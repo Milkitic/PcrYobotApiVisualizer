@@ -245,6 +245,8 @@ namespace PcrYobotExtension
                 list.Add(cycleModel);
             }
 
+            list = list.OrderBy(k => k.BossDamages.Sum()).ToList();
+
             _viewModel.SeriesCollection = new SeriesCollection();
             for (int i = 0; i < 5; i++)
             {
