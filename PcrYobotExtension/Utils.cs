@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,20 @@ namespace PcrYobotExtension
             string nick = responseString.Substring(index1 + str1.Length, index2 - index1 - str1.Length);
             _dicQqNick.Add(qqId, nick);
             return nick;
+        }
+
+        public static async Task<List<Cookie>> GetCookie(string url)
+        {
+            url = url.Replace("/c/#", "/#");
+            var cookies = new CookieContainer();
+            var handler = new HttpClientHandler { CookieContainer = cookies };
+
+            var client = new HttpClient(handler);
+            var response = await client.GetAsync(url);
+            var o = await response.Content.ReadAsStringAsync();
+            Uri uri = new Uri(url);
+            var responseCookies = cookies.GetCookies(uri).Cast<Cookie>().ToList();
+            return responseCookies;
         }
     }
 }

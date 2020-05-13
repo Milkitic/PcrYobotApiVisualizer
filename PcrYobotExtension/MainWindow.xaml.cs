@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,6 +21,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LiveCharts;
 using LiveCharts.Wpf;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using PcrYobotExtension.Annotations;
 using PcrYobotExtension.Models;
@@ -159,15 +163,73 @@ namespace PcrYobotExtension
         private void Window_Initialized(object sender, EventArgs e)
         {
             _viewModel = (MainWindowVm)DataContext;
+            WebBrowserVersionEmulation();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //var o = await Utils.GetCookie("http://101.132.134.254:9222/yobot/login/#qqid=2241521134&key=JwGveb");
+            WebBrowser.Navigated += wbMain_Navigated;
+            WebBrowser.Navigate("http://101.132.134.254:9222/yobot/login/c/#qqid=2241521134&key=VFEMZN");
+            
             var text = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"template.json"));
             _viewModel.ApiObj = JsonConvert.DeserializeObject<YobotApiModel>(text);
             _viewModel.CycleCount = _viewModel.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
             _viewModel.SelectedCycle = _viewModel.CycleCount;
             CycleButtons.ItemsSource = Enumerable.Range(1, _viewModel.CycleCount);
+        }
+
+        private void wbMain_Navigated(object sender, NavigationEventArgs e)
+        {
+            SetSilent(WebBrowser, true); // make it silent
+        }
+
+        private void SetSilent(WebBrowser browser, bool silent)
+        {
+            if (browser == null)
+                throw new ArgumentNullException("browser");
+
+            // get an IWebBrowser2 from the document
+            IOleServiceProvider sp = browser.Document as IOleServiceProvider;
+            if (sp != null)
+            {
+                Guid IID_IWebBrowserApp = new Guid("0002DF05-0000-0000-C000-000000000046");
+                Guid IID_IWebBrowser2 = new Guid("D30C1661-CDAF-11d0-8A3E-00C04FC9E26E");
+
+                object webBrowser;
+                sp.QueryService(ref IID_IWebBrowserApp, ref IID_IWebBrowser2, out webBrowser);
+                if (webBrowser != null)
+                {
+                    webBrowser.GetType().InvokeMember("Silent", BindingFlags.Instance | BindingFlags.Public | BindingFlags.PutDispProperty, null, webBrowser, new object[] { silent });
+                }
+            }
+        }
+
+        [ComImport, Guid("6D5140C1-7436-11CE-8034-00AA006009FA"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        private interface IOleServiceProvider
+        {
+            [PreserveSig]
+            int QueryService([In] ref Guid guidService, [In] ref Guid riid, [MarshalAs(UnmanagedType.IDispatch)] out object ppvObject);
+        }
+
+        private static void WebBrowserVersionEmulation()
+        {
+            const string browserEmulationKey =
+                @"Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
+
+            String appname = Process.GetCurrentProcess().ProcessName + ".exe";
+
+            // Webpages are displayed in IE9 Standards mode, regardless of the !DOCTYPE directive.
+            const int browserEmulationMode = 11001;
+
+            RegistryKey registryKeyObj =
+                Registry.CurrentUser.OpenSubKey(browserEmulationKey, RegistryKeyPermissionCheck.ReadWriteSubTree) ??
+                Registry.CurrentUser.CreateSubKey(browserEmulationKey);
+
+            if (registryKeyObj == null) return;
+
+            registryKeyObj.SetValue(appname, browserEmulationMode, RegistryValueKind.DWord);
+            registryKeyObj.Close();
         }
 
         private void BtnTotalDamageTrend_Click(object sender, RoutedEventArgs e)
