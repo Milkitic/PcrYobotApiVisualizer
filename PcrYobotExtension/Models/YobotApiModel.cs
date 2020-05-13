@@ -8,6 +8,6 @@ namespace PcrYobotExtension.Models
         public ChallengeModel[] Challenges { get; set; }
 
         [JsonProperty("code")]
-        public long Code { get; set; }
+        public int Code { get; set; }
     }
 }

@@ -5,7 +5,7 @@ namespace PcrYobotExtension.Models
     public class ChallengeModel
     {
         [JsonProperty("boss_num")]
-        public long BossNum { get; set; }
+        public int BossNum { get; set; }
 
         [JsonProperty("challenge_time")]
         public long ChallengeTime { get; set; }
@@ -14,13 +14,13 @@ namespace PcrYobotExtension.Models
         public CommentModel Comment { get; set; }
 
         [JsonProperty("cycle")]
-        public long Cycle { get; set; }
+        public int Cycle { get; set; }
 
         [JsonProperty("damage")]
-        public long Damage { get; set; }
+        public int Damage { get; set; }
 
         [JsonProperty("health_ramain")]
-        public long HealthRemain { get; set; }
+        public int HealthRemain { get; set; }
 
         [JsonProperty("is_continue")]
         public bool IsContinue { get; set; }
