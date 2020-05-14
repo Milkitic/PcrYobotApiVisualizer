@@ -67,6 +67,7 @@
     <Compile Include="Models\ChallengeModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="WebBrowserExtension.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
