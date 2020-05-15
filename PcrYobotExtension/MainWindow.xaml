@@ -22,7 +22,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <WebBrowser x:Name="WebBrowser" Grid.Row="3"  />
+        <Grid Grid.Row="3" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <WebBrowser x:Name="WebBrowser" Grid.Column="0" />
+        </Grid>
         <StackPanel Orientation="Horizontal">
             <Button Click="BtnTotalDamageTrend_Click" Content="行会每周目伤害趋势" />
             <Button Click="BtnCyclePersonalDamage_Click" Content="个人每周目伤害累计" />

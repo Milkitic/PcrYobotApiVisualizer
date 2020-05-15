@@ -64,9 +64,13 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="FullWebBrowserCookieExtension.cs" />
+    <Compile Include="HttpRequest.cs" />
     <Compile Include="Models\ChallengeModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Services\QQService.cs" />
+    <Compile Include="Services\YobotService.cs" />
     <Compile Include="WebBrowserExtension.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

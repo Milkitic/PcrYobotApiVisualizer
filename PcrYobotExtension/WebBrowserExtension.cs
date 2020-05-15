@@ -74,36 +74,12 @@ namespace PcrYobotExtension
             }
         }
 
-        // getcookie
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool InternetGetCookieEx(string pchURL, string pchCookieName, StringBuilder pchCookieData, ref System.UInt32 pcchCookieData, int dwFlags, IntPtr lpReserved);
-
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int InternetSetCookieEx(string lpszURL, string lpszCookieName, string lpszCookieData, int dwFlags, IntPtr dwReserved);
-
-        // wb
-        [DllImport("KERNEL32.DLL", EntryPoint = "SetProcessWorkingSetSize", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
-        private static extern bool SetProcessWorkingSetSize(IntPtr pProcess, int dwMinimumWorkingSetSize, int dwMaximumWorkingSetSize);
-
-        [DllImport("KERNEL32.DLL", EntryPoint = "GetCurrentProcess", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr GetCurrentProcess();
-
-        public static Dictionary<string, string> GetCookie(string uri)
+        public static Dictionary<string, string> GetCookie(this WebBrowser browser)
         {
-            IntPtr pHandle = GetCurrentProcess();
-            SetProcessWorkingSetSize(pHandle, -1, -1);
-
-            uint dataSize = 256;
-            var cookieData = new StringBuilder((int)dataSize);
-            if (!InternetGetCookieEx(uri, null, cookieData, ref dataSize, 0x00002000, IntPtr.Zero))
-            {
-                return new Dictionary<string, string>();
-            }
-
-            var str = cookieData.ToString();
-            return str.Split(';')
+            var cookieData = FullWebBrowserCookieExtension.GetCookieInternal(browser.Source, false);
+            return cookieData.Split(';')
                 .Select(k => k.Split('='))
-                .ToDictionary(k => k[0], k => k.Length > 1 ? k[1] : null);
+                .ToDictionary(k => k[0]?.Trim(), k => k.Length > 1 ? k[1]?.Trim() : null);
         }
     }
 }
