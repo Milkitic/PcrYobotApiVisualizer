@@ -58,7 +58,7 @@
             x:Name="Chart"
             Grid.Row="3"
             LegendLocation="Top"
-            Series="{Binding SeriesCollection}">
+            Series="{Binding SeriesCollection, IsAsync=True}">
             <wpf:CartesianChart.AxisX>
                 <wpf:Axis Title="{Binding AxisXTitle}" Labels="{Binding AxisXLabels}" />
             </wpf:CartesianChart.AxisX>
