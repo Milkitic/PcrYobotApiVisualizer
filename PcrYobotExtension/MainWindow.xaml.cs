@@ -168,26 +168,28 @@ namespace PcrYobotExtension
             _viewModel = (MainWindowVm)DataContext;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            WebBrowser.Navigated += wbMain_Navigated;
-            WebBrowser.Navigate("http://101.132.134.254:9222/yobot/login/c/#qqid=2241521134&key=fKfQAt");
+            _yobotService = new YobotService(Browser);
+            _yobotService.InitRequested += _yobotService_InitRequested;
+            //await _yobotService.InitAsync("http://101.132.134.254:9222/yobot/login/c/#qqid=224521134&key=tdVE5WX");
+            await Load();
         }
 
-        private async void wbMain_Navigated(object sender, NavigationEventArgs e)
+        private async Task<bool> _yobotService_InitRequested()
         {
-            WebBrowser.SetSilent(true); // make it silent
-
-            var url = WebBrowser.Source.ToString();
-            if (url.Contains("/yobot/user/"))
+            var win = new PromptWindow();
+            win.ShowDialog();
+            var text = win.Text;
+            try
             {
+                await _yobotService.InitAsync(text);
+                return true;
             }
-            else if (url.Contains("/yobot/clan/"))
+            catch (Exception ex)
             {
-                //WebBrowser.Visibility = Visibility.Collapsed;
-                var cookie = WebBrowser.GetCookie();
-                _yobotService = new YobotService { Cookie = cookie };
-                await Load();
+                Console.WriteLine(ex);
+                return false;
             }
         }
 
@@ -220,6 +222,7 @@ namespace PcrYobotExtension
                     Title = "花费时间"
                 }
             };
+            _viewModel.AxisYLabels = null;
             _viewModel.AxisXLabels = totalDamageTrend.Select(k => k.Key.ToString()).ToArray();
             Chart.AxisY[0].LabelFormatter = value => TimeSpan.FromSeconds(value).ToString();
             _viewModel.AxisXTitle = "周目";
