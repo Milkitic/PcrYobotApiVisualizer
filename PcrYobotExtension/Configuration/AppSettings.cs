@@ -80,9 +80,4 @@ namespace PcrYobotExtension.Configuration
             SaveDefault();
         }
     }
-
-    public class GeneralSection
-    {
-        public string Origin { get; set; }
-    }
 }

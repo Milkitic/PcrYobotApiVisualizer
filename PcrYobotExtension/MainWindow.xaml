@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PcrYobotExtension"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:statsGraphControls="clr-namespace:PcrYobotExtension.UserControls.StatsGraphControls"
+    xmlns:viewModels="clr-namespace:PcrYobotExtension.ViewModels"
     xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     Title="MainWindow"
     Width="800"
@@ -13,7 +15,7 @@
     Loaded="Window_Loaded"
     mc:Ignorable="d">
     <Window.DataContext>
-        <local:MainWindowVm />
+        <viewModels:StatsVm />
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
@@ -22,48 +24,29 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Button Click="BtnTotalDamageTrend_Click" Content="行会每周目伤害趋势" />
-            <Button Click="BtnCyclePersonalDamage_Click" Content="个人每周目伤害累计" />
+        <StackPanel x:Name="GraphControlPanel">
+            <statsGraphControls:TotalDamageTrendControl />
+            <statsGraphControls:PersonalDamageControl />
         </StackPanel>
-        <ItemsControl x:Name="CycleButtons" Grid.Row="1">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Click="BtnCyclePersonalDamageChangeCycle_Click" Tag="{Binding Mode=OneWay}">
-                        <Button.Content>
-                            <TextBlock>
-                                <Run Text="{Binding Mode=OneWay}" /><Run Text="周目" />
-                            </TextBlock>
-                        </Button.Content>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
         <WebBrowser
             x:Name="Browser"
             Grid.Row="3"
             Visibility="Hidden" />
         <Label
-            x:Name="LblTitle"
             Grid.Row="2"
             HorizontalAlignment="Center"
-            Content="1232134"
+            Content="{Binding StatsGraph.Title}"
             FontSize="20" />
         <wpf:CartesianChart
             x:Name="Chart"
             Grid.Row="3"
             LegendLocation="Top"
-            Series="{Binding SeriesCollection, IsAsync=True}">
+            Series="{Binding StatsGraph.SeriesCollection, IsAsync=True}">
             <wpf:CartesianChart.AxisX>
-                <wpf:Axis Title="{Binding AxisXTitle}" Labels="{Binding AxisXLabels}" />
+                <wpf:Axis Title="{Binding StatsGraph.AxisXTitle}" Labels="{Binding StatsGraph.AxisXLabels}" />
             </wpf:CartesianChart.AxisX>
             <wpf:CartesianChart.AxisY>
-                <wpf:Axis Title="{Binding AxisYTitle}" Labels="{Binding AxisYLabels}" />
+                <wpf:Axis Title="{Binding StatsGraph.AxisYTitle}" Labels="{Binding StatsGraph.AxisYLabels}" />
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>
     </Grid>

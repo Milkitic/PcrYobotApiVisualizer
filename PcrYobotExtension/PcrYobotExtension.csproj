@@ -67,6 +67,17 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Compile Include="Configuration\AppSettings.cs" />
+    <Compile Include="Configuration\GeneralSection.cs" />
+    <Compile Include="IChartProvider.cs" />
+    <Compile Include="UserControls\StatsGraphControls\IChartSwitchControl.cs" />
+    <Compile Include="UserControls\StatsGraphControls\PersonalDamageControl.xaml.cs">
+      <DependentUpon>PersonalDamageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\StatsGraphControls\TotalDamageTrendControl.xaml.cs">
+      <DependentUpon>TotalDamageTrendControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\StatsGraphVm.cs" />
+    <Compile Include="ViewModels\StatsVm.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />
     <Compile Include="Models\ChallengeModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
@@ -89,6 +100,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PromptWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\StatsGraphControls\PersonalDamageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\StatsGraphControls\TotalDamageTrendControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
