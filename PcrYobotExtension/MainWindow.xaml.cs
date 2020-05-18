@@ -1,33 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using LiveCharts;
+﻿using LiveCharts;
 using LiveCharts.Wpf;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 using PcrYobotExtension.Annotations;
 using PcrYobotExtension.Models;
 using PcrYobotExtension.Services;
-using Path = System.IO.Path;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace PcrYobotExtension
 {
@@ -197,6 +181,8 @@ namespace PcrYobotExtension
         {
             var text = await _yobotService.GetApiInfo();
             _viewModel.ApiObj = JsonConvert.DeserializeObject<YobotApiModel>(text);
+            _viewModel.ApiObj.Challenges = _viewModel.ApiObj.Challenges
+                .Where(k => k.ChallengeTime < new DateTime(2020, 5, 15)).ToArray();
             _viewModel.CycleCount = _viewModel.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
             _viewModel.SelectedCycle = _viewModel.CycleCount;
             CycleButtons.ItemsSource = Enumerable.Range(1, _viewModel.CycleCount);
@@ -213,10 +199,10 @@ namespace PcrYobotExtension
             {
                 new LineSeries
                 {
-                    Values = new ChartValues<long>(totalDamageTrend
+                    Values = new ChartValues<double>(totalDamageTrend
                         .Select(k =>
                         {
-                            return k.Max(o => o.ChallengeTime) - k.Min(o => o.ChallengeTime);
+                            return (k.Max(o => o.ChallengeTime) - k.Min(o => o.ChallengeTime)).TotalSeconds;
                         })
                     ),
                     Title = "花费时间"

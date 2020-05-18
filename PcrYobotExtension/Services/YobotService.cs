@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using PcrYobotExtension.Configuration;
+using PcrYobotExtension.Utils;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using Newtonsoft.Json.Linq;
 
 namespace PcrYobotExtension.Services
 {
@@ -26,16 +28,8 @@ namespace PcrYobotExtension.Services
         public string Host { get; set; }
         public Dictionary<string, string> Cookie { get; set; }
 
-        //public YobotService(long groupId, string origin) : this()
-        //{
-        //    GroupId = groupId;
-        //    Origin = origin;
-        //    IsInit = true;
-        //}
-
         public YobotService(WebBrowser wb)
         {
-            //_hiddenWebBrowser = new WebBrowser();
             _hiddenWebBrowser = wb;
             _hiddenWebBrowser.Navigated += HiddenWebBrowser_Navigated;
             _hiddenWebBrowser.LoadCompleted += _hiddenWebBrowser_LoadCompleted;
@@ -97,7 +91,71 @@ namespace PcrYobotExtension.Services
             return await InnerGetApiInfo(false);
         }
 
+        public async Task<bool> Logout()
+        {
+            _hiddenWebBrowser.LoadCompleted += LoadCompleted;
+            _hiddenWebBrowser.Navigate($"{Origin}/yobot/logout/");
+            bool success = false;
+            await Task.Run(() =>
+            {
+                var sw = Stopwatch.StartNew();
+                while (!success)
+                {
+                    if (sw.ElapsedMilliseconds > 3000)
+                    {
+                        _hiddenWebBrowser.LoadCompleted -= LoadCompleted;
+                        break;
+                    }
+
+                    Thread.Sleep(10);
+                }
+            });
+
+            return success;
+
+            void LoadCompleted(object sender, NavigationEventArgs e)
+            {
+                var url = _hiddenWebBrowser.Source.ToString();
+                if (url.Contains("/yobot/login/"))
+                {
+                    _hiddenWebBrowser.LoadCompleted -= LoadCompleted;
+                    success = true;
+                }
+            }
+        }
+
         private async Task<string> InnerGetApiInfo(bool loop)
+        {
+            await CheckInit();
+
+            var request = (HttpWebRequest)WebRequest.Create($"{Origin}/yobot/clan/{GroupId}/statistics/api/");
+            request.Method = "GET";
+            SetCookie(request);
+
+            string responseFromServer;
+            using (var response = await request.GetResponseAsync())
+            using (var dataStream = response.GetResponseStream())
+            using (var reader = new StreamReader(dataStream))
+            {
+                responseFromServer = reader.ReadToEnd();
+            }
+
+            var jObj = JObject.Parse(responseFromServer);
+            if (jObj.First is JProperty jp && jp.Name == "code")
+            {
+                var code = jp.Value.Value<long>();
+                if (code != 0)
+                {
+                    if (!loop) return await InnerGetApiInfo(true);
+                    if (jObj.Last is JProperty jp2 && jp2.Name == "message")
+                        throw new Exception($"[{code}] {jp2.Value.Value<string>()}");
+                }
+            }
+
+            return responseFromServer;
+        }
+
+        private async Task CheckInit()
         {
             if (!IsInit)
             {
@@ -119,32 +177,6 @@ namespace PcrYobotExtension.Services
                     }
                 }
             }
-
-            var request = (HttpWebRequest)WebRequest.Create($"{Origin}/yobot/clan/{GroupId}/statistics/api/");
-            request.Method = "GET";
-            SetCookie(request);
-
-            string responseFromServer;
-            using (var response = await request.GetResponseAsync())
-            using (var dataStream = response.GetResponseStream())
-            using (var reader = new StreamReader(dataStream))
-            {
-                responseFromServer = reader.ReadToEnd();
-            }
-
-            var jObj = JObject.Parse(responseFromServer);
-            if (jObj.First is JProperty jp)
-            {
-                var code = jp.Value.Value<long>();
-                if (jp.Name == "code" && code != 0)
-                {
-                    if (!loop) return await InnerGetApiInfo(true);
-                    if (jObj.Last is JProperty jp2 && jp2.Name == "message")
-                        throw new Exception($"[{code}] {jp2.Value.Value<string>()}");
-                }
-            }
-
-            return responseFromServer;
         }
 
         private void SetCookie(HttpWebRequest request)
@@ -161,7 +193,6 @@ namespace PcrYobotExtension.Services
         private void HiddenWebBrowser_Navigated(object sender, NavigationEventArgs e)
         {
             _hiddenWebBrowser.SetSilent(true); // make it silent
-
         }
 
         private void _hiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
