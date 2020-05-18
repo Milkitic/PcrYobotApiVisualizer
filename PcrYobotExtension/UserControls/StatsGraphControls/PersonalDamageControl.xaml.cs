@@ -32,8 +32,6 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
             InitModels(stats, chartProvider);
         }
 
-        public bool IsLoading { get; set; }
-
         public StatsVm Stats { get; private set; }
         public IChartProvider ChartProvider { get; private set; }
         public void InitModels(StatsVm stats, IChartProvider chartProvider)
@@ -50,6 +48,8 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
 
         private async Task CyclePersonalDamage()
         {
+            Stats.IsLoading = true;
+            ChartProvider.RecreateGraph();
             var totalDamageTrend = Stats.ApiObj.Challenges
                 .GroupBy(k => k.Cycle).ToList()[Stats.SelectedCycle - 1];
             var challengeModels = totalDamageTrend.ToList();
@@ -112,7 +112,9 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
 
             Stats.StatsGraph = vm;
 
-            ChartProvider.Graph.AxisY[0].Separator = new LiveCharts.Wpf.Separator { Step = 1 };
+            ChartProvider.Chart.AxisY[0].Separator = new LiveCharts.Wpf.Separator { Step = 1 };
+
+            Stats.IsLoading = false;
         }
 
         private async void BtnCyclePersonalDamageChangeCycle_Click(object sender, RoutedEventArgs e)

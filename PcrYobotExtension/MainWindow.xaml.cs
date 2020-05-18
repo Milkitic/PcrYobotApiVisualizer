@@ -6,8 +6,13 @@ using PcrYobotExtension.UserControls.StatsGraphControls;
 using PcrYobotExtension.ViewModels;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using LiveCharts;
+using LiveCharts.Wpf.Charts.Base;
 
 namespace PcrYobotExtension
 {
@@ -62,20 +67,57 @@ namespace PcrYobotExtension
             _viewModel.CycleCount = _viewModel.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
             _viewModel.SelectedCycle = _viewModel.CycleCount;
 
-            foreach (UIElement child in GraphControlPanel.Children)
+            GraphControlPanel.Children.Clear();
+
+            var asm = Assembly.GetExecutingAssembly();
+            var switchControls = asm.GetExportedTypes().Where(k => k.GetInterfaces().Contains(typeof(IChartSwitchControl)));
+
+            foreach (var switchControl in switchControls)
             {
-                if (child is IChartSwitchControl c)
+                var obj = (UserControl)Activator.CreateInstance(switchControl);
+                GraphControlPanel.Children.Add(obj);
+                if (obj is IChartSwitchControl sw)
                 {
-                    c.InitModels(_viewModel, this);
+                    sw.InitModels(_viewModel, this);
                 }
             }
         }
 
-        public CartesianChart Graph => Chart;
-        public CartesianChart RecreateGraph()
+        public Chart Chart { get; private set; }
+        public void RecreateGraph()
         {
-            Chart = new CartesianChart();
-            return Chart;
+            MainGrid.Children.Remove(Chart);
+
+            Chart = new CartesianChart
+            {
+                LegendLocation = LegendLocation.Top,
+                AxisX = new AxesCollection { new Axis() },
+                AxisY = new AxesCollection { new Axis() }
+            };
+
+            var binding = new Binding("Text") { Path = new PropertyPath("StatsGraph.SeriesCollection") };
+            Chart.SetBinding(Chart.SeriesProperty, binding);
+            var bindAxisXTitle = new Binding("Title") { Path = new PropertyPath("StatsGraph.AxisXTitle") };
+            Chart.AxisX[0].SetBinding(Axis.TitleProperty, bindAxisXTitle);
+            var bindAxisXLabels = new Binding("Labels") { Path = new PropertyPath("StatsGraph.AxisXLabels") };
+            Chart.AxisX[0].SetBinding(Axis.LabelsProperty, bindAxisXLabels);
+
+            var bindAxisYTitle = new Binding("Title") { Path = new PropertyPath("StatsGraph.AxisYTitle") };
+            Chart.AxisY[0].SetBinding(Axis.TitleProperty, bindAxisYTitle);
+            var bindAxisYLabels = new Binding("Labels") { Path = new PropertyPath("StatsGraph.AxisYLabels") };
+            Chart.AxisY[0].SetBinding(Axis.LabelsProperty, bindAxisYLabels);
+
+            MainGrid.Children.Add(Chart);
+            Grid.SetRow(Chart, 3);
+        }
+
+        public void RecreateGraph(Chart chart)
+        {
+            MainGrid.Children.Remove(Chart);
+
+            Chart = chart;
+            MainGrid.Children.Add(Chart);
+            Grid.SetRow(Chart, 3);
         }
     }
 }

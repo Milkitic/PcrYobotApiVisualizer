@@ -34,21 +34,21 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
             InitModels(stats, chartProvider);
         }
 
+        public StatsVm Stats { get; private set; }
+        public IChartProvider ChartProvider { get; private set; }
+
         public void InitModels(StatsVm stats, IChartProvider chartProvider)
         {
             ChartProvider = chartProvider;
             Stats = stats;
         }
 
-        public StatsVm Stats { get; private set; }
-        public IChartProvider ChartProvider { get; private set; }
-
-        public bool IsLoading { get; set; }
-
-
         private void BtnTotalDamageTrend_Click(object sender, RoutedEventArgs e)
         {
-            ChartProvider.Graph.AxisY[0].Separator.ClearValue(LiveCharts.Wpf.Separator.StepProperty);
+            Stats.IsLoading = true;
+            ChartProvider.RecreateGraph();
+
+            ChartProvider.Chart.AxisY[0].Separator.ClearValue(LiveCharts.Wpf.Separator.StepProperty);
 
             var totalDamageTrend = Stats.ApiObj.Challenges
                 .GroupBy(k => k.Cycle).ToList();
@@ -75,8 +75,9 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
             };
 
             Stats.StatsGraph = vm;
+            ChartProvider.Chart.AxisY[0].LabelFormatter = value => TimeSpan.FromSeconds(value).ToString();
 
-            ChartProvider.Graph.AxisY[0].LabelFormatter = value => TimeSpan.FromSeconds(value).ToString();
+            Stats.IsLoading = false;
         }
     }
 }

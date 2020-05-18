@@ -13,8 +13,11 @@ namespace PcrYobotExtension.ViewModels
 
         private int _selectedCycle = -1;
         private StatsGraphVm _statsGraph;
+        private bool _isLoading;
 
-
+        /// <summary>
+        /// 数据源
+        /// </summary>
         public YobotApiModel ApiObj
         {
             get => _apiObj;
@@ -26,6 +29,9 @@ namespace PcrYobotExtension.ViewModels
             }
         }
 
+        /// <summary>
+        /// 图表的图相关上下文
+        /// </summary>
         public StatsGraphVm StatsGraph
         {
             get => _statsGraph;
@@ -37,6 +43,9 @@ namespace PcrYobotExtension.ViewModels
             }
         }
 
+        /// <summary>
+        /// 周目数
+        /// </summary>
         public int CycleCount
         {
             get => _cycleCount;
@@ -48,6 +57,9 @@ namespace PcrYobotExtension.ViewModels
             }
         }
 
+        /// <summary>
+        /// 已选周目
+        /// </summary>
         public int SelectedCycle
         {
             get => _selectedCycle;
@@ -55,6 +67,20 @@ namespace PcrYobotExtension.ViewModels
             {
                 if (value == _selectedCycle) return;
                 _selectedCycle = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// 数据是否正在准备，即图表是否正在加载
+        /// </summary>
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                if (value == _isLoading) return;
+                _isLoading = value;
                 OnPropertyChanged();
             }
         }

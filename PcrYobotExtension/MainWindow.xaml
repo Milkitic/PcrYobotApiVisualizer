@@ -17,7 +17,7 @@
     <Window.DataContext>
         <viewModels:StatsVm />
     </Window.DataContext>
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -25,8 +25,8 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel x:Name="GraphControlPanel">
-            <statsGraphControls:TotalDamageTrendControl />
-            <statsGraphControls:PersonalDamageControl />
+            <!--<statsGraphControls:TotalDamageTrendControl />
+            <statsGraphControls:PersonalDamageControl />-->
         </StackPanel>
         <WebBrowser
             x:Name="Browser"
@@ -37,7 +37,7 @@
             HorizontalAlignment="Center"
             Content="{Binding StatsGraph.Title}"
             FontSize="20" />
-        <wpf:CartesianChart
+        <!--<wpf:CartesianChart
             x:Name="Chart"
             Grid.Row="3"
             LegendLocation="Top"
@@ -48,6 +48,16 @@
             <wpf:CartesianChart.AxisY>
                 <wpf:Axis Title="{Binding StatsGraph.AxisYTitle}" Labels="{Binding StatsGraph.AxisYLabels}" />
             </wpf:CartesianChart.AxisY>
-        </wpf:CartesianChart>
+        </wpf:CartesianChart>-->
+        <Label
+            Grid.Row="0"
+            Grid.RowSpan="4"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="#80303030"
+            Content="加载中"
+            FontSize="18"
+            Foreground="White"
+            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>
 </Window>

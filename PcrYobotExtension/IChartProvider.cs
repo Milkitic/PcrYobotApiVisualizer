@@ -1,10 +1,24 @@
 ﻿using LiveCharts.Wpf;
+using LiveCharts.Wpf.Charts.Base;
 
 namespace PcrYobotExtension
 {
     public interface IChartProvider
     {
-        CartesianChart Graph { get; }
-        CartesianChart RecreateGraph();
+        /// <summary>
+        /// 图表控件
+        /// </summary>
+        Chart Chart { get; }
+
+        /// <summary>
+        /// 重建图表
+        /// </summary>
+        /// <returns></returns>
+        void RecreateGraph();
+
+        /// <summary>
+        /// 重建自定义图表
+        /// </summary>
+        void RecreateGraph(Chart chart);
     }
 }
