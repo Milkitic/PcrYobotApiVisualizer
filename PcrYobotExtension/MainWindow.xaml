@@ -17,7 +17,7 @@
     <Window.DataContext>
         <viewModels:StatsVm />
     </Window.DataContext>
-    <Grid x:Name="MainGrid">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -37,6 +37,10 @@
             HorizontalAlignment="Center"
             Content="{Binding StatsGraph.Title}"
             FontSize="20" />
+        <Border
+            x:Name="Haha"
+            Grid.Row="3"
+            Margin="15" />
         <!--<wpf:CartesianChart
             x:Name="Chart"
             Grid.Row="3"

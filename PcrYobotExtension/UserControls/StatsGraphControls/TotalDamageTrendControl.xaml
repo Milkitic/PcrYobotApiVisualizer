@@ -10,6 +10,7 @@
         <GroupBox Header="行会">
             <WrapPanel>
                 <Button Click="BtnTotalDamageTrend_Click" Content="行会每周目伤害趋势" />
+                <Button Click="BtnTotalDamageDailyTrend_Click" Content="行会每天伤害趋势" />
             </WrapPanel>
         </GroupBox>
     </Grid>

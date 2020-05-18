@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace PcrYobotExtension.UserControls.StatsGraphControls
 {
@@ -51,6 +52,7 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
             Stats.IsLoading = true;
             ChartProvider.RecreateGraph();
             var totalDamageTrend = Stats.ApiObj.Challenges
+                .Select(k => k.Clone())
                 .GroupBy(k => k.Cycle).ToList()[Stats.SelectedCycle - 1];
             var challengeModels = totalDamageTrend.ToList();
             var personsDic = challengeModels.GroupBy(k => k.QqId)
@@ -121,6 +123,120 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
         {
             Stats.SelectedCycle = (int)((Button)sender).Tag;
             await CyclePersonalDamage();
+        }
+
+        private async void BtnTotalPersonalDamage_Click(object sender, RoutedEventArgs e)
+        {
+            Stats.IsLoading = true;
+            ChartProvider.RecreateGraph();
+
+            var dic = Stats.ApiObj.Challenges
+                .Select(k => k.Clone())
+                .GroupBy(k => k.QqId)
+                .ToDictionary(k => k.Key,
+                    k => k.Sum(o => o.Damage))
+                .OrderBy(k => k.Value)
+                .ToDictionary(k => k.Key,
+                    k => k.Value);
+
+            var list = new List<string>();
+            foreach (var dicKey in dic.Keys)
+            {
+                var nick = $"{await QQService.GetQqNickNameAsync(dicKey)} ({dicKey})";
+                list.Add(nick);
+            }
+
+            var vm = new StatsGraphVm
+            {
+                AxisYLabels = list.ToArray(),
+                AxisYTitle = "成员",
+                AxisXTitle = "伤害",
+                Title = "个人总伤害排名"
+            };
+
+            vm.SeriesCollection.Add(new RowSeries()
+            {
+                Title = "伤害",
+                Values = new ChartValues<int>(dic.Values),
+                DataLabels = true
+            });
+
+            Stats.StatsGraph = vm;
+
+            ChartProvider.Chart.AxisY[0].Separator = new LiveCharts.Wpf.Separator { Step = 1 };
+            ChartProvider.Chart.AxisX[0].LabelFormatter = value => value.ToString("N0");
+
+            Stats.IsLoading = false;
+        }
+
+        private async void BtnTotalPersonalDamageMultiBoss_Click(object sender, RoutedEventArgs e)
+        {
+            Stats.IsLoading = true;
+            ChartProvider.RecreateGraph();
+            var challengeModels = Stats.ApiObj.Challenges.Select(k => k.Clone()).ToList();
+            var personsDic = challengeModels.GroupBy(k => k.QqId)
+                .ToDictionary(k => k.Key,
+                    k =>
+                    {
+                        var dic = new Dictionary<int, ChallengeModel>();
+                        foreach (var challengeModel in k)
+                        {
+                            if (dic.ContainsKey(challengeModel.BossNum))
+                            {
+                                dic[challengeModel.BossNum].Damage += challengeModel.Damage;
+                            }
+                            else
+                            {
+                                dic.Add(challengeModel.BossNum, challengeModel);
+                            }
+                        }
+
+                        return dic;
+                    });
+            var list = new List<CyclePersonalDamageModel>();
+            foreach (var kvp in personsDic)
+            {
+                var cycleModel = new CyclePersonalDamageModel
+                {
+                    Name = $"{await QQService.GetQqNickNameAsync(kvp.Key)} ({kvp.Key})"
+                };
+                for (int i = 0; i < 5; i++)
+                {
+                    cycleModel.BossDamages.Add((int)(kvp.Value.ContainsKey(cycleModel.BossDamages.Count + 1)
+                        ? kvp.Value[cycleModel.BossDamages.Count + 1].Damage
+                        : 0L));
+                }
+
+                list.Add(cycleModel);
+            }
+
+            list = list.OrderBy(k => k.BossDamages.Sum()).ToList();
+
+            var vm = new StatsGraphVm
+            {
+                AxisYLabels = list.Select(k => k.Name).ToArray(),
+                AxisXTitle = "伤害",
+                AxisYTitle = "成员",
+                Title = Stats.SelectedCycle + "周目个人伤害统计"
+            };
+
+            for (int i = 0; i < 5; i++)
+            {
+                var i1 = i;
+                vm.SeriesCollection.Add(new StackedRowSeries
+                {
+                    Title = "BOSS " + (i + 1),
+                    Values = new ChartValues<int>(list.Select(k => k.BossDamages[i1])),
+                    DataLabels = true
+                });
+            }
+
+            Stats.StatsGraph = vm;
+
+            ChartProvider.Chart.AxisY[0].Separator = new LiveCharts.Wpf.Separator { Step = 1 };
+            ChartProvider.Chart.AxisX[0].LabelFormatter = value => value.ToString("N0");
+
+            Stats.IsLoading = false;
         }
     }
 }

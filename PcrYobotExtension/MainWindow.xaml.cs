@@ -86,7 +86,7 @@ namespace PcrYobotExtension
         public Chart Chart { get; private set; }
         public void RecreateGraph()
         {
-            MainGrid.Children.Remove(Chart);
+            Haha.Child = null;
 
             Chart = new CartesianChart
             {
@@ -107,16 +107,15 @@ namespace PcrYobotExtension
             var bindAxisYLabels = new Binding("Labels") { Path = new PropertyPath("StatsGraph.AxisYLabels") };
             Chart.AxisY[0].SetBinding(Axis.LabelsProperty, bindAxisYLabels);
 
-            MainGrid.Children.Add(Chart);
-            Grid.SetRow(Chart, 3);
+            Haha.Child = Chart;
         }
 
         public void RecreateGraph(Chart chart)
         {
-            MainGrid.Children.Remove(Chart);
+            Haha.Child = null;
 
             Chart = chart;
-            MainGrid.Children.Add(Chart);
+            Haha.Child = Chart;
             Grid.SetRow(Chart, 3);
         }
     }

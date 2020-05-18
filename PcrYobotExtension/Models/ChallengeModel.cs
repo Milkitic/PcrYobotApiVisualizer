@@ -33,6 +33,11 @@ namespace PcrYobotExtension.Models
 
         [JsonProperty("qqid")]
         public long QqId { get; set; }
+        
+        public ChallengeModel Clone()
+        {
+            return (ChallengeModel)MemberwiseClone();
+        }
     }
 
     public class MyJavaScriptDateTimeConverter : DateTimeConverterBase
