@@ -57,7 +57,7 @@ namespace PcrYobotExtension.Models
                 return null;
             }
 
-            var addMilliseconds = _epoch.AddSeconds((long)reader.Value);
+            var addMilliseconds = _epoch.AddSeconds((long)reader.Value).AddHours(8);
             return addMilliseconds;
         }
     }

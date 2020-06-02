@@ -63,5 +63,11 @@
             FontSize="18"
             Foreground="White"
             Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button
+            x:Name="btnUpdateData"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Click="UpdateData_Click"
+            Content="更新数据" />
     </Grid>
 </Window>

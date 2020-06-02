@@ -1,4 +1,5 @@
-﻿using LiveCharts;
+﻿using System;
+using LiveCharts;
 using LiveCharts.Wpf;
 using PcrYobotExtension.Models;
 using PcrYobotExtension.Services;
@@ -17,6 +18,12 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
     /// </summary>
     public partial class PersonalDamageControl : UserControl, IChartSwitchControl
     {
+        internal class DayPersonalDamageModel
+        {
+            public string Name { get; set; }
+            public List<int> TimeDamages { get; set; } = new List<int>();
+        }
+
         internal class CyclePersonalDamageModel
         {
             public string Name { get; set; }
@@ -40,6 +47,11 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
             Stats = stats;
             ChartProvider = chartProvider;
             CycleButtons.ItemsSource = Enumerable.Range(1, stats.CycleCount);
+            var dates = Stats.ApiObj.Challenges
+                .GroupBy(k => k.ChallengeTime.AddHours(-5).Date)
+                .Select(k => k.Key)
+                .ToList();
+            DayButtons.ItemsSource = dates;
         }
 
         private async void BtnCyclePersonalDamage_Click(object sender, RoutedEventArgs e)
@@ -235,6 +247,90 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
 
             ChartProvider.Chart.AxisY[0].Separator = new LiveCharts.Wpf.Separator { Step = 1 };
             ChartProvider.Chart.AxisX[0].LabelFormatter = value => value.ToString("N0");
+
+            Stats.IsLoading = false;
+        }
+
+        private async void BtnDayPersonalDamage_Click(object sender, RoutedEventArgs e)
+        {
+            await DayPersonalDamage();
+        }
+
+        private async void BtnDayPersonalDamageChangeDay_Click(object sender, RoutedEventArgs e)
+        {
+            Stats.SelectedDay = (DateTime?)((Button)sender).Tag;
+            await DayPersonalDamage();
+        }
+
+        private async Task DayPersonalDamage()
+        {
+            if (Stats.SelectedDay is null) return;
+            var selectedDay = Stats.SelectedDay.Value;
+            Stats.IsLoading = true;
+            ChartProvider.RecreateGraph();
+            var totalDamageTrend = Stats.ApiObj.Challenges
+                .Select(k => k.Clone())
+                .GroupBy(k => k.ChallengeTime.AddHours(-5).Date)
+                .ToDictionary(k => k.Key, k => k.ToList())
+                [selectedDay.Date];
+
+            var challengeModels = totalDamageTrend.ToList();
+            var personsDic = challengeModels.GroupBy(k => k.QqId)
+                .ToDictionary(k => k.Key,
+                    k => k.ToList());
+            var list = new List<DayPersonalDamageModel>();
+            foreach (var kvp in personsDic)
+            {
+                var cycleModel = new DayPersonalDamageModel
+                {
+                    Name = $"{await QQService.GetQqNickNameAsync(kvp.Key)} ({kvp.Key})",
+                    TimeDamages = new List<int> { 0, 0, 0, 0, 0, 0 }
+                };
+
+                int i = 0;
+                foreach (var challengeModel in kvp.Value)
+                {
+                    if (challengeModel.IsContinue)
+                    {
+                        if (i % 2 == 0) i++;
+                        cycleModel.TimeDamages[i] = challengeModel.Damage;
+                    }
+                    else
+                    {
+                        if (i % 2 != 0) i++;
+                        cycleModel.TimeDamages[i] = challengeModel.Damage;
+                    }
+
+                    i++;
+                }
+
+                list.Add(cycleModel);
+            }
+
+            list = list.OrderBy(k => k.TimeDamages.Sum()).ToList();
+
+            var vm = new StatsGraphVm
+            {
+                AxisYLabels = list.Select(k => k.Name).ToArray(),
+                AxisXTitle = "伤害",
+                AxisYTitle = "成员",
+                Title = selectedDay.Date.ToShortDateString() + "个人伤害统计"
+            };
+
+            for (int i = 0; i < 6; i++)
+            {
+                var i1 = i;
+                vm.SeriesCollection.Add(new StackedRowSeries
+                {
+                    Title = i % 2 == 0 ? "第" + (i / 2 + 1) + "刀" : "第" + (i / 2 + 1) + "刀（补偿刀）",
+                    Values = new ChartValues<int>(list.Select(k => k.TimeDamages[i1])),
+                    DataLabels = true
+                });
+            }
+
+            Stats.StatsGraph = vm;
+
+            ChartProvider.Chart.AxisY[0].Separator = new LiveCharts.Wpf.Separator { Step = 1 };
 
             Stats.IsLoading = false;
         }

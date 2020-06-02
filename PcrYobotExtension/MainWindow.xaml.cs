@@ -60,27 +60,8 @@ namespace PcrYobotExtension
 
         private async Task Load()
         {
-            var json = await _yobotService.GetApiInfo();
-            _viewModel.ApiObj = JsonConvert.DeserializeObject<YobotApiModel>(json);
-            _viewModel.ApiObj.Challenges = _viewModel.ApiObj.Challenges
-                .Where(k => k.ChallengeTime < new DateTime(2020, 5, 15)).ToArray();
-            _viewModel.CycleCount = _viewModel.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
-            _viewModel.SelectedCycle = _viewModel.CycleCount;
-
-            GraphControlPanel.Children.Clear();
-
-            var asm = Assembly.GetExecutingAssembly();
-            var switchControls = asm.GetExportedTypes().Where(k => k.GetInterfaces().Contains(typeof(IChartSwitchControl)));
-
-            foreach (var switchControl in switchControls)
-            {
-                var obj = (UserControl)Activator.CreateInstance(switchControl);
-                GraphControlPanel.Children.Add(obj);
-                if (obj is IChartSwitchControl sw)
-                {
-                    sw.InitModels(_viewModel, this);
-                }
-            }
+            await UpdateDataAsync();
+            UpdateInterface();
         }
 
         public Chart Chart { get; private set; }
@@ -117,6 +98,56 @@ namespace PcrYobotExtension
             Chart = chart;
             Haha.Child = Chart;
             Grid.SetRow(Chart, 3);
+        }
+
+        private async void UpdateData_Click(object sender, RoutedEventArgs e)
+        {
+            await UpdateDataAsync();
+        }
+
+        private async Task UpdateDataAsync()
+        {
+            btnUpdateData.IsEnabled = false;
+
+            try
+            {
+                bool updateInterface = _viewModel.ApiObj == null;
+                var json = await _yobotService.GetApiInfo();
+                _viewModel.ApiObj = JsonConvert.DeserializeObject<YobotApiModel>(json);
+                _viewModel.ApiObj.Challenges = _viewModel.ApiObj.Challenges.OrderBy(k=>k.ChallengeTime)
+                    /*         .Where(k => k.ChallengeTime < new DateTime(2020, 5, 15))*/.ToArray();
+                _viewModel.CycleCount = _viewModel.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
+
+                if (updateInterface)
+                {
+                    UpdateInterface();
+                }
+            }
+            finally
+            {
+                btnUpdateData.IsEnabled = true;
+            }
+        }
+
+        private void UpdateInterface()
+        {
+            _viewModel.SelectedCycle = _viewModel.CycleCount;
+            _viewModel.SelectedDay = _viewModel.ApiObj.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
+
+            GraphControlPanel.Children.Clear();
+
+            var asm = Assembly.GetExecutingAssembly();
+            var switchControls = asm.GetExportedTypes().Where(k => k.GetInterfaces().Contains(typeof(IChartSwitchControl)));
+
+            foreach (var switchControl in switchControls)
+            {
+                var obj = (UserControl)Activator.CreateInstance(switchControl);
+                GraphControlPanel.Children.Add(obj);
+                if (obj is IChartSwitchControl sw)
+                {
+                    sw.InitModels(_viewModel, this);
+                }
+            }
         }
     }
 }
