@@ -1,0 +1,131 @@
+﻿<Window
+    x:Class="PcrYobotExtension.AutoUpdate.NewVersionWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:autoUpdate="clr-namespace:PcrYobotExtension.AutoUpdate"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+    Title="有可用更新"
+    Width="600"
+    Height="450"
+    FontSize="13"
+    ResizeMode="NoResize"
+    SizeToContent="Height"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <autoUpdate:GithubRelease />
+    </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="{x:Type Paragraph}">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="LineHeight" Value="5" />
+        </Style>
+        <Style x:Key="{x:Static md:Styles.DocumentStyleKey}" TargetType="{x:Type FlowDocument}">
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="PagePadding" Value="0" />
+        </Style>
+        <Style x:Key="{x:Static md:Styles.Heading5StyleKey}" TargetType="{x:Type Paragraph}">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Foreground" Value="#ff000000" />
+            <Setter Property="LineHeight" Value="10" />
+        </Style>
+        <Style x:Key="{x:Static md:Styles.Heading4StyleKey}" TargetType="{x:Type Paragraph}">
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type List}">
+            <Setter Property="Margin" Value="20,0,0,0" />
+            <Setter Property="Padding" Value="5,2" />
+        </Style>
+        <Style x:Key="{x:Static md:Styles.HyperlinkStyleKey}" TargetType="{x:Type Hyperlink}">
+            <Setter Property="Foreground" Value="#1060BE" />
+            <Setter Property="TextDecorations" Value="None" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#4080CE" />
+                    <Setter Property="TextDecorations" Value="Underline" />
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="True">
+                    <Setter Property="Foreground" Value="#1060AE" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--<converters:MarkdownConverter x:Key="MarkdownConverter" />-->
+    </Window.Resources>
+    <Window.Background>
+        <LinearGradientBrush>
+            <GradientStop Offset="0" Color="  #303030" />
+            <GradientStop Offset="1" Color="  #202020" />
+        </LinearGradientBrush>
+    </Window.Background>
+    <Grid x:Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Border Width="120" Background="#B0F8F8F8">
+          
+        </Border>
+        <Border
+            Grid.Column="1"
+            Padding="5,0"
+            Background="#F8F8F8">
+            <StackPanel>
+                <Label HorizontalAlignment="Left" Content="当前版本" />
+                <Label VerticalContentAlignment="Center" Content="{Binding NowVerString}" />
+                <Label HorizontalAlignment="Left" Content="新版本" />
+                <Label VerticalContentAlignment="Center" Content="{Binding NewVerString}" />
+                <Label HorizontalAlignment="Left" Content="更新页面" />
+                <Button
+                    Margin="10,0"
+                    HorizontalAlignment="Left"
+                    Click="HtmlUrl_Click"
+                    Content="{Binding HtmlUrl}" />
+                <Label HorizontalAlignment="Left" Content="更新说明" />
+                <md:MarkdownViewer
+                    x:Name="Viewer"
+                    Margin="10,0"
+                    Background="Transparent"
+                    FontSize="10"
+                    IsEnabled="False"
+                    Markdown="{Binding Body}">
+                    <!--<md:MarkdownViewer.Markdown>
+                    <MultiBinding Converter="{StaticResource MarkdownConverter}">
+                        <Binding Path="Body" />
+                        <Binding Path="NowVerString" />
+                        <Binding Path="NewVerString" />
+                        <Binding Path="HtmlUrl" />
+                    </MultiBinding>
+                </md:MarkdownViewer.Markdown>-->
+                    <!--<FrameworkElement.CommandBindings>
+                    <CommandBinding Command="{x:Static md:Commands.Hyperlink}" Executed="OpenHyperlink" />
+                </FrameworkElement.CommandBindings>-->
+                </md:MarkdownViewer>
+                <Button
+                    Click="Update_Click"
+                    Content="立刻升级"
+                    FontWeight="Bold" />
+                <StackPanel
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        HorizontalAlignment="Right"
+                        Click="Skip_Click"
+                        Content="跳过版本">
+                        <!--<buttonComponent:CommonButton.Content>Skip this version</buttonComponent:CommonButton.Content>-->
+                    </Button>
+                    <Button
+                        Margin="10,0"
+                        HorizontalAlignment="Right"
+                        Click="Later_Click"
+                        Content="稍后提醒">
+                        <!--<buttonComponent:CommonButton.Content>Remind me later</buttonComponent:CommonButton.Content>-->
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
+

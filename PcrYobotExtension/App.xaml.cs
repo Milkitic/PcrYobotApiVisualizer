@@ -71,7 +71,7 @@ namespace PcrYobotExtension
                 catch (JsonException ex)
                 {
                     var result = MessageBox.Show("载入配置文件时失败，用默认配置覆盖继续打开吗？" + Environment.NewLine + ex.Message,
-                        "Osu Player", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        "YobotExtension", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (result == MessageBoxResult.Yes)
                     {
                         AppSettings.CreateNewConfig();

@@ -13,6 +13,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using LiveCharts;
 using LiveCharts.Wpf.Charts.Base;
+using PcrYobotExtension.AutoUpdate;
+using PcrYobotExtension.Configuration;
 
 namespace PcrYobotExtension
 {
@@ -23,6 +25,9 @@ namespace PcrYobotExtension
     {
         private StatsVm _viewModel;
         private YobotService _yobotService;
+        private Updater _updater;
+
+        public Chart Chart { get; private set; }
 
         public MainWindow()
         {
@@ -36,8 +41,23 @@ namespace PcrYobotExtension
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            new Task(async () =>
+            {
+                _updater = new Updater();
+                bool? hasUpdate = await _updater.CheckUpdateAsync();
+                if (hasUpdate == true && _updater.NewRelease.NewVerString != AppSettings.Default.General.IgnoredVer)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        var newVersionWindow = new NewVersionWindow(_updater.NewRelease, this);
+                        newVersionWindow.ShowDialog();
+                    });
+                }
+            }).Start();
+
             _yobotService = new YobotService(Browser);
             _yobotService.InitRequested += _yobotService_InitRequested;
+
             await Load();
         }
 
@@ -64,7 +84,6 @@ namespace PcrYobotExtension
             UpdateInterface();
         }
 
-        public Chart Chart { get; private set; }
         public void RecreateGraph()
         {
             Haha.Child = null;
@@ -114,7 +133,7 @@ namespace PcrYobotExtension
                 bool updateInterface = _viewModel.ApiObj == null;
                 var json = await _yobotService.GetApiInfo();
                 _viewModel.ApiObj = JsonConvert.DeserializeObject<YobotApiModel>(json);
-                _viewModel.ApiObj.Challenges = _viewModel.ApiObj.Challenges.OrderBy(k=>k.ChallengeTime)
+                _viewModel.ApiObj.Challenges = _viewModel.ApiObj.Challenges.OrderBy(k => k.ChallengeTime)
                     /*         .Where(k => k.ChallengeTime < new DateTime(2020, 5, 15))*/.ToArray();
                 _viewModel.CycleCount = _viewModel.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
 
