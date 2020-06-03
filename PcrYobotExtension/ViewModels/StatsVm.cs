@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using PcrYobotExtension.Annotations;
@@ -12,10 +13,12 @@ namespace PcrYobotExtension.ViewModels
 
         private int _cycleCount;
 
-        private int _selectedCycle = -1;
+        private int? _selectedCycle = -1;
+        private DateTime? _selectedDate;
+
         private StatsGraphVm _statsGraph;
         private bool _isLoading;
-        private DateTime? _selectedDay;
+        private List<DateTime> _dateList;
 
         /// <summary>
         /// 数据源
@@ -60,9 +63,23 @@ namespace PcrYobotExtension.ViewModels
         }
 
         /// <summary>
+        /// 周目数
+        /// </summary>
+        public List<DateTime> DateList
+        {
+            get => _dateList;
+            set
+            {
+                if (Equals(value, _dateList)) return;
+                _dateList = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
         /// 已选周目
         /// </summary>
-        public int SelectedCycle
+        public int? SelectedCycle
         {
             get => _selectedCycle;
             set
@@ -76,13 +93,13 @@ namespace PcrYobotExtension.ViewModels
         /// <summary>
         /// 已选日期
         /// </summary>
-        public DateTime? SelectedDay
+        public DateTime? SelectedDate
         {
-            get => _selectedDay;
+            get => _selectedDate;
             set
             {
-                if (value.Equals(_selectedDay)) return;
-                _selectedDay = value;
+                if (value.Equals(_selectedDate)) return;
+                _selectedDate = value;
                 OnPropertyChanged();
             }
         }

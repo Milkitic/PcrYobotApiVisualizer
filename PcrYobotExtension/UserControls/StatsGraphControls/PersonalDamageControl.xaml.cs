@@ -56,16 +56,24 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
 
         private async void BtnCyclePersonalDamage_Click(object sender, RoutedEventArgs e)
         {
+            if (Stats.CycleCount > 0 && Stats.SelectedCycle is null)
+            {
+                Stats.SelectedCycle = 1;
+            }
+
             await CyclePersonalDamage();
         }
 
         private async Task CyclePersonalDamage()
         {
+            if (Stats.SelectedCycle is null) return;
+
+            var selectedCycle = Stats.SelectedCycle.Value;
             Stats.IsLoading = true;
             ChartProvider.RecreateGraph();
             var totalDamageTrend = Stats.ApiObj.Challenges
                 .Select(k => k.Clone())
-                .GroupBy(k => k.Cycle).ToList()[Stats.SelectedCycle - 1];
+                .GroupBy(k => k.Cycle).ToList()[selectedCycle - 1];
             var challengeModels = totalDamageTrend.ToList();
             var personsDic = challengeModels.GroupBy(k => k.QqId)
                 .ToDictionary(k => k.Key,
@@ -110,7 +118,7 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
                 AxisYLabels = list.Select(k => k.Name).ToArray(),
                 AxisXTitle = "伤害",
                 AxisYTitle = "成员",
-                Title = Stats.SelectedCycle + "周目个人伤害统计"
+                Title = selectedCycle + "周目个人伤害统计"
             };
 
             for (int i = 0; i < 5; i++)
@@ -258,14 +266,14 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
 
         private async void BtnDayPersonalDamageChangeDay_Click(object sender, RoutedEventArgs e)
         {
-            Stats.SelectedDay = (DateTime?)((Button)sender).Tag;
+            Stats.SelectedDate = (DateTime?)((Button)sender).Tag;
             await DayPersonalDamage();
         }
 
         private async Task DayPersonalDamage()
         {
-            if (Stats.SelectedDay is null) return;
-            var selectedDay = Stats.SelectedDay.Value;
+            if (Stats.SelectedDate is null) return;
+            var selectedDay = Stats.SelectedDate.Value;
             Stats.IsLoading = true;
             ChartProvider.RecreateGraph();
             var totalDamageTrend = Stats.ApiObj.Challenges

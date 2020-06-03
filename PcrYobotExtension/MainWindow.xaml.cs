@@ -151,7 +151,7 @@ namespace PcrYobotExtension
         private void UpdateInterface()
         {
             _viewModel.SelectedCycle = _viewModel.CycleCount;
-            _viewModel.SelectedDay = _viewModel.ApiObj.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
+            _viewModel.SelectedDate = _viewModel.ApiObj.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
 
             GraphControlPanel.Children.Clear();
 
