@@ -23,6 +23,8 @@ namespace PcrYobotExtension
     /// </summary>
     public partial class MainWindow : Window, IChartProvider
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private StatsVm _viewModel;
         private YobotService _yobotService;
         private Updater _updater;
@@ -43,15 +45,22 @@ namespace PcrYobotExtension
         {
             new Task(async () =>
             {
-                _updater = new Updater();
-                bool? hasUpdate = await _updater.CheckUpdateAsync();
-                if (hasUpdate == true && _updater.NewRelease.NewVerString != AppSettings.Default.General.IgnoredVer)
+                try
                 {
-                    Dispatcher.Invoke(() =>
+                    _updater = new Updater();
+                    bool? hasUpdate = await _updater.CheckUpdateAsync();
+                    if (hasUpdate == true && _updater.NewRelease.NewVerString != AppSettings.Default.General.IgnoredVer)
                     {
-                        var newVersionWindow = new NewVersionWindow(_updater.NewRelease, this);
-                        newVersionWindow.ShowDialog();
-                    });
+                        Dispatcher.Invoke(() =>
+                        {
+                            var newVersionWindow = new NewVersionWindow(_updater.NewRelease, this);
+                            newVersionWindow.ShowDialog();
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "检测更新出现错误");
                 }
             }).Start();
 

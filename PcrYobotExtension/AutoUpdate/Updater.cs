@@ -30,13 +30,14 @@ namespace PcrYobotExtension.AutoUpdate
                 string json = "";
                 while (json == "")
                 {
-                    json = await HttpGetAsync("http://api.github.com/repos/Milkitic/YobotExtension/releases");
+                    json = await HttpGetAsync("http://api.github.com:1234/repos/Milkitic/YobotExtension/releases");
                 }
 
                 if (json.Contains("API rate limit"))
                 {
-                    Logger.Error("Error while checking for updates: API rate limit");
-                    throw new Exception("Github API rate limit exceeded.");
+                    Logger.Error("Error while checking for updates: Github API rate limit exceeded.");
+                    return null;
+                    //throw new Exception("Github API rate limit exceeded.");
                 }
 
                 List<GithubRelease> releases = JsonConvert.DeserializeObject<List<GithubRelease>>(json);
@@ -68,7 +69,8 @@ namespace PcrYobotExtension.AutoUpdate
             catch (Exception ex)
             {
                 Logger.Error(ex, "Error while checking for updates.");
-                throw;
+                return null;
+                //throw;
             }
 
             IsRunningChecking = false;

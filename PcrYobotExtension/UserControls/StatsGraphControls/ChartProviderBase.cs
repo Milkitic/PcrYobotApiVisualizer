@@ -19,12 +19,13 @@ namespace PcrYobotExtension.UserControls.StatsGraphControls
         /// </summary>
         public IChartProvider ChartProvider { get; set; }
 
-        [Something("")]
-        public async Task<CartesianChartConfigModel> Get()
-        {
-            var o = new CartesianChartConfigModel();
-            o.ChartConfig = (e) => { };
-        }
+        //[Something("")]
+        //public async Task<CartesianChartConfigModel> Get()
+        //{
+        //    var o = new CartesianChartConfigModel();
+        //    o.ChartConfig = (e) => { };
+        //    o.Title = "ss";
+        //}
     }
 
     public static class ChartConfigModelHelper

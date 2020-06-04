@@ -19,9 +19,12 @@ namespace PcrYobotExtension
     /// </summary>
     public partial class App : Application
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             DispatcherUnhandledException += App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             CheckBrowserVersion();
 
@@ -34,8 +37,22 @@ namespace PcrYobotExtension
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception?.Message, "Msgbox", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             e.Handled = true;
+            MessageBox.Show(e.Exception?.Message, "Msgbox", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var stop = e.IsTerminating ? "，即将终止" : "";
+
+            if (e.ExceptionObject is Exception ex)
+            {
+                Logger.Error(ex, $"程序出现未处理的异常{stop}");
+            }
+            else
+            {
+                Logger.Error("程序出现未处理的异常" + stop + "：{0}", e.ExceptionObject);
+            }
         }
 
         private static void CheckBrowserVersion()
