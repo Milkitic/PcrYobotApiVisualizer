@@ -207,11 +207,11 @@ namespace PcrYobotExtension.Services
                     var o = new HtmlAgilityPack.HtmlDocument();
                     o.LoadHtml(text);
                     var docNode = o.DocumentNode;
-                    var elRow = docNode.Descendants("el-row").FirstOrDefault();
+                    var elRows = docNode.Descendants("el-row").ToList();
 
-                    if (elRow != null)
+                    if (elRows.Count > 1)
                     {
-                        var elRowChildNodes = elRow.ChildNodes.Where(k => k.Name == "a").ToArray();
+                        var elRowChildNodes = elRows[0].ChildNodes.Where(k => k.Name == "a").ToArray();
                         if (elRowChildNodes.Length > 1)
                         {
                             var firstA = elRowChildNodes[0];
@@ -221,14 +221,19 @@ namespace PcrYobotExtension.Services
                                 QqId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
                             }
 
-                            var firstB = elRowChildNodes[1];
-                            href = firstB.GetAttributeValue("href", null);
-                            if (href != null)
-                            {
-                                GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                            }
+                            elRowChildNodes = elRows[1].ChildNodes.Where(k => k.Name == "a").ToArray();
 
-                            _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
+                            if (elRowChildNodes.Length > 1)
+                            {
+                                var firstB = elRowChildNodes.Last();
+                                href = firstB.GetAttributeValue("href", null);
+                                if (href != null)
+                                {
+                                    GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                                }
+
+                                _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
+                            }
                         }
 
                     }
