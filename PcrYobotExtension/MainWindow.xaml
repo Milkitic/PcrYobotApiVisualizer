@@ -22,24 +22,58 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel x:Name="GraphControlPanel">
+        <ItemsControl x:Name="hhh">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <GroupBox>
+                        <GroupBox.Header>
+                            <TextBlock>
+                                <Run Text="{Binding Metadata.Name}" /><Run Text=" (by " /><Run Text="{Binding Metadata.Author}" /><Run Text=")"/>
+                            </TextBlock>
+                        </GroupBox.Header>
+                        <ItemsControl ItemsSource="{Binding FunctionsMapping}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Click="Button_Click"
+                                        Content="{Binding Key.Name}"
+                                        Tag="{Binding Value}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </GroupBox>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel x:Name="GraphControlPanel" Grid.Row="1">
             <!--<statsGraphControls:TotalDamageTrendControl />
             <statsGraphControls:PersonalDamageControl />-->
         </StackPanel>
         <WebBrowser
             x:Name="Browser"
-            Grid.Row="3"
+            Grid.Row="4"
             Visibility="Hidden" />
         <Label
-            Grid.Row="2"
+            Grid.Row="3"
             HorizontalAlignment="Center"
             Content="{Binding StatsGraph.Title}"
             FontSize="20" />
         <Border
-            x:Name="Haha"
-            Grid.Row="3"
+            x:Name="ChartContainer"
+            Grid.Row="4"
             Margin="15" />
         <!--<wpf:CartesianChart
             x:Name="Chart"
@@ -53,9 +87,16 @@
                 <wpf:Axis Title="{Binding StatsGraph.AxisYTitle}" Labels="{Binding StatsGraph.AxisYLabels}" />
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>-->
+        <Button
+            x:Name="btnUpdateData"
+            Grid.Row="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Click="UpdateData_Click"
+            Content="更新数据" />
         <Label
             Grid.Row="0"
-            Grid.RowSpan="4"
+            Grid.RowSpan="5"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             Background="#80303030"
@@ -63,11 +104,5 @@
             FontSize="18"
             Foreground="White"
             Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <Button
-            x:Name="btnUpdateData"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Click="UpdateData_Click"
-            Content="更新数据" />
     </Grid>
 </Window>

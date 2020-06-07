@@ -92,7 +92,7 @@
     <Compile Include="Configuration\AppSettings.cs" />
     <Compile Include="Configuration\GeneralSection.cs" />
     <Compile Include="IChartProvider.cs" />
-    <Compile Include="UserControls\StatsGraphControls\ChartProviderBase.cs" />
+    <Compile Include="UserControls\StatsGraphControls\IStatisticsProvider.cs" />
     <Compile Include="UserControls\StatsGraphControls\IChartSwitchControl.cs" />
     <Compile Include="UserControls\StatsGraphControls\PersonalDamageControl.xaml.cs">
       <DependentUpon>PersonalDamageControl.xaml</DependentUpon>

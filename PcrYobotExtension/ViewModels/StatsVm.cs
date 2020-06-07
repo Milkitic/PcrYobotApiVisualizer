@@ -16,7 +16,7 @@ namespace PcrYobotExtension.ViewModels
         private int? _selectedCycle = -1;
         private DateTime? _selectedDate;
 
-        private StatsGraphVm _statsGraph;
+        private StatsGraphVm _statsGraph = new StatsGraphVm();
         private bool _isLoading;
         private List<DateTime> _dateList;
 
