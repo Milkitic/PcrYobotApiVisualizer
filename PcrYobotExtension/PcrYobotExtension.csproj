@@ -92,7 +92,18 @@
     <Compile Include="Configuration\AppSettings.cs" />
     <Compile Include="Configuration\GeneralSection.cs" />
     <Compile Include="IChartProvider.cs" />
-    <Compile Include="UserControls\StatsGraphControls\IStatisticsProvider.cs" />
+    <Compile Include="ChartFramework\CartesianChartConfigModel.cs" />
+    <Compile Include="ChartFramework\ChartConfigModel.cs" />
+    <Compile Include="ChartFramework\ChartConfigModelHelper.cs" />
+    <Compile Include="ChartFramework\ChartType.cs" />
+    <Compile Include="ChartFramework\GranularityModel.cs" />
+    <Compile Include="ChartFramework\GranularityType.cs" />
+    <Compile Include="ChartFramework\IChartConfigModel.cs" />
+    <Compile Include="ChartFramework\IStatsProvider.cs" />
+    <Compile Include="ChartFramework\StatsProviders\PersonalStatsProvider.cs" />
+    <Compile Include="ChartFramework\StatsMethodAttribute.cs" />
+    <Compile Include="ChartFramework\StatsProviderInfo.cs" />
+    <Compile Include="ChartFramework\StatsProviderMetadataAttribute.cs" />
     <Compile Include="UserControls\StatsGraphControls\IChartSwitchControl.cs" />
     <Compile Include="UserControls\StatsGraphControls\PersonalDamageControl.xaml.cs">
       <DependentUpon>PersonalDamageControl.xaml</DependentUpon>

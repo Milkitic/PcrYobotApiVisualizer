@@ -17,6 +17,7 @@ using System.Windows.Documents;
 using LiveCharts;
 using LiveCharts.Wpf.Charts.Base;
 using PcrYobotExtension.AutoUpdate;
+using PcrYobotExtension.ChartFramework;
 using PcrYobotExtension.Configuration;
 
 namespace PcrYobotExtension
@@ -181,27 +182,27 @@ namespace PcrYobotExtension
             }
 
             var statsProviders = asm.GetExportedTypes()
-                .Where(k => k.GetInterfaces().Contains(typeof(IStatisticsProvider)))
+                .Where(k => k.GetInterfaces().Contains(typeof(IStatsProvider)))
                 .ToArray();
-            HashSet<StatisticsProviderInfo> statsProviderInfos = new HashSet<StatisticsProviderInfo>();
+            HashSet<StatsProviderInfo> statsProviderInfos = new HashSet<StatsProviderInfo>();
             foreach (var statsProvider in statsProviders)
             {
                 try
                 {
-                    var statisticsProviderInfo = new StatisticsProviderInfo();
-                    var attr = statsProvider.GetCustomAttribute<StatisticsProviderMetadataAttribute>();
+                    var statisticsProviderInfo = new StatsProviderInfo();
+                    var attr = statsProvider.GetCustomAttribute<StatsProviderMetadataAttribute>();
 
                     statsProviderInfos.Add(statisticsProviderInfo);
                     statisticsProviderInfo.Metadata = attr;
 
-                    var instance = (IStatisticsProvider)Activator.CreateInstance(statsProvider);
+                    var instance = (IStatsProvider)Activator.CreateInstance(statsProvider);
                     //instance.ChartProvider = this;
                     instance.Challenges = _viewModel.ApiObj.Challenges.ToArray();
 
                     var methods = statsProvider.GetMethods();
                     foreach (var methodInfo in methods)
                     {
-                        var o = methodInfo.GetCustomAttribute<StatisticsMethodAttribute>();
+                        var o = methodInfo.GetCustomAttribute<StatsMethodAttribute>();
                         if (o == null) continue;
 
                         Func<GranularityModel, Task<IChartConfigModel>> invokeFunc = null;
