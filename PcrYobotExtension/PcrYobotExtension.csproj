@@ -89,6 +89,7 @@
     <Compile Include="AutoUpdate\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ChartFramework\StatsMethodAcceptGranularityAttribute.cs" />
     <Compile Include="Configuration\AppSettings.cs" />
     <Compile Include="Configuration\GeneralSection.cs" />
     <Compile Include="IChartProvider.cs" />
@@ -191,6 +192,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\YobotExtension.Shared\YobotExtension.Shared.csproj">
+      <Project>{5F52D672-2B15-4ECE-BC4E-CA3EA62288DD}</Project>
+      <Name>YobotExtension.Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

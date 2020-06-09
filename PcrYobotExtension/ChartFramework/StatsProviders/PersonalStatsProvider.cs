@@ -1,12 +1,12 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
+using PcrYobotExtension.Annotations;
 using PcrYobotExtension.Models;
 using PcrYobotExtension.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PcrYobotExtension.ViewModels;
 
 namespace PcrYobotExtension.ChartFramework.StatsProviders
 {
@@ -16,81 +16,92 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
         public ChallengeModel[] Challenges { get; set; }
 
         [StatsMethod("个人每日刀伤横向比较")]
-        [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.SingleRound)]
-        public async Task<CartesianChartConfigModel> PersonalDivideByChallengeTimesDayComparision(GranularityModel granularity)
+        [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.MultiDate)]
+        [UsedImplicitly]
+        public async Task<CartesianChartConfigModel> PersonalDivideByChallengeTimesDayComparision(
+            GranularityModel granularity)
         {
-            if (granularity.SelectedDate is null)
-                throw new Exception("请选择日期");
-            var personsDic = GetPersonalDictionary(granularity, out var titlePrefix);
+            if (granularity.SelectedDate is null &&
+                granularity.StartDate is null &&
+                granularity.EndDate is null)
+                throw new Exception("未指定日期");
 
-            var list = new List<DayPersonalDamageModel>();
-            foreach (var kvp in personsDic)
+            var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
+
+            var list = new List<PersonalDamageModel>();
+            foreach (var kvp in personsGrouping)
             {
-                var cycleModel = new DayPersonalDamageModel
+                var qqId = kvp.Key;
+
+                var byDate = kvp.GroupBy(k => k.ChallengeTime.Date);
+                // multi date support
+
+                var damageModel = new PersonalDamageModel
                 {
-                    Name = $"{await QQService.GetQqNickNameAsync(kvp.Key)} ({kvp.Key})",
-                    TimeDamages = new List<int> { 0, 0, 0, 0, 0, 0 }
+                    Name = $"{await QQService.GetQqNickNameAsync(qqId)} ({qqId})",
+                    Damages = new List<int> { 0, 0, 0, 0, 0, 0 }
                 };
 
-                int i = 0;
-                foreach (var challengeModel in kvp.Value)
+                foreach (var grouping in byDate)
                 {
-                    if (challengeModel.IsContinue)
+                    int i = 0;
+                    foreach (var challengeModel in grouping)
                     {
-                        if (i % 2 == 0) i++;
-                        cycleModel.TimeDamages[i] = challengeModel.Damage;
-                    }
-                    else
-                    {
-                        if (i % 2 != 0) i++;
-                        cycleModel.TimeDamages[i] = challengeModel.Damage;
-                    }
+                        if (challengeModel.IsContinue)
+                        {
+                            if (i % 2 == 0) i++;
+                            damageModel.Damages[i] += challengeModel.Damage;
+                        }
+                        else
+                        {
+                            if (i % 2 != 0) i++;
+                            damageModel.Damages[i] += challengeModel.Damage;
+                        }
 
-                    i++;
+                        i++;
+                    }
                 }
 
-                list.Add(cycleModel);
+                list.Add(damageModel);
             }
 
-            list = list.OrderBy(k => k.TimeDamages.Sum()).ToList();
+            list = list.OrderBy(k => k.Damages.Sum()).ToList();
 
-            var configModel = new CartesianChartConfigModel
-            {
-                AxisYLabels = list.Select(k => k.Name).ToArray(),
-                AxisXTitle = "伤害",
-                AxisYTitle = "成员",
-                Title = titlePrefix + "个人伤害统计"
-            };
+            var configModel = GetSharedConfigModel(titlePrefix, list);
 
             for (int i = 0; i < 6; i++)
             {
-                var i1 = i;
+                var challengeIndex = i / 2 + 1;
                 configModel.SeriesCollection.Add(new StackedRowSeries
                 {
-                    Title = i % 2 == 0 ? "第" + (i / 2 + 1) + "刀" : "第" + (i / 2 + 1) + "刀（补偿刀）",
-                    Values = new ChartValues<int>(list.Select(k => k.TimeDamages[i1])),
+                    Title = i % 2 == 0 ? $"第{challengeIndex}刀" : $"第{challengeIndex}刀（补偿刀）",
+                    Values = new ChartValues<int>(list.Select(k => k.Damages[i]).ToList()),
                     DataLabels = true
                 });
             }
 
-            configModel.ChartConfig = chart => { chart.AxisY[0].Separator = new Separator { Step = 1 }; };
+            ConfigStepOne(configModel);
 
             return configModel;
         }
 
         [StatsMethod("个人每日Boss伤害横向比较")]
+        [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.MultiDate)]
+        [UsedImplicitly]
         public async Task<CartesianChartConfigModel> PersonalDivideByBossDayComparision(GranularityModel granularity)
         {
-            if (granularity.SelectedDate is null)
-                throw new Exception("请选择日期");
+            if (granularity.SelectedDate is null &&
+                granularity.StartDate is null &&
+                granularity.EndDate is null)
+                throw new Exception("未指定日期");
 
-            var personsDic = GetPersonalDictionary(granularity, out var titlePrefix);
+            var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
 
-            var personBossDic = personsDic.ToDictionary(k => k.Key,
+            var personBossDic = personsGrouping.ToDictionary(k => k.Key,
                 k =>
                 {
                     var dic = new Dictionary<int, int>();
-                    foreach (var challengeModel in k.Value)
+                    foreach (var challengeModel in k)
                     {
                         if (dic.ContainsKey(challengeModel.BossNum))
                         {
@@ -105,52 +116,184 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
                     return dic;
                 });
 
-            var list = new List<CyclePersonalDamageModel>();
+            var list = new List<PersonalDamageModel>();
             foreach (var kvp in personBossDic)
             {
-                var cycleModel = new CyclePersonalDamageModel
+                var cycleModel = new PersonalDamageModel
                 {
                     Name = $"{await QQService.GetQqNickNameAsync(kvp.Key)} ({kvp.Key})"
                 };
 
                 for (int i = 0; i < 5; i++)
                 {
-                    cycleModel.BossDamages.Add((int)(kvp.Value.ContainsKey(cycleModel.BossDamages.Count + 1)
-                        ? kvp.Value[cycleModel.BossDamages.Count + 1]
-                        : 0L));
+                    var bossNum = cycleModel.Damages.Count + 1;
+                    var bossDamage = kvp.Value.ContainsKey(bossNum) ? kvp.Value[bossNum] : 0L;
+                    cycleModel.Damages.Add((int)bossDamage);
                 }
 
                 list.Add(cycleModel);
             }
 
-            list = list.OrderBy(k => k.BossDamages.Sum()).ToList();
+            list = list.OrderBy(k => k.Damages.Sum()).ToList();
 
-
-            var configModel = new CartesianChartConfigModel
-            {
-                AxisYLabels = list.Select(k => k.Name).ToArray(),
-                AxisXTitle = "伤害",
-                AxisYTitle = "成员",
-                Title = titlePrefix + "个人伤害统计"
-            };
+            var configModel = GetSharedConfigModel(titlePrefix, list);
 
             for (int i = 0; i < 5; i++)
             {
-                var i1 = i;
                 configModel.SeriesCollection.Add(new StackedRowSeries
                 {
-                    Title = "BOSS " + (i + 1),
-                    Values = new ChartValues<int>(list.Select(k => k.BossDamages[i1])),
+                    Title = $"BOSS {i + 1}",
+                    Values = new ChartValues<int>(list.Select(k => k.Damages[i]).ToList()),
                     DataLabels = true
                 });
             }
 
-            configModel.ChartConfig = chart => { chart.AxisY[0].Separator = new Separator { Step = 1 }; };
+            ConfigStepOne(configModel);
 
             return configModel;
         }
 
-        private Dictionary<long, List<ChallengeModel>> GetPersonalDictionary(GranularityModel granularity, out string titlePrefix)
+        [StatsMethod("个人周目刀伤横向比较")]
+        [StatsMethodAcceptGranularity(GranularityType.SingleRound, GranularityType.MultiRound)]
+        [UsedImplicitly]
+        public async Task<CartesianChartConfigModel> PersonalDivideByChallengeTimesRoundComparision(
+            GranularityModel granularity)
+        {
+            if (granularity.SelectedRound is null &&
+                granularity.StartRound is null &&
+                granularity.EndRound is null)
+                throw new Exception("未指定周目");
+
+            var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
+
+            var list = new List<PersonalDamageModel>();
+            foreach (var kvp in personsGrouping)
+            {
+                var qqId = kvp.Key;
+
+                var byDate = kvp.GroupBy(k => k.ChallengeTime.AddHours(-5).Date);
+                // multi date support
+
+                var damageModel = new PersonalDamageModel
+                {
+                    Name = $"{await QQService.GetQqNickNameAsync(qqId)} ({qqId})",
+                    Damages = new List<int> { 0, 0, 0, 0, 0, 0 }
+                };
+
+                foreach (var grouping in byDate)
+                {
+                    int i = 0;
+                    var all = grouping.ToList();
+                    foreach (var challengeModel in all)
+                    {
+                        if (challengeModel.IsContinue)
+                        {
+                            if (i % 2 == 0) i++;
+                            damageModel.Damages[i] += challengeModel.Damage;
+                        }
+                        else
+                        {
+                            if (i % 2 != 0) i++;
+                            damageModel.Damages[i] += challengeModel.Damage;
+                        }
+
+                        i++;
+                    }
+                }
+
+                list.Add(damageModel);
+            }
+
+            list = list.OrderBy(k => k.Damages.Sum()).ToList();
+
+            var configModel = GetSharedConfigModel(titlePrefix, list);
+
+            for (int i = 0; i < 6; i++)
+            {
+                var challengeIndex = i / 2 + 1;
+                configModel.SeriesCollection.Add(new StackedRowSeries
+                {
+                    Title = i % 2 == 0 ? $"第{challengeIndex}刀" : $"第{challengeIndex}刀（补偿刀）",
+                    Values = new ChartValues<int>(list.Select(k => k.Damages[i]).ToList()),
+                    DataLabels = true
+                });
+            }
+
+            ConfigStepOne(configModel);
+
+            return configModel;
+        }
+
+        [StatsMethod("个人周目Boss伤害横向比较")]
+        [StatsMethodAcceptGranularity(GranularityType.SingleRound, GranularityType.MultiRound)]
+        [UsedImplicitly]
+        public async Task<CartesianChartConfigModel> PersonalDivideByBossRoundComparision(GranularityModel granularity)
+        {
+            if (granularity.SelectedRound is null &&
+                granularity.StartRound is null &&
+                granularity.EndRound is null)
+                throw new Exception("未指定周目");
+
+            var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
+
+            var personBossDic = personsGrouping.ToDictionary(k => k.Key,
+                k =>
+                {
+                    var dic = new Dictionary<int, int>();
+                    foreach (var challengeModel in k)
+                    {
+                        if (dic.ContainsKey(challengeModel.BossNum))
+                        {
+                            dic[challengeModel.BossNum] += challengeModel.Damage;
+                        }
+                        else
+                        {
+                            dic.Add(challengeModel.BossNum, challengeModel.Damage);
+                        }
+                    }
+
+                    return dic;
+                });
+
+            var list = new List<PersonalDamageModel>();
+            foreach (var kvp in personBossDic)
+            {
+                var cycleModel = new PersonalDamageModel
+                {
+                    Name = $"{await QQService.GetQqNickNameAsync(kvp.Key)} ({kvp.Key})"
+                };
+
+                for (int i = 0; i < 5; i++)
+                {
+                    var bossNum = cycleModel.Damages.Count + 1;
+                    var bossDamage = kvp.Value.ContainsKey(bossNum) ? kvp.Value[bossNum] : 0L;
+                    cycleModel.Damages.Add((int)bossDamage);
+                }
+
+                list.Add(cycleModel);
+            }
+
+            list = list.OrderBy(k => k.Damages.Sum()).ToList();
+
+            var configModel = GetSharedConfigModel(titlePrefix, list);
+
+            for (int i = 0; i < 5; i++)
+            {
+                configModel.SeriesCollection.Add(new StackedRowSeries
+                {
+                    Title = $"BOSS {i + 1}",
+                    Values = new ChartValues<int>(list.Select(k => k.Damages[i]).ToList()),
+                    DataLabels = true
+                });
+            }
+
+            ConfigStepOne(configModel);
+
+            return configModel;
+        }
+
+        private IEnumerable<IGrouping<long, ChallengeModel>> GetPersonalDictionary(GranularityModel granularity,
+            out string titlePrefix)
         {
             switch (granularity.GranularityType)
             {
@@ -185,17 +328,46 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
                             throw new ArgumentOutOfRangeException();
                         }
 
-                        var personsDic = challengeModels.GroupBy(k => k.QqId)
-                            .ToDictionary(k => k.Key,
-                                k => k.ToList());
+                        var personsDic = challengeModels.GroupBy(k => k.QqId);
                         return personsDic;
                     }
                 case GranularityType.Total:
                     break;
                 case GranularityType.SingleRound:
-                    break;
                 case GranularityType.MultiRound:
-                    break;
+                    {
+                        var grouped = Challenges
+                            .Select(k => k.Clone())
+                            .GroupBy(k => k.Cycle);
+                        List<ChallengeModel> challengeModels;
+                        if (granularity.GranularityType == GranularityType.SingleRound &&
+                            granularity.SelectedRound != null)
+                        {
+                            var selectedRound = granularity.SelectedRound.Value;
+                            var singleDateData = grouped.First(k => k.Key == selectedRound);
+                            challengeModels = singleDateData.ToList();
+
+                            titlePrefix = selectedRound + "周目";
+                        }
+                        else if (granularity.GranularityType == GranularityType.MultiRound &&
+                                 granularity.StartRound != null &&
+                                 granularity.EndRound != null)
+                        {
+                            var startRound = granularity.StartRound.Value;
+                            var endRound = granularity.EndRound.Value;
+                            var multiDateData = grouped
+                                .Where(k => k.Key >= startRound && k.Key <= endRound);
+                            challengeModels = multiDateData.SelectMany(k => k).ToList();
+                            titlePrefix = $"{startRound}周目 - {endRound}周目";
+                        }
+                        else
+                        {
+                            throw new ArgumentOutOfRangeException();
+                        }
+
+                        var personsDic = challengeModels.GroupBy(k => k.QqId);
+                        return personsDic;
+                    }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -203,26 +375,27 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
             throw new NotImplementedException();
         }
 
-        internal class DayPersonalDamageModel
+        private static CartesianChartConfigModel GetSharedConfigModel(string titlePrefix,
+            IEnumerable<PersonalDamageModel> damages)
         {
-            public string Name { get; set; }
-            public List<int> TimeDamages { get; set; } = new List<int>();
+            return new CartesianChartConfigModel
+            {
+                AxisYLabels = damages.Select(k => k.Name).ToArray(),
+                AxisXTitle = "伤害",
+                AxisYTitle = "成员",
+                Title = titlePrefix + "个人伤害统计"
+            };
         }
 
-        internal class CyclePersonalDamageModel
+        private static void ConfigStepOne(CartesianChartConfigModel configModel)
+        {
+            configModel.ChartConfig = chart => { chart.AxisY[0].Separator = new Separator { Step = 1 }; };
+        }
+
+        internal class PersonalDamageModel
         {
             public string Name { get; set; }
-            public List<int> BossDamages { get; set; } = new List<int>();
-        }
-    }
-
-    public class StatsMethodAcceptGranularityAttribute : Attribute
-    {
-        public GranularityType[] Types { get; }
-
-        public StatsMethodAcceptGranularityAttribute(params GranularityType[] types)
-        {
-            Types = types;
+            public List<int> Damages { get; set; } = new List<int>();
         }
     }
 }

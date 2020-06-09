@@ -87,13 +87,20 @@
                 <wpf:Axis Title="{Binding StatsGraph.AxisYTitle}" Labels="{Binding StatsGraph.AxisYLabels}" />
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>-->
-        <Button
-            x:Name="btnUpdateData"
-            Grid.Row="0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Click="UpdateData_Click"
-            Content="更新数据" />
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="0">
+            <Button
+                x:Name="btnUpdateData"
+                VerticalAlignment="Top"
+                Click="UpdateData_Click"
+                Content="更新数据" />
+            <Button
+                x:Name="btnLogout"
+                VerticalAlignment="Top"
+                Click="Logout_Click"
+                Content="退出登录" />
+        </StackPanel>
         <Label
             Grid.Row="0"
             Grid.RowSpan="5"

@@ -8,10 +8,16 @@ namespace PcrYobotExtension.ChartFramework
     {
         public StatsProviderMetadataAttribute Metadata { get; set; }
 
-        public Dictionary<StatsMethodAttribute, Func<GranularityModel, Task<IChartConfigModel>>> FunctionsMapping
+        public Dictionary<StatsMethodAttribute, StatsFunctionInfo> FunctionsMapping
         {
             get;
             set;
-        } = new Dictionary<StatsMethodAttribute, Func<GranularityModel, Task<IChartConfigModel>>>();
+        } = new Dictionary<StatsMethodAttribute, StatsFunctionInfo>();
+    }
+
+    public class StatsFunctionInfo
+    {
+        public Func<GranularityModel, Task<IChartConfigModel>> Function { get; set; }
+        public GranularityType[] AcceptGranularities { get; set; }
     }
 }

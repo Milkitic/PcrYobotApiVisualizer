@@ -7,15 +7,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using YobotExtension.Shared;
 
 namespace PcrYobotExtension.Services
 {
-    public class YobotService
+    public class YobotService : IYobotServiceV1<>
     {
+        public string Version => "yobot[v3.6.3-beta.4]";
+
         private WebBrowser _hiddenWebBrowser;
         private ManualResetEventSlim mre = new ManualResetEventSlim(false);
 
@@ -37,7 +41,11 @@ namespace PcrYobotExtension.Services
             Origin = AppSettings.Default.General.Origin;
         }
 
-        public async Task InitAsync(string loginUrl)
+        public UriType InitUriType { get; } = UriType.Login;
+
+        public bool IsLogin { get; private set; }
+
+        public async Task<bool> LoginAsync(string loginUrl)
         {
             var uri = new Uri(loginUrl);
             var origin = uri.Scheme + "://" + uri.Authority;
@@ -59,12 +67,31 @@ namespace PcrYobotExtension.Services
 
             Host = uri.Host;
             Origin = origin;
+
+            await ValidateVersion();
             mre.Reset();
             _hiddenWebBrowser.Navigate(loginUrl);
             var waitResult = await Task.Run(() => mre.Wait(3000));
             if (!waitResult)
             {
                 throw new Exception("登陆失败");
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task ValidateVersion()
+        {
+            var o = new HttpClient();
+            var result = await o.GetAsync(Origin + "/yobot/about/");
+            var str = await result.Content.ReadAsStringAsync();
+            var ver1Index = str.IndexOf("版本：", StringComparison.Ordinal);
+            var verIndex2 = str.IndexOf("</p>", ver1Index, StringComparison.Ordinal);
+            var subStr = str.Substring(ver1Index, verIndex2 - ver1Index).Split('\n')[1].Trim();
+            if (!subStr.StartsWith(this.Version))
+            {
+                Console.WriteLine("yobot版本：" + subStr + "，当前版本支持：" + this.Version + "。可能存在兼容问题");
             }
         }
 
@@ -79,8 +106,6 @@ namespace PcrYobotExtension.Services
         //    await Task.Run(() => mre.Wait(5000));
         //}
 
-        public bool IsInit { get; private set; }
-
         // /yobot/login/ POST qqid=&pwd= [BROWSER]
         // /yobot/logout/ GET [BROWSER]
         // /yobot/user/ GET (QQ ID & GROUP ID)
@@ -91,7 +116,7 @@ namespace PcrYobotExtension.Services
             return await InnerGetApiInfo(false);
         }
 
-        public async Task<bool> Logout()
+        public async Task<bool> LogoutAsync()
         {
             _hiddenWebBrowser.LoadCompleted += LoadCompleted;
             _hiddenWebBrowser.Navigate($"{Origin}/yobot/logout/");
@@ -111,6 +136,8 @@ namespace PcrYobotExtension.Services
                 }
             });
 
+            Cookie = null;
+            IsLogin = false;
             return success;
 
             void LoadCompleted(object sender, NavigationEventArgs e)
@@ -157,23 +184,23 @@ namespace PcrYobotExtension.Services
 
         private async Task CheckInit()
         {
-            if (!IsInit)
+            if (!IsLogin)
             {
                 try
                 {
-                    await InitAsync($"{Origin}/yobot/login/");
+                    await LoginAsync($"{Origin}/yobot/login/");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     if (InitRequested != null)
                     {
                         var result = await InitRequested.Invoke();
                         if (result == false)
-                            throw new Exception("获取API信息失败");
+                            throw new Exception("获取API信息失败：" + ex.Message);
                     }
                     else
                     {
-                        throw new Exception("获取API信息失败");
+                        throw new Exception("获取API信息失败：" + ex.Message);
                     }
                 }
             }
@@ -200,7 +227,7 @@ namespace PcrYobotExtension.Services
             var url = _hiddenWebBrowser.Source.ToString();
             if (url.EndsWith("/yobot/user/"))
             {
-                if (!IsInit)
+                if (!IsLogin)
                 {
                     dynamic doc = _hiddenWebBrowser.Document;
                     var text = doc.DocumentElement.OuterHtml;
@@ -243,7 +270,7 @@ namespace PcrYobotExtension.Services
             {
                 var cookie = _hiddenWebBrowser.GetCookie();
                 Cookie = cookie;
-                IsInit = true;
+                IsLogin = true;
                 mre.Set();
 
                 _hiddenWebBrowser.Navigate($"{Origin}/yobot/user/");

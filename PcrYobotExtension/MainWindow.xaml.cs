@@ -1,5 +1,10 @@
-﻿using LiveCharts.Wpf;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using LiveCharts.Wpf.Charts.Base;
 using Newtonsoft.Json;
+using PcrYobotExtension.AutoUpdate;
+using PcrYobotExtension.ChartFramework;
+using PcrYobotExtension.Configuration;
 using PcrYobotExtension.Models;
 using PcrYobotExtension.Services;
 using PcrYobotExtension.UserControls.StatsGraphControls;
@@ -13,12 +18,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using LiveCharts;
-using LiveCharts.Wpf.Charts.Base;
-using PcrYobotExtension.AutoUpdate;
-using PcrYobotExtension.ChartFramework;
-using PcrYobotExtension.Configuration;
 
 namespace PcrYobotExtension
 {
@@ -81,7 +80,7 @@ namespace PcrYobotExtension
             var text = win.Text;
             try
             {
-                await _yobotService.InitAsync(text);
+                await _yobotService.LoginAsync(text);
                 return true;
             }
             catch (Exception ex)
@@ -205,6 +204,13 @@ namespace PcrYobotExtension
                         var o = methodInfo.GetCustomAttribute<StatsMethodAttribute>();
                         if (o == null) continue;
 
+                        var statsFunctionInfo = new StatsFunctionInfo();
+                        var granularityAttr = methodInfo.GetCustomAttribute<StatsMethodAcceptGranularityAttribute>();
+                        if (granularityAttr != null)
+                        {
+                            statsFunctionInfo.AcceptGranularities = granularityAttr.AcceptGranularities;
+                        }
+
                         Func<GranularityModel, Task<IChartConfigModel>> invokeFunc = null;
                         var retType = methodInfo.ReturnType;
                         if (retType.IsGenericType)
@@ -236,7 +242,6 @@ namespace PcrYobotExtension
                                             return (IChartConfigModel)resultProperty?.GetValue(task);
                                         };
                                     }
-
                                 }
                             }
                         }
@@ -265,8 +270,10 @@ namespace PcrYobotExtension
 
                         if (invokeFunc != null)
                         {
-                            statisticsProviderInfo.FunctionsMapping.Add(o, invokeFunc);
+                            statsFunctionInfo.Function = invokeFunc;
                         }
+
+                        statisticsProviderInfo.FunctionsMapping.Add(o, statsFunctionInfo);
                     }
                 }
                 catch (Exception e)
@@ -297,14 +304,32 @@ namespace PcrYobotExtension
 
             try
             {
-                var func = (Func<GranularityModel, Task<IChartConfigModel>>)((Button)sender).Tag;
+
+                var functionInfo = (StatsFunctionInfo)((Button)sender).Tag;
+                var func = functionInfo.Function;
 
                 if (func != null)
                 {
                     IChartConfigModel result;
                     try
                     {
-                        result = await func.Invoke(new GranularityModel(0, _viewModel.ApiObj.Challenges.Max(k => k.ChallengeTime).Date));
+                        GranularityModel granularityModel;
+                        if (functionInfo.AcceptGranularities == null)
+                        {
+                            granularityModel = new GranularityModel(0,
+                                _viewModel.ApiObj.Challenges.Max(k => k.ChallengeTime).Date);
+                        }
+                        else if (functionInfo.AcceptGranularities.Contains(GranularityType.MultiRound))
+                        {
+                            granularityModel = new GranularityModel(0, 1, 4);
+                        }
+                        else
+                        {
+                            granularityModel = new GranularityModel(0,
+                                _viewModel.ApiObj.Challenges.Max(k => k.ChallengeTime).Date);
+                        }
+
+                        result = await func.Invoke(granularityModel);
                     }
                     catch (Exception ex)
                     {
@@ -338,6 +363,11 @@ namespace PcrYobotExtension
                 _viewModel.IsLoading = false;
                 _loadTimer?.Dispose();
             }
+        }
+
+        private async void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            await _yobotService.LogoutAsync();
         }
     }
 }
