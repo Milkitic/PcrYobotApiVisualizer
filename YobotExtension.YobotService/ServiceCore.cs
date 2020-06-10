@@ -11,8 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using YobotExtension.Shared;
 using YobotExtension.Shared.Configuration;
+using YobotExtension.Shared.Win32;
 using YobotExtension.Shared.YobotService;
 using YobotExtension.Shared.YobotService.V1;
 
@@ -26,7 +26,7 @@ namespace YobotExtension.YobotService
         private WebBrowser _hiddenWebBrowser;
         private ManualResetEventSlim _mre = new ManualResetEventSlim(false);
 
-        public event Func<Task<bool>> InitRequested;
+        public event Func<Task<string>> InitRequested;
         public event Func<Task<bool>> OriginChangeRequested;
 
         public string QqId { get; private set; }
@@ -39,7 +39,7 @@ namespace YobotExtension.YobotService
         {
             _hiddenWebBrowser = wb;
             _hiddenWebBrowser.Navigated += HiddenWebBrowser_Navigated;
-            _hiddenWebBrowser.LoadCompleted += _hiddenWebBrowser_LoadCompleted;
+            _hiddenWebBrowser.LoadCompleted += HiddenWebBrowser_LoadCompleted;
 
             Origin = AppSettings.Default.General.Origin;
         }
@@ -48,6 +48,7 @@ namespace YobotExtension.YobotService
 
         public bool IsLogin { get; private set; }
         private int _timeoutMilliseconds = 3000;
+
         public async Task<bool> LoginAsync(string loginUrl)
         {
             var uri = new Uri(loginUrl);
@@ -75,13 +76,7 @@ namespace YobotExtension.YobotService
             _mre.Reset();
             _hiddenWebBrowser.Navigate(loginUrl);
             var waitResult = await Task.Run(() => _mre.Wait(_timeoutMilliseconds));
-            if (!waitResult)
-            {
-                throw new Exception("登陆失败");
-                return false;
-            }
-
-            return true;
+            return waitResult;
         }
 
         private async Task ValidateVersion()
@@ -146,7 +141,7 @@ namespace YobotExtension.YobotService
 
         private async Task<string> InnerGetApiInfo(bool loop)
         {
-            await CheckInit();
+            await CheckIsLogin();
 
             var request = (HttpWebRequest)WebRequest.Create($"{Origin}/yobot/clan/{GroupId}/statistics/api/");
             request.Method = "GET";
@@ -175,28 +170,18 @@ namespace YobotExtension.YobotService
             return responseFromServer;
         }
 
-        private async Task CheckInit()
+        private async Task CheckIsLogin()
         {
-            if (!IsLogin)
-            {
-                try
-                {
-                    await LoginAsync($"{Origin}/yobot/login/");
-                }
-                catch (Exception ex)
-                {
-                    if (InitRequested != null)
-                    {
-                        var result = await InitRequested.Invoke();
-                        if (result == false)
-                            throw new Exception("获取API信息失败：" + ex.Message);
-                    }
-                    else
-                    {
-                        throw new Exception("获取API信息失败：" + ex.Message);
-                    }
-                }
-            }
+            if (IsLogin) return;
+
+            var result = await LoginAsync($"{Origin}/yobot/login/");
+            if (result) return;
+
+            if (InitRequested == null) throw new Exception("登录失败，请检查链接是否已过期");
+
+            var newUri = await InitRequested.Invoke();
+            result = await LoginAsync(newUri);
+            if (!result) throw new Exception("登录失败，请检查链接是否已过期");
         }
 
         private void SetCookie(HttpWebRequest request)
@@ -215,51 +200,57 @@ namespace YobotExtension.YobotService
             _hiddenWebBrowser.SetSilent(true); // make it silent
         }
 
-        private void _hiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
+        private void HiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
         {
             var url = _hiddenWebBrowser.Source.ToString();
-            if (url.EndsWith("/yobot/user/"))
+            // ↓ 爬取个人信息、公会信息
+            if (url.EndsWith("/yobot/user/") && !IsLogin)
             {
-                if (!IsLogin)
+                var outerHtml = _hiddenWebBrowser.GetDocumentOuterHtml();
+
+                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(outerHtml);
+                
+                var docNode = htmlDoc.DocumentNode;
+
+                var elRows = docNode.Descendants("el-row").ToList();
+                if (elRows.Count <= 1) return;
+
+                var elRowChildNodes = elRows[0].ChildNodes.Where(k => k.Name == "a").ToArray();
+                // 功能按钮列表
+                if (elRowChildNodes.Length <= 1) return;
+
+                var btnMyCenter = elRowChildNodes.First(); // 个人中心按钮
+                var href = btnMyCenter.GetAttributeValue("href", null);
+                if (href != null)
                 {
-                    dynamic doc = _hiddenWebBrowser.Document;
-                    var text = doc.DocumentElement.OuterHtml;
-                    var o = new HtmlAgilityPack.HtmlDocument();
-                    o.LoadHtml(text);
-                    var docNode = o.DocumentNode;
-                    var elRows = docNode.Descendants("el-row").ToList();
-
-                    if (elRows.Count > 1)
+                    QqId = href.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                    if (!int.TryParse(QqId, out _))
                     {
-                        var elRowChildNodes = elRows[0].ChildNodes.Where(k => k.Name == "a").ToArray();
-                        if (elRowChildNodes.Length > 1)
-                        {
-                            var firstA = elRowChildNodes[0];
-                            var href = firstA.GetAttributeValue("href", null);
-                            if (href != null)
-                            {
-                                QqId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                            }
-
-                            elRowChildNodes = elRows[1].ChildNodes.Where(k => k.Name == "a").ToArray();
-
-                            if (elRowChildNodes.Length > 1)
-                            {
-                                var firstB = elRowChildNodes.Last();
-                                href = firstB.GetAttributeValue("href", null);
-                                if (href != null)
-                                {
-                                    GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                                }
-
-                                _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
-                            }
-                        }
-
+                        Console.WriteLine("错误：非法的QQ号，可能页面已发生改变");
                     }
                 }
+
+                elRowChildNodes = elRows[1].ChildNodes.Where(k => k.Name == "a").ToArray();
+                // 公会（可能多个）按钮
+                if (elRowChildNodes.Length <= 1) return;
+
+                var btnClan = elRowChildNodes.Last(); // 选择最后一个
+                href = btnClan.GetAttributeValue("href", null);
+                if (href != null)
+                {
+                    GroupId = href.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries)
+                        .LastOrDefault();
+                    if (!int.TryParse(GroupId, out _))
+                    {
+                        Console.WriteLine("错误：非法的QQ群号，可能页面已发生改变");
+                    }
+                }
+
+                _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
+                // ↓ 如果跳转至公会信息，则上面爬取的内容无误
             }
-            else if (url.Contains("/yobot/clan/"))
+            else if (url.Contains("/yobot/clan/") && !IsLogin)
             {
                 var cookie = _hiddenWebBrowser.GetCookie();
                 Cookie = cookie;

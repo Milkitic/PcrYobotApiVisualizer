@@ -69,25 +69,16 @@ namespace YobotExtension
             }).Start();
 
             _yobotService = new ServiceCore(Browser);
-            _yobotService.InitRequested += _yobotService_InitRequested;
+            _yobotService.InitRequested += YobotService_InitRequested;
             await Load();
         }
 
-        private async Task<bool> _yobotService_InitRequested()
+        private static async Task<string> YobotService_InitRequested()
         {
             var win = new PromptWindow();
             win.ShowDialog();
-            var text = win.Text;
-            try
-            {
-                await _yobotService.LoginAsync(text);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
+            await Task.CompletedTask;
+            return win.Text;
         }
 
         private async Task Load()

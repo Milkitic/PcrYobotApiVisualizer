@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -10,9 +9,8 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Windows.Controls;
-using Microsoft.Win32;
 
-namespace YobotExtension.Shared
+namespace YobotExtension.Shared.Win32
 {
     public static class WebBrowserExtension
     {
@@ -36,6 +34,13 @@ namespace YobotExtension.Shared
                     new object[] { silent }
                 );
             }
+        }
+
+        public static string GetDocumentOuterHtml(this WebBrowser browser)
+        {
+            dynamic doc = browser.Document;
+            var text = doc.DocumentElement.OuterHtml;
+            return text;
         }
 
         [ComImport, Guid("6D5140C1-7436-11CE-8034-00AA006009FA"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
