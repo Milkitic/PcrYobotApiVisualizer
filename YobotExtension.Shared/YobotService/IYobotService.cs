@@ -13,6 +13,7 @@ namespace YobotExtension.Shared.YobotService
         UriType InitUriType { get; }
         bool IsLogin { get; }
 
+        Task<string> ValidateVersion();
         Task<T> GetApiInfo();
         Task<bool> LoginAsync(string url);
         Task<bool> LogoutAsync();

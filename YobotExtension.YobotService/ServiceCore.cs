@@ -20,7 +20,7 @@ namespace YobotExtension.YobotService
 {
     public class ServiceCore : IYobotServiceV1
     {
-        public string Version => "yobot[v3.6.3-beta.4]";
+        public string Version { get; } = "3.6.3.4";
         public string ApiVersion => "1";
 
         private WebBrowser _hiddenWebBrowser;
@@ -34,6 +34,8 @@ namespace YobotExtension.YobotService
         public string Origin { get; set; }
         public string Host { get; set; }
         public Dictionary<string, string> Cookie { get; set; }
+        public UriType InitUriType { get; } = UriType.Login;
+        public bool IsLogin { get; private set; }
 
         public ServiceCore(WebBrowser wb)
         {
@@ -43,10 +45,6 @@ namespace YobotExtension.YobotService
 
             Origin = AppSettings.Default.General.Origin;
         }
-
-        public UriType InitUriType { get; } = UriType.Login;
-
-        public bool IsLogin { get; private set; }
         private int _timeoutMilliseconds = 3000;
 
         public async Task<bool> LoginAsync(string loginUrl)
@@ -79,18 +77,29 @@ namespace YobotExtension.YobotService
             return waitResult;
         }
 
-        private async Task ValidateVersion()
+        public async Task<string> ValidateVersion()
         {
             var o = new HttpClient();
             var result = await o.GetAsync(Origin + "/yobot/about/");
             var str = await result.Content.ReadAsStringAsync();
             var ver1Index = str.IndexOf("版本：", StringComparison.Ordinal);
+            if (ver1Index == -1) return null;
             var verIndex2 = str.IndexOf("</p>", ver1Index, StringComparison.Ordinal);
+            if (verIndex2 == -1) return null;
             var subStr = str.Substring(ver1Index, verIndex2 - ver1Index).Split('\n')[1].Trim();
-            if (!subStr.StartsWith(this.Version))
+
+            var braceIndex1 = subStr.IndexOf('[');
+            if (braceIndex1 == -1) return null;
+            var braceIndex2 = subStr.IndexOf(']', braceIndex1);
+            if (braceIndex2 == -1) return null;
+            var version = subStr.Substring(braceIndex1 + 1, braceIndex2 - braceIndex1 - 1);
+            version = version.Replace("-beta", "").Replace("-alpha", ".0").Trim('v');
+            if (version != this.Version)
             {
-                Console.WriteLine("yobot版本：" + subStr + "，当前版本支持：" + this.Version + "。可能存在兼容问题");
+                Console.WriteLine("yobot版本：" + version + "，当前版本支持：" + this.Version + "。可能存在兼容问题");
             }
+
+            return version;
         }
 
         // /yobot/login/ POST qqid=&pwd= [BROWSER]
@@ -210,7 +219,7 @@ namespace YobotExtension.YobotService
 
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 htmlDoc.LoadHtml(outerHtml);
-                
+
                 var docNode = htmlDoc.DocumentNode;
 
                 var elRows = docNode.Descendants("el-row").ToList();
@@ -224,8 +233,8 @@ namespace YobotExtension.YobotService
                 var href = btnMyCenter.GetAttributeValue("href", null);
                 if (href != null)
                 {
-                    QqId = href.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                    if (!int.TryParse(QqId, out _))
+                    QqId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                    if (!long.TryParse(QqId, out _))
                     {
                         Console.WriteLine("错误：非法的QQ号，可能页面已发生改变");
                     }
@@ -239,9 +248,9 @@ namespace YobotExtension.YobotService
                 href = btnClan.GetAttributeValue("href", null);
                 if (href != null)
                 {
-                    GroupId = href.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries)
+                    GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries)
                         .LastOrDefault();
-                    if (!int.TryParse(GroupId, out _))
+                    if (!long.TryParse(GroupId, out _))
                     {
                         Console.WriteLine("错误：非法的QQ群号，可能页面已发生改变");
                     }

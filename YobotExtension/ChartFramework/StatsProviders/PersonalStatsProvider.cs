@@ -80,7 +80,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
                 });
             }
 
-            ConfigStepOne(configModel);
+            ConfigAxises(configModel);
 
             return configModel;
         }
@@ -148,7 +148,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
                 });
             }
 
-            ConfigStepOne(configModel);
+            ConfigAxises(configModel);
 
             return configModel;
         }
@@ -219,7 +219,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
                 });
             }
 
-            ConfigStepOne(configModel);
+            ConfigAxises(configModel);
 
             return configModel;
         }
@@ -287,7 +287,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
                 });
             }
 
-            ConfigStepOne(configModel);
+            ConfigAxises(configModel);
 
             return configModel;
         }
@@ -385,9 +385,13 @@ namespace YobotExtension.ChartFramework.StatsProviders
             };
         }
 
-        private static void ConfigStepOne(CartesianChartConfigModel configModel)
+        private static void ConfigAxises(CartesianChartConfigModel configModel)
         {
-            configModel.ChartConfig = chart => { chart.AxisY[0].Separator = new Separator { Step = 1 }; };
+            configModel.ChartConfig = chart =>
+            {
+                chart.AxisY[0].Separator = new Separator { Step = 1 };
+                chart.AxisX[0].LabelFormatter = value => value.ToString("N0");
+            };
         }
 
         internal class PersonalDamageModel
