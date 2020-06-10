@@ -9,6 +9,7 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    Background="#f6f6f7"
     Initialized="Window_Initialized"
     Loaded="Window_Loaded"
     mc:Ignorable="d">
@@ -18,12 +19,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ItemsControl x:Name="hhh">
+        <WebBrowser x:Name="Browser" Grid.Row="0">
+            <WebBrowser.Visibility>Collapsed</WebBrowser.Visibility>
+        </WebBrowser>
+        <ItemsControl
+            x:Name="hhh"
+            Grid.Row="0"
+            Visibility="Collapsed">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />
@@ -56,34 +60,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <StackPanel x:Name="GraphControlPanel" Grid.Row="1">
-            <!--<statsGraphControls:TotalDamageTrendControl />
-            <statsGraphControls:PersonalDamageControl />-->
-        </StackPanel>
-        <WebBrowser x:Name="Browser" Grid.Row="4">
-            <WebBrowser.Visibility>Hidden</WebBrowser.Visibility>
-        </WebBrowser>
-        <Label
-            Grid.Row="3"
-            HorizontalAlignment="Center"
-            Content="{Binding StatsGraph.Title}"
-            FontSize="20" />
-        <Border
-            x:Name="ChartContainer"
-            Grid.Row="4"
-            Margin="15" />
-        <!--<wpf:CartesianChart
-            x:Name="Chart"
-            Grid.Row="3"
-            LegendLocation="Top"
-            Series="{Binding StatsGraph.SeriesCollection, IsAsync=True}">
-            <wpf:CartesianChart.AxisX>
-                <wpf:Axis Title="{Binding StatsGraph.AxisXTitle}" Labels="{Binding StatsGraph.AxisXLabels}" />
-            </wpf:CartesianChart.AxisX>
-            <wpf:CartesianChart.AxisY>
-                <wpf:Axis Title="{Binding StatsGraph.AxisYTitle}" Labels="{Binding StatsGraph.AxisYLabels}" />
-            </wpf:CartesianChart.AxisY>
-        </wpf:CartesianChart>-->
         <StackPanel
             Grid.Row="0"
             HorizontalAlignment="Right"
@@ -99,9 +75,36 @@
                 Click="Logout_Click"
                 Content="退出登录" />
         </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                Content="{Binding StatsGraph.Title}"
+                FontSize="20" />
+            <Border
+                x:Name="ChartContainer"
+                Grid.Row="1"
+                Margin="15" />
+        </Grid>
+        <!--<wpf:CartesianChart
+            x:Name="Chart"
+            Grid.Row="3"
+            LegendLocation="Top"
+            Series="{Binding StatsGraph.SeriesCollection, IsAsync=True}">
+            <wpf:CartesianChart.AxisX>
+                <wpf:Axis Title="{Binding StatsGraph.AxisXTitle}" Labels="{Binding StatsGraph.AxisXLabels}" />
+            </wpf:CartesianChart.AxisX>
+            <wpf:CartesianChart.AxisY>
+                <wpf:Axis Title="{Binding StatsGraph.AxisYTitle}" Labels="{Binding StatsGraph.AxisYLabels}" />
+            </wpf:CartesianChart.AxisY>
+        </wpf:CartesianChart>-->
         <Label
             Grid.Row="0"
-            Grid.RowSpan="5"
+            Grid.RowSpan="2"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             Background="#80303030"
@@ -109,5 +112,98 @@
             FontSize="18"
             Foreground="White"
             Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Margin="15">
+            <ItemsControl x:Name="GraphList" Grid.Row="0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label FontSize="18" Foreground="#2B2B2B">
+                                    <TextBlock>
+                                        <Run Text="{Binding Metadata.Name}" />
+                                    </TextBlock>
+                                </Label>
+                                <Label VerticalAlignment="Bottom" Foreground="#909090">
+                                    <TextBlock>
+                                        <Run Text="by " />
+                                        <Run Text="{Binding Metadata.Author}" />
+                                    </TextBlock>
+                                </Label>
+                            </StackPanel>
+                            <Label
+                                Content="{Binding Metadata.Description}"
+                                FontSize="13"
+                                Foreground="#484848" />
+                            <ItemsControl Margin="-6,4,-6,0" ItemsSource="{Binding FunctionsMapping}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button
+                                            Margin="4"
+                                            Click="Button_Click"
+                                            Tag="{Binding Value}">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <Grid>
+                                                        <Border Margin="8" Background="White">
+                                                            <Border.Effect>
+                                                                <DropShadowEffect
+                                                                    BlurRadius="10"
+                                                                    Opacity="0.2"
+                                                                    ShadowDepth="0"
+                                                                    Color="Black" />
+                                                            </Border.Effect>
+                                                        </Border>
+                                                        <Border
+                                                            Width="240"
+                                                            Height="210"
+                                                            Margin="8"
+                                                            Background="White"
+                                                            BorderThickness="1">
+
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition />
+                                                                    <RowDefinition Height="Auto" />
+                                                                </Grid.RowDefinitions>
+                                                                <Image
+                                                                    Margin="4,4,4,0"
+                                                                    RenderOptions.BitmapScalingMode="HighQuality"
+                                                                    Source="{Binding Value.ThumbnailPath}" />
+                                                                <Label
+                                                                    Grid.Row="1"
+                                                                    Margin="0,4"
+                                                                    HorizontalAlignment="Center"
+                                                                    FontSize="13"
+                                                                    Foreground="#5fb3f3">
+                                                                    <TextBlock Text="{Binding Key.Name}" />
+                                                                </Label>
+                                                            </Grid>
+                                                        </Border>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </Grid>
     </Grid>
 </Window>

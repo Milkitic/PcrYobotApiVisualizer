@@ -10,13 +10,17 @@ using YobotExtension.Shared.YobotService;
 
 namespace YobotExtension.ChartFramework.StatsProviders
 {
-    [StatsProviderMetadata("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a", Author = "yf_extension", Name = "个人")]
+    [StatsProviderMetadata("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a",
+        Author = "yf_extension",
+        Name = "会内比较统计",
+        Description = "将会员的排名进行横向比较，包括每刀详情、每只Boss伤害详情。")]
     public class PersonalStatsProvider : IStatsProvider
     {
         public IChallengeObject[] Challenges { get; set; }
 
         [StatsMethod("个人每日刀伤横向比较")]
         [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.MultiDate)]
+        [StatsMethodThumbnail("个人每日刀伤横向比较.jpg")]
         [UsedImplicitly]
         public async Task<CartesianChartConfigModel> PersonalDivideByChallengeTimesDayComparision(
             GranularityModel granularity)
@@ -87,6 +91,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
 
         [StatsMethod("个人每日Boss伤害横向比较")]
         [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.MultiDate)]
+        [StatsMethodThumbnail("个人每日Boss伤害横向比较.jpg")]
         [UsedImplicitly]
         public async Task<CartesianChartConfigModel> PersonalDivideByBossDayComparision(GranularityModel granularity)
         {
@@ -155,6 +160,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
 
         [StatsMethod("个人周目刀伤横向比较")]
         [StatsMethodAcceptGranularity(GranularityType.SingleRound, GranularityType.MultiRound)]
+        [StatsMethodThumbnail("个人周目刀伤横向比较.jpg")]
         [UsedImplicitly]
         public async Task<CartesianChartConfigModel> PersonalDivideByChallengeTimesRoundComparision(
             GranularityModel granularity)
@@ -226,6 +232,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
 
         [StatsMethod("个人周目Boss伤害横向比较")]
         [StatsMethodAcceptGranularity(GranularityType.SingleRound, GranularityType.MultiRound)]
+        [StatsMethodThumbnail("个人周目Boss伤害横向比较.jpg")]
         [UsedImplicitly]
         public async Task<CartesianChartConfigModel> PersonalDivideByBossRoundComparision(GranularityModel granularity)
         {

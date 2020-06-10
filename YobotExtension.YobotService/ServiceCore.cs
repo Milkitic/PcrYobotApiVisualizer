@@ -49,7 +49,16 @@ namespace YobotExtension.YobotService
 
         public async Task<bool> LoginAsync(string loginUrl)
         {
-            var uri = new Uri(loginUrl);
+            Uri uri;
+            try
+            {
+                uri = new Uri(loginUrl);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
             var origin = uri.Scheme + "://" + uri.Authority;
 
             if (origin != Origin && !string.IsNullOrWhiteSpace(Origin) && OriginChangeRequested != null)

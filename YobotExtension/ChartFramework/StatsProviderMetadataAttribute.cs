@@ -14,6 +14,8 @@ namespace YobotExtension.ChartFramework
         public Version Version { get; set; }
         public Guid Guid { get; }
 
+        public string Description { get; set; }
+
         public override bool Equals(object obj)
         {
             return obj is StatsProviderMetadataAttribute attr ? Equals(attr) : ReferenceEquals(this, obj);

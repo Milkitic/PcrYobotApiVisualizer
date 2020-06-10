@@ -19,5 +19,6 @@ namespace YobotExtension.ChartFramework
     {
         public Func<GranularityModel, Task<IChartConfigModel>> Function { get; set; }
         public GranularityType[] AcceptGranularities { get; set; }
+        public string ThumbnailPath { get; set; }
     }
 }

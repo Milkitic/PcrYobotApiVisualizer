@@ -3,6 +3,7 @@ using LiveCharts.Wpf;
 using LiveCharts.Wpf.Charts.Base;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -15,7 +16,6 @@ using YobotExtension.ChartFramework;
 using YobotExtension.Shared.Configuration;
 using YobotExtension.Shared.Win32;
 using YobotExtension.Shared.YobotService.V1;
-using YobotExtension.UserControls.StatsGraphControls;
 using YobotExtension.ViewModels;
 using YobotExtension.YobotService;
 
@@ -156,20 +156,20 @@ namespace YobotExtension
             _viewModel.SelectedCycle = _viewModel.CycleCount;
             _viewModel.SelectedDate = _viewModel.ApiObj.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
 
-            GraphControlPanel.Children.Clear();
+            //GraphControlPanel.Children.Clear();
 
             var asm = Assembly.GetExecutingAssembly();
-            var switchControls = asm.GetExportedTypes().Where(k => k.GetInterfaces().Contains(typeof(IChartSwitchControl)));
+            //var switchControls = asm.GetExportedTypes().Where(k => k.GetInterfaces().Contains(typeof(IChartSwitchControl)));
 
-            foreach (var switchControl in switchControls)
-            {
-                var obj = (UserControl)Activator.CreateInstance(switchControl);
-                GraphControlPanel.Children.Add(obj);
-                if (obj is IChartSwitchControl sw)
-                {
-                    sw.InitModels(_viewModel, this);
-                }
-            }
+            //foreach (var switchControl in switchControls)
+            //{
+            //    var obj = (UserControl)Activator.CreateInstance(switchControl);
+            //    GraphControlPanel.Children.Add(obj);
+            //    if (obj is IChartSwitchControl sw)
+            //    {
+            //        sw.InitModels(_viewModel, this);
+            //    }
+            //}
 
             var statsProviders = asm.GetExportedTypes()
                 .Where(k => k.GetInterfaces().Contains(typeof(IStatsProvider)))
@@ -200,6 +200,16 @@ namespace YobotExtension
                         if (granularityAttr != null)
                         {
                             statsFunctionInfo.AcceptGranularities = granularityAttr.AcceptGranularities;
+                        }
+
+                        var thumbnailAttr = methodInfo.GetCustomAttribute<StatsMethodThumbnailAttribute>();
+                        if (thumbnailAttr != null)
+                        {
+                            var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "providers",
+                                statisticsProviderInfo.Metadata.Guid.ToString());
+                            if (!Directory.Exists(dir))
+                                Directory.CreateDirectory(dir);
+                            statsFunctionInfo.ThumbnailPath = Path.Combine(dir, thumbnailAttr.Path);
                         }
 
                         Func<GranularityModel, Task<IChartConfigModel>> invokeFunc = null;
@@ -273,7 +283,8 @@ namespace YobotExtension
                 }
             }
 
-            hhh.ItemsSource = statsProviderInfos;
+            //hhh.ItemsSource = statsProviderInfos;
+            GraphList.ItemsSource = statsProviderInfos;
             //foreach (var statsProviderInfo in statsProviderInfos)
             //{
             //    var obj = (UserControl)Activator.CreateInstance(statsProviderInfo);
