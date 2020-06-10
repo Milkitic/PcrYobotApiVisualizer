@@ -1,4 +1,4 @@
-﻿namespace PcrYobotExtension.Configuration
+﻿namespace YobotExtension.Shared.Configuration
 {
     public class GeneralSection
     {

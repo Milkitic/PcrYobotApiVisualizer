@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PcrYobotExtension.ChartFramework
+namespace YobotExtension.ChartFramework
 {
     public interface IChartConfigModel
     {

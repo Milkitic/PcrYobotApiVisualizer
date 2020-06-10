@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using PcrYobotExtension.Configuration;
-using PcrYobotExtension.Utils;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,15 +12,19 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using YobotExtension.Shared;
+using YobotExtension.Shared.Configuration;
+using YobotExtension.Shared.YobotService;
+using YobotExtension.Shared.YobotService.V1;
 
-namespace PcrYobotExtension.Services
+namespace YobotExtension.YobotService
 {
-    public class YobotService : IYobotServiceV1<>
+    public class ServiceCore : IYobotServiceV1
     {
         public string Version => "yobot[v3.6.3-beta.4]";
+        public string ApiVersion => "1";
 
         private WebBrowser _hiddenWebBrowser;
-        private ManualResetEventSlim mre = new ManualResetEventSlim(false);
+        private ManualResetEventSlim _mre = new ManualResetEventSlim(false);
 
         public event Func<Task<bool>> InitRequested;
         public event Func<Task<bool>> OriginChangeRequested;
@@ -32,7 +35,7 @@ namespace PcrYobotExtension.Services
         public string Host { get; set; }
         public Dictionary<string, string> Cookie { get; set; }
 
-        public YobotService(WebBrowser wb)
+        public ServiceCore(WebBrowser wb)
         {
             _hiddenWebBrowser = wb;
             _hiddenWebBrowser.Navigated += HiddenWebBrowser_Navigated;
@@ -44,7 +47,7 @@ namespace PcrYobotExtension.Services
         public UriType InitUriType { get; } = UriType.Login;
 
         public bool IsLogin { get; private set; }
-
+        private int _timeoutMilliseconds = 3000;
         public async Task<bool> LoginAsync(string loginUrl)
         {
             var uri = new Uri(loginUrl);
@@ -69,9 +72,9 @@ namespace PcrYobotExtension.Services
             Origin = origin;
 
             await ValidateVersion();
-            mre.Reset();
+            _mre.Reset();
             _hiddenWebBrowser.Navigate(loginUrl);
-            var waitResult = await Task.Run(() => mre.Wait(3000));
+            var waitResult = await Task.Run(() => _mre.Wait(_timeoutMilliseconds));
             if (!waitResult)
             {
                 throw new Exception("登陆失败");
@@ -95,25 +98,15 @@ namespace PcrYobotExtension.Services
             }
         }
 
-        //public async Task InitAsync(string qqId, string password)
-        //{
-        //    var uri = new Uri(loginUrl);
-        //    Host = uri.Host;
-        //    Origin = uri.Scheme + "://" + uri.Authority;
-
-        //    mre.Reset();
-        //    _hiddenWebBrowser.Navigate(loginUrl);
-        //    await Task.Run(() => mre.Wait(5000));
-        //}
-
         // /yobot/login/ POST qqid=&pwd= [BROWSER]
         // /yobot/logout/ GET [BROWSER]
         // /yobot/user/ GET (QQ ID & GROUP ID)
         // /yobot/clan/{groupId}/api/ POST {action: "get_data", csrf_token: "oFrl0Gi0FiA6t0Xa"} (Group name)
 
-        public async Task<string> GetApiInfo()
+        public async Task<YobotApiObjectV1> GetApiInfo()
         {
-            return await InnerGetApiInfo(false);
+            var str = await InnerGetApiInfo(false);
+            return JsonConvert.DeserializeObject<YobotApiObjectV1>(str);
         }
 
         public async Task<bool> LogoutAsync()
@@ -126,7 +119,7 @@ namespace PcrYobotExtension.Services
                 var sw = Stopwatch.StartNew();
                 while (!success)
                 {
-                    if (sw.ElapsedMilliseconds > 3000)
+                    if (sw.ElapsedMilliseconds > _timeoutMilliseconds)
                     {
                         _hiddenWebBrowser.LoadCompleted -= LoadCompleted;
                         break;
@@ -271,7 +264,7 @@ namespace PcrYobotExtension.Services
                 var cookie = _hiddenWebBrowser.GetCookie();
                 Cookie = cookie;
                 IsLogin = true;
-                mre.Set();
+                _mre.Set();
 
                 _hiddenWebBrowser.Navigate($"{Origin}/yobot/user/");
             }

@@ -1,7 +1,7 @@
 ﻿using System;
 using LiveCharts.Wpf;
 
-namespace PcrYobotExtension.ChartFramework
+namespace YobotExtension.ChartFramework
 {
     public static class ChartConfigModelHelper
     {

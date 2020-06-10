@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace PcrYobotExtension.AutoUpdate
+namespace YobotExtension.AutoUpdate
 {
     public class GithubRelease
     {

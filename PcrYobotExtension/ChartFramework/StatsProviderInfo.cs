@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PcrYobotExtension.ChartFramework
+namespace YobotExtension.ChartFramework
 {
     public class StatsProviderInfo
     {

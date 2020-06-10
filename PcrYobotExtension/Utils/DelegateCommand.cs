@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace PcrYobotExtension.Utils
+namespace YobotExtension.Utils
 {
     public class DelegateCommand : ICommand
     {

@@ -1,7 +1,6 @@
-﻿using LiveCharts.Wpf;
-using LiveCharts.Wpf.Charts.Base;
+﻿using LiveCharts.Wpf.Charts.Base;
 
-namespace PcrYobotExtension
+namespace YobotExtension
 {
     public interface IChartProvider
     {

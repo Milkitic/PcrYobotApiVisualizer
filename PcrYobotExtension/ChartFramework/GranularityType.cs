@@ -1,4 +1,4 @@
-﻿namespace PcrYobotExtension.ChartFramework
+﻿namespace YobotExtension.ChartFramework
 {
     public enum GranularityType
     {

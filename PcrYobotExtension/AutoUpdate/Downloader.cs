@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PcrYobotExtension.AutoUpdate
+namespace YobotExtension.AutoUpdate
 {
     public class Downloader
     {

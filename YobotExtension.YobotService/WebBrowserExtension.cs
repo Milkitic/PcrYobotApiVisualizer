@@ -12,12 +12,10 @@ using System.Text;
 using System.Windows.Controls;
 using Microsoft.Win32;
 
-namespace PcrYobotExtension.Utils
+namespace YobotExtension.Shared
 {
     public static class WebBrowserExtension
     {
-        private static string _appName = Process.GetCurrentProcess().ProcessName + ".exe";
-
         public static void SetSilent(this WebBrowser browser, bool silent)
         {
             if (browser == null)
@@ -46,33 +44,6 @@ namespace PcrYobotExtension.Utils
             [PreserveSig]
             int QueryService([In] ref Guid guidService, [In] ref Guid riid,
                 [MarshalAs(UnmanagedType.IDispatch)] out object ppvObject);
-        }
-
-        public static bool? CheckWebBrowserVersion()
-        {
-            const string browserEmulationKey =
-                @"Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
-
-            // Webpages are displayed in IE9 Standards mode, regardless of the !DOCTYPE directive.
-            const int browserEmulationMode = 11001;
-
-            using (RegistryKey registryKeyObj =
-                Registry.CurrentUser.OpenSubKey(browserEmulationKey, RegistryKeyPermissionCheck.ReadWriteSubTree) ??
-                Registry.CurrentUser.CreateSubKey(browserEmulationKey))
-            {
-                if (registryKeyObj == null) return null;
-
-                var oldVal = registryKeyObj.GetValue(_appName);
-                if (!(oldVal is int i) || i != browserEmulationMode)
-                {
-                    registryKeyObj.SetValue(_appName, browserEmulationMode, RegistryValueKind.DWord);
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
         }
 
         public static Dictionary<string, string> GetCookie(this WebBrowser browser)

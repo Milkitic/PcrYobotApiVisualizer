@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace PcrYobotExtension.AutoUpdate
+namespace YobotExtension.AutoUpdate
 {
     public class Updater
     {

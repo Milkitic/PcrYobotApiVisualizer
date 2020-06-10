@@ -1,12 +1,12 @@
-﻿using PcrYobotExtension.Models;
+﻿using YobotExtension.Shared.YobotService;
 
-namespace PcrYobotExtension.ChartFramework
+namespace YobotExtension.ChartFramework
 {
     public interface IStatsProvider
     {
         /// <summary>
         /// 数据源
         /// </summary>
-        ChallengeModel[] Challenges { get; set; }
+        IChallengeObject[] Challenges { get; set; }
     }
 }

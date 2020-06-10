@@ -1,6 +1,6 @@
-﻿using PcrYobotExtension.ViewModels;
+﻿using YobotExtension.ViewModels;
 
-namespace PcrYobotExtension.UserControls.StatsGraphControls
+namespace YobotExtension.UserControls.StatsGraphControls
 {
     public interface IChartSwitchControl
     {

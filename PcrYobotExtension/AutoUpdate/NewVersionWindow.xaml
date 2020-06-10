@@ -1,11 +1,11 @@
 ﻿<Window
-    x:Class="PcrYobotExtension.AutoUpdate.NewVersionWindow"
+    x:Class="YobotExtension.AutoUpdate.NewVersionWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:autoUpdate="clr-namespace:PcrYobotExtension.AutoUpdate"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+    xmlns:autoUpdate="clr-namespace:YobotExtension.AutoUpdate"
     Title="有可用更新"
     Width="600"
     Height="450"

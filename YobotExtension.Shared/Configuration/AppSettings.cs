@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace PcrYobotExtension.Configuration
+namespace YobotExtension.Shared.Configuration
 {
     public class AppSettings : IDisposable
     {

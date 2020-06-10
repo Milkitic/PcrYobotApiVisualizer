@@ -1,20 +1,29 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
-namespace PcrYobotExtension.Models
+namespace YobotExtension.Shared.YobotService.V1
 {
-    public class ChallengeModel
+    public class ChallengeObject : IChallengeObject
     {
+        [JsonProperty("battle_id")]
+        public long BattleId { get; set; }
+
+        [JsonProperty("behalf")]
+        public long? BehalfQQId { get; set; }
+
         [JsonProperty("boss_num")]
         public int BossNum { get; set; }
+
+        [JsonProperty("challenge_pcrdate")]
+        public long ChallengePcrdate { get; set; }
+
+        [JsonProperty("challenge_pcrtime")]
+        public long ChallengePcrtime { get; set; }
 
         [JsonProperty("challenge_time")]
         [JsonConverter(typeof(MyJavaScriptDateTimeConverter))]
         public DateTime ChallengeTime { get; set; }
-
-        [JsonProperty("comment")]
-        public CommentModel Comment { get; set; }
 
         [JsonProperty("cycle")]
         public int Cycle { get; set; }
@@ -23,7 +32,7 @@ namespace PcrYobotExtension.Models
         public int Damage { get; set; }
 
         [JsonProperty("health_ramain")]
-        public int HealthRemain { get; set; }
+        public long HealthRemain { get; set; }
 
         [JsonProperty("is_continue")]
         public bool IsContinue { get; set; }
@@ -32,11 +41,10 @@ namespace PcrYobotExtension.Models
         public string Message { get; set; }
 
         [JsonProperty("qqid")]
-        public long QqId { get; set; }
-        
-        public ChallengeModel Clone()
+        public long QQId { get; set; }
+        public ChallengeObject Clone()
         {
-            return (ChallengeModel)MemberwiseClone();
+            return (ChallengeObject)MemberwiseClone();
         }
     }
 

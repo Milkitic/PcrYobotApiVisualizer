@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 using Path = System.IO.Path;
 
-namespace PcrYobotExtension.AutoUpdate
+namespace YobotExtension.AutoUpdate
 {
     /// <summary>
     /// UpdateWindow.xaml 的交互逻辑

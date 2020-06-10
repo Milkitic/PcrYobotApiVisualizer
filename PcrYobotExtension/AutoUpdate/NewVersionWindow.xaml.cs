@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Windows;
-using PcrYobotExtension.Configuration;
+using YobotExtension.Shared.Configuration;
 
-namespace PcrYobotExtension.AutoUpdate
+namespace YobotExtension.AutoUpdate
 {
     /// <summary>
     /// NewVersionWindow.xaml 的交互逻辑

@@ -1,19 +1,19 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
-using PcrYobotExtension.Annotations;
-using PcrYobotExtension.Models;
-using PcrYobotExtension.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YobotExtension.Annotations;
+using YobotExtension.Services;
+using YobotExtension.Shared.YobotService;
 
-namespace PcrYobotExtension.ChartFramework.StatsProviders
+namespace YobotExtension.ChartFramework.StatsProviders
 {
     [StatsProviderMetadata("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a", Author = "yf_extension", Name = "个人")]
     public class PersonalStatsProvider : IStatsProvider
     {
-        public ChallengeModel[] Challenges { get; set; }
+        public IChallengeObject[] Challenges { get; set; }
 
         [StatsMethod("个人每日刀伤横向比较")]
         [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.MultiDate)]
@@ -292,7 +292,7 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
             return configModel;
         }
 
-        private IEnumerable<IGrouping<long, ChallengeModel>> GetPersonalDictionary(GranularityModel granularity,
+        private IEnumerable<IGrouping<long, IChallengeObject>> GetPersonalDictionary(GranularityModel granularity,
             out string titlePrefix)
         {
             switch (granularity.GranularityType)
@@ -301,9 +301,8 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
                 case GranularityType.MultiDate:
                     {
                         var grouped = Challenges
-                            .Select(k => k.Clone())
                             .GroupBy(k => k.ChallengeTime.AddHours(-5).Date);
-                        List<ChallengeModel> challengeModels;
+                        List<IChallengeObject> challengeModels;
                         if (granularity.GranularityType == GranularityType.SingleDate && granularity.SelectedDate != null)
                         {
                             var selectedDay = granularity.SelectedDate.Value;
@@ -328,7 +327,7 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
                             throw new ArgumentOutOfRangeException();
                         }
 
-                        var personsDic = challengeModels.GroupBy(k => k.QqId);
+                        var personsDic = challengeModels.GroupBy(k => k.QQId);
                         return personsDic;
                     }
                 case GranularityType.Total:
@@ -337,9 +336,8 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
                 case GranularityType.MultiRound:
                     {
                         var grouped = Challenges
-                            .Select(k => k.Clone())
                             .GroupBy(k => k.Cycle);
-                        List<ChallengeModel> challengeModels;
+                        List<IChallengeObject> challengeModels;
                         if (granularity.GranularityType == GranularityType.SingleRound &&
                             granularity.SelectedRound != null)
                         {
@@ -365,7 +363,7 @@ namespace PcrYobotExtension.ChartFramework.StatsProviders
                             throw new ArgumentOutOfRangeException();
                         }
 
-                        var personsDic = challengeModels.GroupBy(k => k.QqId);
+                        var personsDic = challengeModels.GroupBy(k => k.QQId);
                         return personsDic;
                     }
                 default:

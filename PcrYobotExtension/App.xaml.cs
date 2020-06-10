@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+﻿using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using Newtonsoft.Json;
-using PcrYobotExtension.Configuration;
-using PcrYobotExtension.Utils;
+using YobotExtension.Shared;
+using YobotExtension.Shared.Configuration;
 
-namespace PcrYobotExtension
+namespace YobotExtension
 {
     /// <summary>
     /// App.xaml 的交互逻辑
@@ -57,7 +52,7 @@ namespace PcrYobotExtension
 
         private static void CheckBrowserVersion()
         {
-            if (WebBrowserExtension.CheckWebBrowserVersion() == false)
+            if (WebBrowserUtils.CheckWebBrowserVersion() == false)
             {
                 Thread.Sleep(2000);
                 Process.Start(Process.GetCurrentProcess().MainModule.FileName);

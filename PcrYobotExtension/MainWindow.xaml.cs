@@ -1,14 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
 using LiveCharts.Wpf.Charts.Base;
-using Newtonsoft.Json;
-using PcrYobotExtension.AutoUpdate;
-using PcrYobotExtension.ChartFramework;
-using PcrYobotExtension.Configuration;
-using PcrYobotExtension.Models;
-using PcrYobotExtension.Services;
-using PcrYobotExtension.UserControls.StatsGraphControls;
-using PcrYobotExtension.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +10,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using YobotExtension.AutoUpdate;
+using YobotExtension.ChartFramework;
+using YobotExtension.Shared.Configuration;
+using YobotExtension.Shared.Win32;
+using YobotExtension.Shared.YobotService.V1;
+using YobotExtension.UserControls.StatsGraphControls;
+using YobotExtension.ViewModels;
+using YobotExtension.YobotService;
 
-namespace PcrYobotExtension
+namespace YobotExtension
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -29,7 +29,7 @@ namespace PcrYobotExtension
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private StatsVm _viewModel;
-        private YobotService _yobotService;
+        private IYobotServiceV1 _yobotService;
         private Updater _updater;
 
         public Chart Chart { get; private set; }
@@ -42,6 +42,7 @@ namespace PcrYobotExtension
         private void Window_Initialized(object sender, EventArgs e)
         {
             _viewModel = (StatsVm)DataContext;
+            Execute.SetMainThreadContext();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -67,9 +68,8 @@ namespace PcrYobotExtension
                 }
             }).Start();
 
-            _yobotService = new YobotService(Browser);
+            _yobotService = new ServiceCore(Browser);
             _yobotService.InitRequested += _yobotService_InitRequested;
-
             await Load();
         }
 
@@ -143,8 +143,8 @@ namespace PcrYobotExtension
             try
             {
                 bool updateInterface = _viewModel.ApiObj == null;
-                var json = await _yobotService.GetApiInfo();
-                _viewModel.ApiObj = JsonConvert.DeserializeObject<YobotApiModel>(json);
+                var apiObj = await _yobotService.GetApiInfo();
+                _viewModel.ApiObj = apiObj;
                 _viewModel.ApiObj.Challenges = _viewModel.ApiObj.Challenges.OrderBy(k => k.ChallengeTime)
                     /*         .Where(k => k.ChallengeTime < new DateTime(2020, 5, 15))*/.ToArray();
                 _viewModel.CycleCount = _viewModel.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
