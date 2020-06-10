@@ -56,7 +56,7 @@
     <Compile Include="WebBrowserExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Yobot.Shared.Win32\YobotExtension.Shared.Win32.csproj">
+    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotExtension.Shared.Win32.csproj">
       <Project>{44155f0b-18ec-415e-a03a-ed4056be8d64}</Project>
       <Name>YobotExtension.Shared.Win32</Name>
     </ProjectReference>

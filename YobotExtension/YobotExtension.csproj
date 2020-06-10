@@ -180,7 +180,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Yobot.Shared.Win32\YobotExtension.Shared.Win32.csproj">
+    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotExtension.Shared.Win32.csproj">
       <Project>{44155F0B-18EC-415E-A03A-ED4056BE8D64}</Project>
       <Name>YobotExtension.Shared.Win32</Name>
     </ProjectReference>
