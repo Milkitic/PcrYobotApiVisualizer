@@ -49,7 +49,7 @@ namespace YobotExtension.Shared.Win32
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("UiContext execute error.");
+                        Console.WriteLine("UiContext execute error: " + ex.Message);
                     }
                 });
             }
@@ -71,7 +71,7 @@ namespace YobotExtension.Shared.Win32
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("UiContext execute error.");
+                        Console.WriteLine("UiContext execute error: " + ex.Message);
                     }
                 }), DispatcherPriority.Normal);
             }
