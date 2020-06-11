@@ -55,11 +55,11 @@
     <Compile Include="ServiceCore.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotChart.Shared.Win32.csproj">
+    <ProjectReference Include="..\YobotChart.Shared.Win32\YobotChart.Shared.Win32.csproj">
       <Project>{44155f0b-18ec-415e-a03a-ed4056be8d64}</Project>
       <Name>YobotChart.Shared.Win32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YobotExtension.Shared\YobotChart.Shared.csproj">
+    <ProjectReference Include="..\YobotChart.Shared\YobotChart.Shared.csproj">
       <Project>{5F52D672-2B15-4ECE-BC4E-CA3EA62288DD}</Project>
       <Name>YobotChart.Shared</Name>
     </ProjectReference>

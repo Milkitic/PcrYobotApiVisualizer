@@ -83,7 +83,7 @@ namespace YobotChart
                 catch (JsonException ex)
                 {
                     var result = MessageBox.Show("载入配置文件时失败，用默认配置覆盖继续打开吗？" + Environment.NewLine + ex.Message,
-                        "YobotExtension", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        "YobotChart", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (result == MessageBoxResult.Yes)
                     {
                         AppSettings.CreateNewConfig();

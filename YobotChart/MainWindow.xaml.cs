@@ -19,7 +19,7 @@ using YobotChart.Shared.Win32;
 using YobotChart.Shared.YobotService.V1;
 using YobotChart.ViewModels;
 using YobotChart.YobotService;
-using NewVersionWindow = YobotExtension.AutoUpdate.NewVersionWindow;
+using NewVersionWindow = YobotChart.AutoUpdate.NewVersionWindow;
 
 namespace YobotChart
 {

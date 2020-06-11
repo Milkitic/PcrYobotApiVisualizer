@@ -5,7 +5,7 @@
     xmlns:chartFramework="clr-namespace:YobotChart.ChartFramework"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:yobotExtension="clr-namespace:YobotChart"
+    xmlns:local="clr-namespace:YobotChart"
     Title="MainWindow"
     Width="1600"
     Height="900"
@@ -15,7 +15,7 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.DataContext>
-        <yobotExtension:MainWindowVm />
+        <local:MainWindowVm />
     </Window.DataContext>
     <Window.Resources>
         <ControlTemplate x:Key="ProviderNavItemTempl" TargetType="{x:Type ListBoxItem}">

@@ -30,7 +30,7 @@ namespace YobotChart.AutoUpdate
                 string json = "";
                 while (json == "")
                 {
-                    json = await HttpGetAsync("https://gitee.com/api/v5/repos/Milkitic/YobotExtensionRelease/releases");
+                    json = await HttpGetAsync("https://gitee.com/api/v5/repos/Milkitic/YobotChartRelease/releases");
                 }
 
                 if (json.Contains("API rate limit"))

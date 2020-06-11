@@ -1,4 +1,4 @@
-# YobotExtension
+# YobotChart
 
 Yobot API数据可视化程序
 
@@ -20,7 +20,7 @@ Yobot API数据可视化程序
 
 * C#基本使用
 * LiveCharts的使用，参考 [官方文档](https://lvcharts.net/App/examples/v1/wpf/Basics)
-* 关注 `YobotExtension\ChartFramework\StatsProviders` 内的两个Demo。
+* 关注 `YobotChart\ChartFramework\StatsProviders` 内的两个Demo。
 
 开发新图表仅需创建一个实现`IStatsProvider`接口的类，并标注Provider的元信息。再按一定规范在此类中编写方法提供数据模板，框架会自动读取方法，并且生成多个图表。
 

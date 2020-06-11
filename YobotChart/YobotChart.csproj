@@ -193,15 +193,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotChart.Shared.Win32.csproj">
+    <ProjectReference Include="..\YobotChart.Shared.Win32\YobotChart.Shared.Win32.csproj">
       <Project>{44155F0B-18EC-415E-A03A-ED4056BE8D64}</Project>
       <Name>YobotChart.Shared.Win32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YobotExtension.Shared\YobotChart.Shared.csproj">
+    <ProjectReference Include="..\YobotChart.Shared\YobotChart.Shared.csproj">
       <Project>{5F52D672-2B15-4ECE-BC4E-CA3EA62288DD}</Project>
       <Name>YobotChart.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YobotExtension.YobotService\YobotChart.YobotService.csproj">
+    <ProjectReference Include="..\YobotChart.YobotService\YobotChart.YobotService.csproj">
       <Project>{464DC7E9-EC94-4447-AC4F-2B1A027A8BF8}</Project>
       <Name>YobotChart.YobotService</Name>
     </ProjectReference>
