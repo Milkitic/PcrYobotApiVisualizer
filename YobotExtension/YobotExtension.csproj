@@ -154,6 +154,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="providers\872c4594-aaf1-4453-a652-fb304cb936f7\行会周目花费时间趋势.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="providers\872c4594-aaf1-4453-a652-fb304cb936f7\行会每天伤害趋势.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人周目Boss伤害横向比较.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -200,8 +206,6 @@
       <Name>YobotExtension.YobotService</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="providers\872c4594-aaf1-4453-a652-fb304cb936f7\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
