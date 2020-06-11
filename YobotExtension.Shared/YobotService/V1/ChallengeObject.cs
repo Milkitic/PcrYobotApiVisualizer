@@ -16,10 +16,10 @@ namespace YobotExtension.Shared.YobotService.V1
         public int BossNum { get; set; }
 
         [JsonProperty("challenge_pcrdate")]
-        public long ChallengePcrdate { get; set; }
+        public long ChallengePcrDate { get; set; }
 
         [JsonProperty("challenge_pcrtime")]
-        public long ChallengePcrtime { get; set; }
+        public long ChallengePcrTime { get; set; }
 
         [JsonProperty("challenge_time")]
         [JsonConverter(typeof(MyJavaScriptDateTimeConverter))]
@@ -50,11 +50,12 @@ namespace YobotExtension.Shared.YobotService.V1
 
     public class MyJavaScriptDateTimeConverter : DateTimeConverterBase
     {
-        private static readonly DateTime _epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime BaseTime =
+            new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            writer.WriteRawValue($"{((DateTime)value - _epoch).TotalSeconds}");
+            writer.WriteRawValue($"{((DateTime)value - BaseTime).TotalSeconds}");
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
@@ -65,7 +66,7 @@ namespace YobotExtension.Shared.YobotService.V1
                 return null;
             }
 
-            var addMilliseconds = _epoch.AddSeconds((long)reader.Value).AddHours(8);
+            var addMilliseconds = BaseTime.AddSeconds((long)reader.Value).AddHours(8);
             return addMilliseconds;
         }
     }

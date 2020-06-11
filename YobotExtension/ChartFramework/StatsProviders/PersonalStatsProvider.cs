@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using YobotExtension.Annotations;
 using YobotExtension.Services;
 using YobotExtension.Shared.YobotService;
+using YobotExtension.ViewModels;
 
 namespace YobotExtension.ChartFramework.StatsProviders
 {
@@ -16,7 +17,8 @@ namespace YobotExtension.ChartFramework.StatsProviders
         Description = "将会员的排名进行横向比较，包括每刀详情、每只Boss伤害详情。")]
     public class PersonalStatsProvider : IStatsProvider
     {
-        public IChallengeObject[] Challenges { get; set; }
+        public StatsVm Stats { get; set; }
+        public IChallengeObject[] Challenges => Stats.ApiObj.Challenges;
 
         [StatsMethod("个人每日刀伤横向比较")]
         [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.MultiDate)]
@@ -377,7 +379,7 @@ namespace YobotExtension.ChartFramework.StatsProviders
                     throw new ArgumentOutOfRangeException();
             }
 
-            throw new NotImplementedException();
+            throw new ArgumentOutOfRangeException();
         }
 
         private static CartesianChartConfigModel GetSharedConfigModel(string titlePrefix,

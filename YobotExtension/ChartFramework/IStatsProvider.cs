@@ -1,4 +1,4 @@
-﻿using YobotExtension.Shared.YobotService;
+﻿using YobotExtension.ViewModels;
 
 namespace YobotExtension.ChartFramework
 {
@@ -7,6 +7,6 @@ namespace YobotExtension.ChartFramework
         /// <summary>
         /// 数据源
         /// </summary>
-        IChallengeObject[] Challenges { get; set; }
+        StatsVm Stats { get; set; }
     }
 }

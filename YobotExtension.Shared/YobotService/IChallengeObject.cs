@@ -4,8 +4,10 @@ namespace YobotExtension.Shared.YobotService
 {
     public interface IChallengeObject
     {
+        // ReSharper disable InconsistentNaming
         long QQId { get; set; }
         long? BehalfQQId { get; }
+        // ReSharper restore InconsistentNaming
         int BossNum { get; }
         DateTime ChallengeTime { get; }
         int Cycle { get; }

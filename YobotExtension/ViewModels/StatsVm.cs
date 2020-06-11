@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using YobotExtension.Annotations;
+using YobotExtension.Shared.YobotService;
 using YobotExtension.Shared.YobotService.V1;
 
 namespace YobotExtension.ViewModels
 {
     public class StatsVm : INotifyPropertyChanged
     {
-        private YobotApiObjectV1 _apiObj;
+        private IYobotApiObject _apiObj;
 
         private int _cycleCount;
 
@@ -23,7 +24,7 @@ namespace YobotExtension.ViewModels
         /// <summary>
         /// 数据源
         /// </summary>
-        public YobotApiObjectV1 ApiObj
+        public IYobotApiObject ApiObj
         {
             get => _apiObj;
             set

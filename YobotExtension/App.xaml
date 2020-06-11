@@ -10,6 +10,7 @@
 
             </ResourceDictionary.MergedDictionaries>
 
+            <QuinticEase x:Key="QuinticEaseOut" EasingMode="EaseOut" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>

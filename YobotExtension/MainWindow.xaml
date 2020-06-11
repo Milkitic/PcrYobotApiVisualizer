@@ -4,18 +4,207 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:YobotExtension.ViewModels"
-    xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+    xmlns:yobotExtension="clr-namespace:YobotExtension"
     Title="MainWindow"
-    Width="800"
-    Height="450"
+    Width="1600"
+    Height="900"
     Background="#f6f6f7"
     Initialized="Window_Initialized"
     Loaded="Window_Loaded"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.DataContext>
-        <viewModels:StatsVm />
+        <yobotExtension:MainWindowVm />
     </Window.DataContext>
+    <Window.Resources>
+        <ControlTemplate x:Key="ProviderNavItemTempl" TargetType="{x:Type ListBoxItem}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Border
+                    x:Name="Border"
+                    Width="3"
+                    Margin="0,0,12,0"
+                    Background="#e5e5e5" />
+                <TextBlock
+                    x:Name="TextBlock"
+                    Grid.Column="1"
+                    Margin="0,7"
+                    FontSize="16"
+                    Foreground="#3480e8"
+                    Text="{Binding Metadata.Name}" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Border" Property="Background" Value="#402a82e5" />
+                    <Setter TargetName="TextBlock" Property="Foreground" Value="#2862c5" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter TargetName="Border" Property="Background" Value="#2a82e5" />
+                    <Setter TargetName="TextBlock" Property="Foreground" Value="#2B2B2B" />
+                    <Setter Property="Cursor" Value="Arrow" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ProviderMethodCardTempl">
+            <Grid>
+                <Border
+                    x:Name="ShadowBorder"
+                    Width="240"
+                    Height="200"
+                    Margin="8"
+                    Background="White"
+                    CornerRadius="10"
+                    SnapsToDevicePixels="True"
+                    UseLayoutRounding="True">
+                    <Border.Effect>
+                        <DropShadowEffect
+                            BlurRadius="10"
+                            Direction="-90"
+                            Opacity="0.25"
+                            ShadowDepth="1"
+                            Color="Black" />
+                    </Border.Effect>
+                </Border>
+                <Border
+                    Width="240"
+                    Height="200"
+                    Margin="8"
+                    Background="White"
+                    CornerRadius="2"
+                    SnapsToDevicePixels="True"
+                    UseLayoutRounding="True">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Image
+                            Margin="4,4,4,0"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding Value.ThumbnailPath}" />
+                        <Label
+                            x:Name="LabelMethodName"
+                            Grid.Row="1"
+                            Margin="0,4"
+                            HorizontalAlignment="Center"
+                            FontSize="13"
+                            Foreground="#5fb3f3">
+                            <TextBlock Text="{Binding Key.Name}" />
+                        </Label>
+                    </Grid>
+                </Border>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Trigger.EnterActions>
+                        <StopStoryboard BeginStoryboardName="ShadowShadowSb2" />
+                        <StopStoryboard BeginStoryboardName="LabelMethodNameForeSb2" />
+                        <BeginStoryboard x:Name="ShadowShadowSb">
+                            <Storyboard Storyboard.TargetName="ShadowBorder">
+                                <DoubleAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="Effect.BlurRadius"
+                                    To="13"
+                                    Duration="0:0:0.7" />
+                                <DoubleAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="Effect.Opacity"
+                                    To="0.55"
+                                    Duration="0:0:0.7" />
+                                <DoubleAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="Effect.ShadowDepth"
+                                    To="3"
+                                    Duration="0:0:0.7" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                        <BeginStoryboard x:Name="LabelMethodNameForeSb">
+                            <Storyboard Storyboard.TargetName="LabelMethodName">
+                                <ColorAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="(Label.Foreground).(SolidColorBrush.Color)"
+                                    To="#2B2B2B"
+                                    Duration="0:0:0.7" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="ShadowShadowSb" />
+                        <StopStoryboard BeginStoryboardName="LabelMethodNameForeSb" />
+                        <BeginStoryboard x:Name="ShadowShadowSb2">
+                            <Storyboard Storyboard.TargetName="ShadowBorder">
+                                <DoubleAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="Effect.BlurRadius"
+                                    To="10"
+                                    Duration="0:0:0.7" />
+                                <DoubleAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="Effect.Opacity"
+                                    To="0.25"
+                                    Duration="0:0:0.7" />
+                                <DoubleAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="Effect.ShadowDepth"
+                                    To="1"
+                                    Duration="0:0:0.7" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                        <BeginStoryboard x:Name="LabelMethodNameForeSb2">
+                            <Storyboard Storyboard.TargetName="LabelMethodName">
+                                <ColorAnimation
+                                    EasingFunction="{StaticResource QuinticEaseOut}"
+                                    Storyboard.TargetProperty="(Label.Foreground).(SolidColorBrush.Color)"
+                                    To="#5fb3f3"
+                                    Duration="0:0:0.7" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <DataTemplate x:Key="ProviderItem">
+            <StackPanel Tag="{Binding Metadata.Name}">
+                <StackPanel Orientation="Horizontal">
+                    <Label FontSize="18" Foreground="#2B2B2B">
+                        <TextBlock>
+                            <Run Text="{Binding Metadata.Name}" />
+                        </TextBlock>
+                    </Label>
+                    <Label VerticalAlignment="Bottom" Foreground="#909090">
+                        <TextBlock>
+                            <Run Text="by " />
+                            <Run Text="{Binding Metadata.Author}" />
+                        </TextBlock>
+                    </Label>
+                </StackPanel>
+                <Label
+                    Content="{Binding Metadata.Description}"
+                    FontSize="13"
+                    Foreground="#484848" />
+                <ItemsControl Margin="-6,4,-6,10" ItemsSource="{Binding FunctionsMapping}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Margin="4"
+                                Click="Button_Click"
+                                Cursor="Hand"
+                                Tag="{Binding Value}"
+                                Template="{StaticResource ProviderMethodCardTempl}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -24,42 +213,6 @@
         <WebBrowser x:Name="Browser" Grid.Row="0">
             <WebBrowser.Visibility>Collapsed</WebBrowser.Visibility>
         </WebBrowser>
-        <ItemsControl
-            x:Name="hhh"
-            Grid.Row="0"
-            Visibility="Collapsed">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <GroupBox>
-                        <GroupBox.Header>
-                            <TextBlock>
-                                <Run Text="{Binding Metadata.Name}" /><Run Text=" (by " /><Run Text="{Binding Metadata.Author}" /><Run Text=")" />
-                            </TextBlock>
-                        </GroupBox.Header>
-                        <ItemsControl ItemsSource="{Binding FunctionsMapping}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button
-                                        Click="Button_Click"
-                                        Content="{Binding Key.Name}"
-                                        Tag="{Binding Value}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </GroupBox>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
         <StackPanel
             Grid.Row="0"
             HorizontalAlignment="Right"
@@ -83,7 +236,7 @@
             <Label
                 Grid.Row="0"
                 HorizontalAlignment="Center"
-                Content="{Binding StatsGraph.Title}"
+                Content="{Binding Stats.StatsGraph.Title}"
                 FontSize="20" />
             <Border
                 x:Name="ChartContainer"
@@ -111,99 +264,33 @@
             Content="加载中"
             FontSize="18"
             Foreground="White"
-            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            Visibility="{Binding Stats.IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Grid
             Grid.Row="0"
             Grid.RowSpan="2"
             Margin="15">
-            <ItemsControl x:Name="GraphList" Grid.Row="0">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label FontSize="18" Foreground="#2B2B2B">
-                                    <TextBlock>
-                                        <Run Text="{Binding Metadata.Name}" />
-                                    </TextBlock>
-                                </Label>
-                                <Label VerticalAlignment="Bottom" Foreground="#909090">
-                                    <TextBlock>
-                                        <Run Text="by " />
-                                        <Run Text="{Binding Metadata.Author}" />
-                                    </TextBlock>
-                                </Label>
-                            </StackPanel>
-                            <Label
-                                Content="{Binding Metadata.Description}"
-                                FontSize="13"
-                                Foreground="#484848" />
-                            <ItemsControl Margin="-6,4,-6,0" ItemsSource="{Binding FunctionsMapping}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button
-                                            Margin="4"
-                                            Click="Button_Click"
-                                            Tag="{Binding Value}">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <Grid>
-                                                        <Border Margin="8" Background="White">
-                                                            <Border.Effect>
-                                                                <DropShadowEffect
-                                                                    BlurRadius="10"
-                                                                    Opacity="0.2"
-                                                                    ShadowDepth="0"
-                                                                    Color="Black" />
-                                                            </Border.Effect>
-                                                        </Border>
-                                                        <Border
-                                                            Width="240"
-                                                            Height="210"
-                                                            Margin="8"
-                                                            Background="White"
-                                                            BorderThickness="1">
-
-                                                            <Grid>
-                                                                <Grid.RowDefinitions>
-                                                                    <RowDefinition />
-                                                                    <RowDefinition Height="Auto" />
-                                                                </Grid.RowDefinitions>
-                                                                <Image
-                                                                    Margin="4,4,4,0"
-                                                                    RenderOptions.BitmapScalingMode="HighQuality"
-                                                                    Source="{Binding Value.ThumbnailPath}" />
-                                                                <Label
-                                                                    Grid.Row="1"
-                                                                    Margin="0,4"
-                                                                    HorizontalAlignment="Center"
-                                                                    FontSize="13"
-                                                                    Foreground="#5fb3f3">
-                                                                    <TextBlock Text="{Binding Key.Name}" />
-                                                                </Label>
-                                                            </Grid>
-                                                        </Border>
-                                                    </Grid>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <ListBox
+                MinWidth="160"
+                Margin="0,0,20,0"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding StatsProvidersList}"
+                SelectedIndex="0">
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="Template" Value="{StaticResource ProviderNavItemTempl}" />
+                    </Style>
+                </ListBox.Resources>
+            </ListBox>
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemTemplate="{StaticResource ProviderItem}" ItemsSource="{Binding StatsProvidersList}" />
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>

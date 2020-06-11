@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Linq;
+using Newtonsoft.Json;
 
 namespace YobotExtension.Shared.YobotService.V1
 {
-    public class YobotApiObjectV1
+    public class YobotApiObjectV1 : IYobotApiObject
     {
         [JsonProperty("api_version")]
         public string ApiVersion { get; set; }
@@ -14,12 +15,18 @@ namespace YobotExtension.Shared.YobotService.V1
         public long Code { get; set; }
 
         [JsonProperty("groupinfo")]
-        public GroupInfoObject[] Groupinfo { get; set; }
+        public GroupInfoObject[] GroupInfo { get; set; }
 
         [JsonProperty("members")]
         public MemberObject[] Members { get; set; }
 
         [JsonProperty("message")]
         public string Message { get; set; }
+
+        IChallengeObject[] IYobotApiObject.Challenges
+        {
+            get => Challenges.Cast<IChallengeObject>().ToArray();
+            set => Challenges = value.Cast<ChallengeObject>().ToArray();
+        }
     }
 }

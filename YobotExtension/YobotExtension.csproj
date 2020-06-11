@@ -90,8 +90,10 @@
     <Compile Include="AutoUpdate\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ChartFramework\ChartProviderLoader.cs" />
     <Compile Include="ChartFramework\StatsMethodAcceptGranularityAttribute.cs" />
     <Compile Include="ChartFramework\StatsMethodThumbnailAttribute.cs" />
+    <Compile Include="ChartFramework\StatsProviders\ClansStatsProvider.cs" />
     <Compile Include="IChartProvider.cs" />
     <Compile Include="ChartFramework\CartesianChartConfigModel.cs" />
     <Compile Include="ChartFramework\ChartConfigModel.cs" />
@@ -160,18 +162,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Resource Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人周目Boss伤害横向比较.jpg">
+    <None Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人周目Boss伤害横向比较.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人周目刀伤横向比较.jpg">
+    </None>
+    <None Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人周目刀伤横向比较.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人每日Boss伤害横向比较.jpg">
+    </None>
+    <None Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人每日Boss伤害横向比较.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人每日刀伤横向比较.jpg">
+    </None>
+    <None Include="providers\9b3a41ae-1ac3-4fad-84ec-e8b26164e58a\个人每日刀伤横向比较.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </None>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
