@@ -2,6 +2,10 @@
 
 Yobot API数据可视化程序
 
+## 开发中的截图
+
+![截图](https://whatsthis-1252749411.cos.ap-shanghai.myqcloud.com/2222.png)
+
 ## 当前重点问题
 
 1. UI的原型设计
