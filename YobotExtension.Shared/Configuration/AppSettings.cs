@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace YobotExtension.Shared.Configuration
+namespace YobotChart.Shared.Configuration
 {
     public class AppSettings : IDisposable
     {

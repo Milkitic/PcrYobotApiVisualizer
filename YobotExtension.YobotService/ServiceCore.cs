@@ -11,12 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using YobotExtension.Shared.Configuration;
-using YobotExtension.Shared.Win32;
-using YobotExtension.Shared.YobotService;
-using YobotExtension.Shared.YobotService.V1;
+using YobotChart.Shared.Configuration;
+using YobotChart.Shared.YobotService;
+using YobotChart.Shared.YobotService.V1;
+using YobotChart.Shared.Win32;
 
-namespace YobotExtension.YobotService
+namespace YobotChart.YobotService
 {
     public class ServiceCore : IYobotServiceV1
     {

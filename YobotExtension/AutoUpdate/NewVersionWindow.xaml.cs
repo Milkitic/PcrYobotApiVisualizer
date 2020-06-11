@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Windows;
-using YobotExtension.Shared.Configuration;
+using YobotChart.Shared.Configuration;
 
-namespace YobotExtension.AutoUpdate
+namespace YobotChart.AutoUpdate
 {
     /// <summary>
     /// NewVersionWindow.xaml 的交互逻辑

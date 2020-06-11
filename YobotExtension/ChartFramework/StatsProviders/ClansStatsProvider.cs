@@ -2,11 +2,11 @@
 using LiveCharts.Wpf;
 using System;
 using System.Linq;
-using YobotExtension.Annotations;
-using YobotExtension.Shared.YobotService;
-using YobotExtension.ViewModels;
+using YobotChart.Annotations;
+using YobotChart.Shared.YobotService;
+using YobotChart.ViewModels;
 
-namespace YobotExtension.ChartFramework.StatsProviders
+namespace YobotChart.ChartFramework.StatsProviders
 {
     [StatsProviderMetadata("872c4594-aaf1-4453-a652-fb304cb936f7",
         Author = "yf_extension",

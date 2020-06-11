@@ -1,9 +1,9 @@
 ﻿using LiveCharts;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using YobotExtension.Annotations;
+using YobotChart.Annotations;
 
-namespace YobotExtension.ViewModels
+namespace YobotChart.ViewModels
 {
     public class StatsGraphVm : INotifyPropertyChanged
     {

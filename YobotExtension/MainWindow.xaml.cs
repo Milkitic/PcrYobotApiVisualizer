@@ -11,16 +11,17 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using YobotExtension.Annotations;
-using YobotExtension.AutoUpdate;
-using YobotExtension.ChartFramework;
-using YobotExtension.Shared.Configuration;
-using YobotExtension.Shared.Win32;
-using YobotExtension.Shared.YobotService.V1;
-using YobotExtension.ViewModels;
-using YobotExtension.YobotService;
+using YobotChart.Annotations;
+using YobotChart.AutoUpdate;
+using YobotChart.ChartFramework;
+using YobotChart.Shared.Configuration;
+using YobotChart.Shared.Win32;
+using YobotChart.Shared.YobotService.V1;
+using YobotChart.ViewModels;
+using YobotChart.YobotService;
+using NewVersionWindow = YobotExtension.AutoUpdate.NewVersionWindow;
 
-namespace YobotExtension
+namespace YobotChart
 {
     public class MainWindowVm : INotifyPropertyChanged
     {
@@ -94,7 +95,7 @@ namespace YobotExtension
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            var newVersionWindow = new NewVersionWindow(_updater.NewRelease, this);
+                            var newVersionWindow = new AutoUpdate.NewVersionWindow(_updater.NewRelease, this);
                             newVersionWindow.ShowDialog();
                         });
                     }

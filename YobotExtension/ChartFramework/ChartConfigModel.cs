@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YobotExtension.ChartFramework
+namespace YobotChart.ChartFramework
 {
     public abstract class ChartConfigModel<T> : IChartConfigModel where T : LiveCharts.Wpf.Charts.Base.Chart
     {

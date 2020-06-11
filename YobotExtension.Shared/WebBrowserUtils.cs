@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Diagnostics;
 
-namespace YobotExtension.Shared
+namespace YobotChart.Shared
 {
     public static class WebBrowserUtils
     {

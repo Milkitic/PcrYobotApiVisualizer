@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace YobotExtension.AutoUpdate
+namespace YobotChart.AutoUpdate
 {
     public class GiteeUpdater
     {

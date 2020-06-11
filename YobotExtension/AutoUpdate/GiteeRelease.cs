@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace YobotExtension.AutoUpdate
+namespace YobotChart.AutoUpdate
 {
     public class GiteeRelease
     {

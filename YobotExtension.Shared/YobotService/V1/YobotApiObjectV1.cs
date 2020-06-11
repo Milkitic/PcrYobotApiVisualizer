@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Newtonsoft.Json;
 
-namespace YobotExtension.Shared.YobotService.V1
+namespace YobotChart.Shared.YobotService.V1
 {
     public class YobotApiObjectV1 : IYobotApiObject
     {

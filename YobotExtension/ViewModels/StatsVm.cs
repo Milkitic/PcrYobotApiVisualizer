@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using YobotExtension.Annotations;
-using YobotExtension.Shared.YobotService;
-using YobotExtension.Shared.YobotService.V1;
+using YobotChart.Annotations;
+using YobotChart.Shared.YobotService;
+using YobotChart.Shared.YobotService.V1;
 
-namespace YobotExtension.ViewModels
+namespace YobotChart.ViewModels
 {
     public class StatsVm : INotifyPropertyChanged
     {

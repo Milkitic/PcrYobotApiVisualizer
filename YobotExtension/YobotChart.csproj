@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3B8559BE-2889-4C5D-8940-B370F2A6F118}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>YobotExtension</RootNamespace>
-    <AssemblyName>YobotExtension</AssemblyName>
+    <RootNamespace>YobotChart</RootNamespace>
+    <AssemblyName>YobotChart</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -193,17 +193,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotExtension.Shared.Win32.csproj">
+    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotChart.Shared.Win32.csproj">
       <Project>{44155F0B-18EC-415E-A03A-ED4056BE8D64}</Project>
-      <Name>YobotExtension.Shared.Win32</Name>
+      <Name>YobotChart.Shared.Win32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YobotExtension.Shared\YobotExtension.Shared.csproj">
+    <ProjectReference Include="..\YobotExtension.Shared\YobotChart.Shared.csproj">
       <Project>{5F52D672-2B15-4ECE-BC4E-CA3EA62288DD}</Project>
-      <Name>YobotExtension.Shared</Name>
+      <Name>YobotChart.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YobotExtension.YobotService\YobotExtension.YobotService.csproj">
+    <ProjectReference Include="..\YobotExtension.YobotService\YobotChart.YobotService.csproj">
       <Project>{464DC7E9-EC94-4447-AC4F-2B1A027A8BF8}</Project>
-      <Name>YobotExtension.YobotService</Name>
+      <Name>YobotChart.YobotService</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

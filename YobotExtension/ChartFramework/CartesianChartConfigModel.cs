@@ -1,7 +1,7 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
 
-namespace YobotExtension.ChartFramework
+namespace YobotChart.ChartFramework
 {
     public class CartesianChartConfigModel : ChartConfigModel<CartesianChart>
     {

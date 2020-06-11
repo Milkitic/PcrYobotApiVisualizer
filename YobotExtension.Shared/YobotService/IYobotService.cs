@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace YobotExtension.Shared.YobotService
+namespace YobotChart.Shared.YobotService
 {
     public interface IYobotService<T>
     {

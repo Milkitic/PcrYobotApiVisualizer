@@ -7,8 +7,8 @@
     <ProjectGuid>{44155F0B-18EC-415E-A03A-ED4056BE8D64}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>YobotExtension.Shared.Win32</RootNamespace>
-    <AssemblyName>YobotExtension.Shared.Win32</AssemblyName>
+    <RootNamespace>YobotChart.Shared.Win32</RootNamespace>
+    <AssemblyName>YobotChart.Shared.Win32</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

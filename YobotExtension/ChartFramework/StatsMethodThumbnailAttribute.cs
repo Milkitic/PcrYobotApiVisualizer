@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YobotExtension.ChartFramework
+namespace YobotChart.ChartFramework
 {
     public class StatsMethodThumbnailAttribute : Attribute
     {

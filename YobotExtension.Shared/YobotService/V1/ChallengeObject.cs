@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System;
 
-namespace YobotExtension.Shared.YobotService.V1
+namespace YobotChart.Shared.YobotService.V1
 {
     public class ChallengeObject : IChallengeObject
     {

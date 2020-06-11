@@ -10,7 +10,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Windows.Controls;
 
-namespace YobotExtension.Shared.Win32
+namespace YobotChart.Shared.Win32
 {
     public static class WebBrowserExtension
     {

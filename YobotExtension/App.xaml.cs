@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using YobotExtension.Shared;
-using YobotExtension.Shared.Configuration;
+using YobotChart.Shared;
+using YobotChart.Shared.Configuration;
 
-namespace YobotExtension
+namespace YobotChart
 {
     /// <summary>
     /// App.xaml 的交互逻辑

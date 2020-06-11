@@ -7,8 +7,8 @@
     <ProjectGuid>{464DC7E9-EC94-4447-AC4F-2B1A027A8BF8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>YobotExtension.YobotService</RootNamespace>
-    <AssemblyName>YobotExtension.YobotService</AssemblyName>
+    <RootNamespace>YobotChart.YobotService</RootNamespace>
+    <AssemblyName>YobotChart.YobotService</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -55,13 +55,13 @@
     <Compile Include="ServiceCore.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotExtension.Shared.Win32.csproj">
+    <ProjectReference Include="..\YobotExtension.Shared.Win32\YobotChart.Shared.Win32.csproj">
       <Project>{44155f0b-18ec-415e-a03a-ed4056be8d64}</Project>
-      <Name>YobotExtension.Shared.Win32</Name>
+      <Name>YobotChart.Shared.Win32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YobotExtension.Shared\YobotExtension.Shared.csproj">
+    <ProjectReference Include="..\YobotExtension.Shared\YobotChart.Shared.csproj">
       <Project>{5F52D672-2B15-4ECE-BC4E-CA3EA62288DD}</Project>
-      <Name>YobotExtension.Shared</Name>
+      <Name>YobotChart.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

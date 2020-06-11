@@ -1,4 +1,4 @@
-﻿namespace YobotExtension.Shared.Configuration
+﻿namespace YobotChart.Shared.Configuration
 {
     public class GeneralSection
     {

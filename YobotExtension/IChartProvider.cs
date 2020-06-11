@@ -1,6 +1,6 @@
 ﻿using LiveCharts.Wpf.Charts.Base;
 
-namespace YobotExtension
+namespace YobotChart
 {
     public interface IChartProvider
     {

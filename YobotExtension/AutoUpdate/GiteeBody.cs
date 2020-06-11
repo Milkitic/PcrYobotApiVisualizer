@@ -1,6 +1,6 @@
 ﻿using YamlDotNet.Serialization;
 
-namespace YobotExtension.AutoUpdate
+namespace YobotChart.AutoUpdate
 {
     public class GiteeBody
     {

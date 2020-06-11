@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YobotExtension.Shared.YobotService
+namespace YobotChart.Shared.YobotService
 {
     public interface IChallengeObject
     {

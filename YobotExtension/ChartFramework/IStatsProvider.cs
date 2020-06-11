@@ -1,6 +1,6 @@
-﻿using YobotExtension.ViewModels;
+﻿using YobotChart.ViewModels;
 
-namespace YobotExtension.ChartFramework
+namespace YobotChart.ChartFramework
 {
     public interface IStatsProvider
     {

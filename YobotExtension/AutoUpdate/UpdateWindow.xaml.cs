@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows;
 using Path = System.IO.Path;
 
-namespace YobotExtension.AutoUpdate
+namespace YobotChart.AutoUpdate
 {
     /// <summary>
     /// UpdateWindow.xaml 的交互逻辑

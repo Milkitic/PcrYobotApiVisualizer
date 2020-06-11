@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using YobotExtension.Shared.YobotService;
-using YobotExtension.Shared.YobotService.V1;
-using YobotExtension.ViewModels;
+using YobotChart.ViewModels;
+using YobotChart.Shared.YobotService;
+using YobotChart.Shared.YobotService.V1;
 
-namespace YobotExtension.ChartFramework
+namespace YobotChart.ChartFramework
 {
     internal class ChartProviderLoader
     {

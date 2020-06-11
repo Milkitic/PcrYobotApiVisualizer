@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YobotExtension.Annotations;
-using YobotExtension.Services;
-using YobotExtension.Shared.YobotService;
-using YobotExtension.ViewModels;
+using YobotChart.Annotations;
+using YobotChart.Services;
+using YobotChart.Shared.YobotService;
+using YobotChart.ViewModels;
 
-namespace YobotExtension.ChartFramework.StatsProviders
+namespace YobotChart.ChartFramework.StatsProviders
 {
     [StatsProviderMetadata("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a",
         Author = "yf_extension",

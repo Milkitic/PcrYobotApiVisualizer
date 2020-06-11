@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace YobotExtension.Utils
+namespace YobotChart.Utils
 {
     public class DelegateCommand : ICommand
     {

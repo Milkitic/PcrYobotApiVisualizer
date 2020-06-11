@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace YobotExtension
+namespace YobotChart
 {
     /// <summary>
     /// PromptWindow.xaml 的交互逻辑

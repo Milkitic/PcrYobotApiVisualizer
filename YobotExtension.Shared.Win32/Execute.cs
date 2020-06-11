@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace YobotExtension.Shared.Win32
+namespace YobotChart.Shared.Win32
 {
     public static class Execute
     {

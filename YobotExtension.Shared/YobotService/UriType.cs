@@ -1,4 +1,4 @@
-﻿namespace YobotExtension.Shared.YobotService
+﻿namespace YobotChart.Shared.YobotService
 {
     public enum UriType
     {

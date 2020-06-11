@@ -1,4 +1,4 @@
-﻿namespace YobotExtension.ChartFramework
+﻿namespace YobotChart.ChartFramework
 {
     public enum ChartType
     {
