@@ -2,6 +2,7 @@
     x:Class="YobotExtension.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:chartFramework="clr-namespace:YobotExtension.ChartFramework"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:yobotExtension="clr-namespace:YobotExtension"
@@ -18,6 +19,9 @@
     </Window.DataContext>
     <Window.Resources>
         <ControlTemplate x:Key="ProviderNavItemTempl" TargetType="{x:Type ListBoxItem}">
+            <d:Object.DataContext>
+                <chartFramework:StatsProviderInfo />
+            </d:Object.DataContext>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -49,6 +53,9 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <ControlTemplate x:Key="ProviderMethodCardTempl">
+            <d:Object.DataContext>
+                <chartFramework:StatsFunctionInfo/>
+            </d:Object.DataContext>
             <Grid>
                 <Border
                     x:Name="ShadowBorder"
@@ -84,7 +91,7 @@
                         <Image
                             Margin="4,4,4,0"
                             RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="{Binding Value.ThumbnailPath}" />
+                            Source="{Binding ThumbnailPath}" />
                         <Label
                             x:Name="LabelMethodName"
                             Grid.Row="1"
@@ -92,7 +99,7 @@
                             HorizontalAlignment="Center"
                             FontSize="13"
                             Foreground="#5fb3f3">
-                            <TextBlock Text="{Binding Key.Name}" />
+                            <TextBlock Text="{Binding Attribute.Name}" />
                         </Label>
                     </Grid>
                 </Border>
@@ -168,6 +175,9 @@
         </ControlTemplate>
         <DataTemplate x:Key="ProviderItem">
             <StackPanel Tag="{Binding Metadata.Name}">
+                <d:Object.DataContext>
+                    <chartFramework:StatsProviderInfo />
+                </d:Object.DataContext>
                 <StackPanel Orientation="Horizontal">
                     <Label FontSize="18" Foreground="#2B2B2B">
                         <TextBlock>
@@ -185,7 +195,7 @@
                     Content="{Binding Metadata.Description}"
                     FontSize="13"
                     Foreground="#484848" />
-                <ItemsControl Margin="-6,4,-6,10" ItemsSource="{Binding FunctionsMapping}">
+                <ItemsControl Margin="-6,4,-6,10" ItemsSource="{Binding FunctionList}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />
@@ -197,8 +207,12 @@
                                 Margin="4"
                                 Click="Button_Click"
                                 Cursor="Hand"
-                                Tag="{Binding Value}"
-                                Template="{StaticResource ProviderMethodCardTempl}" />
+                                Tag="{Binding}"
+                                Template="{StaticResource ProviderMethodCardTempl}" >
+                                <d:Object.DataContext>
+                                    <chartFramework:StatsFunctionInfo />
+                                </d:Object.DataContext>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

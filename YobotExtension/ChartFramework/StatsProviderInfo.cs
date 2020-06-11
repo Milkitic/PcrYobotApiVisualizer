@@ -8,15 +8,12 @@ namespace YobotExtension.ChartFramework
     {
         public StatsProviderMetadataAttribute Metadata { get; set; }
 
-        public Dictionary<StatsMethodAttribute, StatsFunctionInfo> FunctionsMapping
-        {
-            get;
-            set;
-        } = new Dictionary<StatsMethodAttribute, StatsFunctionInfo>();
+        public List<StatsFunctionInfo> FunctionList { get; set; } = new List<StatsFunctionInfo>();
     }
 
     public class StatsFunctionInfo
     {
+        public StatsMethodAttribute Attribute { get; set; }
         public Func<GranularityModel, Task<IChartConfigModel>> Function { get; set; }
         public GranularityType[] AcceptGranularities { get; set; }
         public string ThumbnailPath { get; set; }

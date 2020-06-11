@@ -39,7 +39,7 @@ namespace YobotExtension.ChartFramework
                         var o = methodInfo.GetCustomAttribute<StatsMethodAttribute>();
                         if (o == null) continue;
 
-                        var statsFunctionInfo = new StatsFunctionInfo();
+                        var statsFunctionInfo = new StatsFunctionInfo { Attribute = o };
                         var granularityAttr = methodInfo.GetCustomAttribute<StatsMethodAcceptGranularityAttribute>();
                         if (granularityAttr != null)
                         {
@@ -120,7 +120,7 @@ namespace YobotExtension.ChartFramework
                             statsFunctionInfo.Function = invokeFunc;
                         }
 
-                        statisticsProviderInfo.FunctionsMapping.Add(o, statsFunctionInfo);
+                        statisticsProviderInfo.FunctionList.Add(statsFunctionInfo);
                     }
                 }
                 catch (Exception ex)
