@@ -67,7 +67,7 @@ namespace YobotExtension
 
         private MainWindowVm _viewModel;
         private IYobotServiceV1 _yobotService;
-        private Updater _updater;
+        private GiteeUpdater _updater;
 
         public Chart Chart { get; private set; }
 
@@ -88,7 +88,7 @@ namespace YobotExtension
             {
                 try
                 {
-                    _updater = new Updater();
+                    _updater = new GiteeUpdater();
                     bool? hasUpdate = await _updater.CheckUpdateAsync();
                     if (hasUpdate == true && _updater.NewRelease.NewVerString != AppSettings.Default.General.IgnoredVer)
                     {

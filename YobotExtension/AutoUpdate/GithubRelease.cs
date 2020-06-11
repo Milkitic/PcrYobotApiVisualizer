@@ -23,7 +23,7 @@ namespace YobotExtension.AutoUpdate
         [JsonProperty("published_at")]
         public DateTime? PublishedAt { get; set; }
         [JsonProperty("assets")]
-        public List<Asset> Assets { get; set; }
+        public List<GithubAsset> Assets { get; set; }
         [JsonProperty("body")]
         public string Body { get; set; }
 
@@ -33,7 +33,7 @@ namespace YobotExtension.AutoUpdate
         public string NowVerString { get; set; }
     }
 
-    public class Asset
+    public class GithubAsset
     {
         [JsonProperty("name")]
         public string Name { get; set; }

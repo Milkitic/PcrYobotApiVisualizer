@@ -14,9 +14,9 @@
     SizeToContent="Height"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <autoUpdate:GithubRelease />
-    </Window.DataContext>
+    <d:Window.DataContext>
+        <autoUpdate:GiteeRelease />
+    </d:Window.DataContext>
     <Window.Resources>
         <Style TargetType="{x:Type Paragraph}">
             <Setter Property="FontSize" Value="14" />
@@ -81,16 +81,17 @@
                     Margin="10,0"
                     HorizontalAlignment="Left"
                     Click="HtmlUrl_Click"
-                    Content="{Binding HtmlUrl}" />
+                    Content="{Binding GithubReleasePage}" />
                 <Label HorizontalAlignment="Left" Content="更新说明" />
-                <md:MarkdownViewer
+                <Label Content="{Binding Notes}"/>
+                <!--<md:MarkdownViewer
                     x:Name="Viewer"
                     Margin="10,0"
                     Background="Transparent"
                     FontSize="10"
                     IsEnabled="False"
                     Markdown="{Binding Body}">
-                    <!--<md:MarkdownViewer.Markdown>
+                    --><!--<md:MarkdownViewer.Markdown>
                     <MultiBinding Converter="{StaticResource MarkdownConverter}">
                         <Binding Path="Body" />
                         <Binding Path="NowVerString" />
@@ -100,8 +101,8 @@
                 </md:MarkdownViewer.Markdown>-->
                     <!--<FrameworkElement.CommandBindings>
                     <CommandBinding Command="{x:Static md:Commands.Hyperlink}" Executed="OpenHyperlink" />
-                </FrameworkElement.CommandBindings>-->
-                </md:MarkdownViewer>
+                </FrameworkElement.CommandBindings>--><!--
+                </md:MarkdownViewer>-->
                 <Button
                     Click="Update_Click"
                     Content="立刻升级"

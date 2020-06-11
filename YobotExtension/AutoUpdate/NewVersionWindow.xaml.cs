@@ -9,10 +9,10 @@ namespace YobotExtension.AutoUpdate
     /// </summary>
     public partial class NewVersionWindow : Window
     {
-        private readonly GithubRelease _release;
+        private readonly GiteeRelease _release;
         private readonly MainWindow _mainWindow;
 
-        public NewVersionWindow(GithubRelease release, MainWindow mainWindow)
+        public NewVersionWindow(GiteeRelease release, MainWindow mainWindow)
         {
             _release = release;
             _mainWindow = mainWindow;
@@ -45,14 +45,14 @@ namespace YobotExtension.AutoUpdate
 
         private void Update_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var updateWindow = new UpdateWindow(_release, _mainWindow);
+            var updateWindow = new UpdateWindow(_release.GithubReleaseFile, _mainWindow);
             updateWindow.Show();
             Close();
         }
 
         private void HtmlUrl_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(_release.HtmlUrl);
+            Process.Start(_release.GithubReleasePage);
         }
 
         private void Skip_Click(object sender, RoutedEventArgs e)

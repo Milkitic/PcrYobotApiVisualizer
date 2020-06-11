@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using Path = System.IO.Path;
 
@@ -14,24 +13,22 @@ namespace YobotExtension.AutoUpdate
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly GithubRelease _release;
+        private readonly string _downloadUrl;
         private readonly MainWindow _mainWindow;
         private Downloader _downloader;
         private readonly string _savePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.zip");
 
-        public UpdateWindow(GithubRelease release, MainWindow mainWindow)
+        public UpdateWindow(string downloadUrl, MainWindow mainWindow)
         {
-            _release = release;
+            _downloadUrl = downloadUrl;
             _mainWindow = mainWindow;
             InitializeComponent();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var asset = _release?.Assets.FirstOrDefault(k => k.Name == "YobotExtension.zip");
-            if (asset == null) return;
             _mainWindow.Close();
-            _downloader = new Downloader(asset.BrowserDownloadUrl);
+            _downloader = new Downloader(_downloadUrl);
             _downloader.OnStartDownloading += Downloader_OnStartDownloading;
             _downloader.OnDownloading += Downloader_OnDownloading;
             _downloader.OnFinishDownloading += Downloader_OnFinishDownloading;

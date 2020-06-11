@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace YobotExtension.AutoUpdate
 {
-    public class Updater
+    public class GiteeUpdater
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -17,7 +17,7 @@ namespace YobotExtension.AutoUpdate
         private const int RetryCount = 3;
         private static readonly HttpClient HttpClient;
 
-        public GithubRelease NewRelease { get; private set; }
+        public GiteeRelease NewRelease { get; private set; }
         public bool IsRunningChecking { get; private set; }
         public string CurrentVersion { get; } = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().TrimEnd('.', '0');
 
@@ -30,19 +30,29 @@ namespace YobotExtension.AutoUpdate
                 string json = "";
                 while (json == "")
                 {
-                    json = await HttpGetAsync("http://api.github.com:1234/repos/Milkitic/YobotExtension/releases");
+                    json = await HttpGetAsync("https://gitee.com/api/v5/repos/Milkitic/YobotExtensionRelease/releases");
                 }
 
                 if (json.Contains("API rate limit"))
                 {
-                    Logger.Error("Error while checking for updates: Github API rate limit exceeded.");
+                    Logger.Error("Error while checking for updates: Gitee API rate limit exceeded.");
                     return null;
-                    //throw new Exception("Github API rate limit exceeded.");
                 }
 
-                List<GithubRelease> releases = JsonConvert.DeserializeObject<List<GithubRelease>>(json);
-                var latest = releases.OrderByDescending(k => k.PublishedAt)
-                    .FirstOrDefault(k => !k.Draft && !k.PreRelease);
+                List<GiteeRelease> releases;
+                try
+                {
+                    releases = JsonConvert.DeserializeObject<List<GiteeRelease>>(json);
+                }
+                catch (JsonReaderException ex)
+                {
+                    Logger.Error(ex, json);
+                    NewRelease = null;
+                    return false;
+                }
+
+                var latest = releases.OrderByDescending(k => k.CreatedAt)
+                    .FirstOrDefault(k => !k.PreRelease);
                 if (latest == null)
                 {
                     NewRelease = null;
@@ -50,6 +60,17 @@ namespace YobotExtension.AutoUpdate
                 }
 
                 var latestVer = latest.TagName.TrimStart('v').TrimEnd('.', '0');
+
+                latest.NewVerString = "v" + latestVer;
+                latest.NowVerString = "v" + CurrentVersion;
+                var g = new YamlDotNet.Serialization.Deserializer();
+                var body = latest.Body;
+                body = body.Replace("```yaml", "").Replace("```", "");
+                var giteeBody = g.Deserialize<GiteeBody>(body);
+
+                latest.GithubReleaseFile = giteeBody.ReleaseFile;
+                latest.GithubReleasePage = giteeBody.ReleasePage;
+                latest.Notes = string.Join("\r\n", giteeBody.Notes);
 
                 var latestVerObj = new Version(latestVer);
                 var nowVerObj = new Version(CurrentVersion);
@@ -63,21 +84,18 @@ namespace YobotExtension.AutoUpdate
                 }
 
                 NewRelease = latest;
-                NewRelease.NewVerString = "v" + latestVer;
-                NewRelease.NowVerString = "v" + CurrentVersion;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "Error while checking for updates.");
                 return null;
-                //throw;
             }
 
             IsRunningChecking = false;
             return true;
         }
 
-        static Updater()
+        static GiteeUpdater()
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             HttpClient =
@@ -86,7 +104,7 @@ namespace YobotExtension.AutoUpdate
                     Timeout = TimeSpan.FromMilliseconds(Timeout)
                 };
             HttpClient.DefaultRequestHeaders.Add("User-Agent",
-                "ozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
         }
 
         private static async Task<string> HttpGetAsync(string url)
@@ -96,12 +114,14 @@ namespace YobotExtension.AutoUpdate
                 try
                 {
                     var message = new HttpRequestMessage(HttpMethod.Get, url);
-                    CancellationTokenSource cts = new CancellationTokenSource(Timeout);
+                    var cts = new CancellationTokenSource(Timeout);
                     var response = await HttpClient.SendAsync(message, cts.Token).ConfigureAwait(false);
+                    response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Logger.Warn(ex, $"请求失败 {i + 1}次");
                     if (i == RetryCount - 1)
                         throw;
                 }
