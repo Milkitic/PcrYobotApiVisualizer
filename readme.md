@@ -29,9 +29,9 @@ Provider示例：
     Description = "类型描述")]
 public class DemoStatsProvider : IStatsProvider
 {
-    [StatsMethod("行会每天伤害趋势")]
-    [StatsMethodAcceptGranularity(GranularityType.Total)]
-    [StatsMethodThumbnail("行会每天伤害趋势.jpg")]
+    [StatsMethod("图表选择时的名称")]
+    [StatsMethodAcceptGranularity(GranularityType.Total)] // 为框架提供建议搜索的包含条件
+    [StatsMethodThumbnail("缩略图名称，默认在 ./providers/GUID码/ 中")]
     [UsedImplicitly]
     public CartesianChartConfigModel 自定义名称方法()
     // public PieChartConfigModel 自定义名称方法() // 饼图
