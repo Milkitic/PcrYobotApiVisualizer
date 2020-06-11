@@ -1,4 +1,9 @@
-﻿using YobotExtension.Shared.YobotService;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using System;
+using System.Linq;
+using YobotExtension.Annotations;
+using YobotExtension.Shared.YobotService;
 using YobotExtension.ViewModels;
 
 namespace YobotExtension.ChartFramework.StatsProviders
@@ -10,5 +15,77 @@ namespace YobotExtension.ChartFramework.StatsProviders
     public class ClansStatsProvider : IStatsProvider
     {
         public StatsVm Stats { get; set; }
+        public IChallengeObject[] Challenges => Stats.ApiObj.Challenges;
+
+        [StatsMethod("行会每天伤害趋势")]
+        [StatsMethodAcceptGranularity(GranularityType.Total)]
+        [StatsMethodThumbnail("行会每天伤害趋势.jpg")]
+        [UsedImplicitly]
+        public CartesianChartConfigModel DailyDamageTrend()
+        {
+            var totalDamageTrend = Challenges
+                .GroupBy(k => k.ChallengeTime.Date.ToShortDateString()).ToList();
+            var cartesianConf = new CartesianChartConfigModel
+            {
+                AxisXTitle = "日期",
+                AxisYTitle = "伤害",
+                Title = "行会每天伤害趋势",
+                SeriesCollection = new SeriesCollection
+                {
+                    new LineSeries
+                    {
+                        Values = new ChartValues<int>(totalDamageTrend
+                            .Select(k => k.Sum(o => o.Damage))
+                        ),
+                        Title = "伤害"
+                    }
+                },
+                ChartConfig = chart => chart.AxisY[0].LabelFormatter = value => value.ToString("N0")
+            };
+
+            return cartesianConf;
+        }
+
+        [StatsMethod("行会周目花费时间趋势")]
+        [StatsMethodAcceptGranularity(GranularityType.Total)]
+        [StatsMethodThumbnail("行会周目花费时间趋势.jpg")]
+        [UsedImplicitly]
+        public CartesianChartConfigModel RoundCostTimeTrend()
+        {
+            var totalDamageTrend = Stats.ApiObj.Challenges
+                .GroupBy(k => k.Cycle).ToList();
+
+            var cartesianConf = new CartesianChartConfigModel
+            {
+                AxisXTitle = "周目",
+                AxisYTitle = "周目花费时间",
+                Title = "行会周目花费时间趋势",
+                SeriesCollection = new SeriesCollection
+                {
+                    new LineSeries
+                    {
+                        Values = new ChartValues<double>(totalDamageTrend
+                            .Select((k, i) =>
+                            {
+                                if (i == totalDamageTrend.Count - 1 && k.Count() < 90)
+                                {
+                                    return (
+                                        DateTime.Now - k.Min(o => o.ChallengeTime)
+                                    ).TotalSeconds;
+                                }
+
+                                return (
+                                    k.Max(o => o.ChallengeTime) - k.Min(o => o.ChallengeTime)
+                                ).TotalSeconds;
+                            })
+                        ),
+                        Title = "花费时间"
+                    }
+                },
+                ChartConfig = chart => chart.AxisY[0].LabelFormatter = value => TimeSpan.FromSeconds(value).ToString()
+            };
+
+            return cartesianConf;
+        }
     }
 }

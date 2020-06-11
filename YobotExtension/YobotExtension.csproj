@@ -107,10 +107,6 @@
     <Compile Include="ChartFramework\StatsMethodAttribute.cs" />
     <Compile Include="ChartFramework\StatsProviderInfo.cs" />
     <Compile Include="ChartFramework\StatsProviderMetadataAttribute.cs" />
-    <Compile Include="UserControls\StatsGraphControls\IChartSwitchControl.cs" />
-    <Compile Include="UserControls\StatsGraphControls\TotalDamageTrendControl.xaml.cs">
-      <DependentUpon>TotalDamageTrendControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\StatsGraphVm.cs" />
     <Compile Include="ViewModels\StatsVm.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />
@@ -139,10 +135,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PromptWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\StatsGraphControls\TotalDamageTrendControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -207,6 +199,9 @@
       <Project>{464DC7E9-EC94-4447-AC4F-2B1A027A8BF8}</Project>
       <Name>YobotExtension.YobotService</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="providers\872c4594-aaf1-4453-a652-fb304cb936f7\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
