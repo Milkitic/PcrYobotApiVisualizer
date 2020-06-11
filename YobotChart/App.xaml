@@ -7,9 +7,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-
+                <ResourceDictionary Source="UiComponents/ButtonComponent/CommonButton.xaml" />
+                <ResourceDictionary Source="UiComponents/LoaderComponent/Loader.xaml" />
+                <ResourceDictionary Source="UiComponents/TextBoxComponent/CommonTextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
             <QuinticEase x:Key="QuinticEaseOut" EasingMode="EaseOut" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>

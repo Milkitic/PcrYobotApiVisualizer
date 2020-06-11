@@ -17,9 +17,10 @@ using YobotChart.ChartFramework;
 using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
 using YobotChart.Shared.YobotService.V1;
+using YobotChart.UiComponents.FrontDialogComponent;
+using YobotChart.UserControls;
 using YobotChart.ViewModels;
 using YobotChart.YobotService;
-using NewVersionWindow = YobotChart.AutoUpdate.NewVersionWindow;
 
 namespace YobotChart
 {
@@ -111,18 +112,31 @@ namespace YobotChart
             await Load();
         }
 
-        private static async Task<string> YobotService_InitRequested()
+        private async Task<string> YobotService_InitRequested()
         {
-            var win = new PromptWindow();
-            win.ShowDialog();
-            await Task.CompletedTask;
-            return win.Text;
+            bool? result = null;
+            var initUriControl = new InitUriControl();
+            FrontDialogOverlay.ShowContent(initUriControl, new FrontDialogOverlay.ShowContentOptions
+            {
+                Height = 400,
+                Width = 650,
+                ShowDialogButtons = false,
+                ShowTitleBar = false
+            }, (sender, args) => result = true,
+                (sender, args) => result = false);
+            await Task.Run(() =>
+            {
+                while (result == null)
+                {
+                    Thread.Sleep(10);
+                }
+            });
+            return initUriControl.Text;
         }
 
         private async Task Load()
         {
             await UpdateDataAsync();
-            UpdateInterface();
         }
 
         public void RecreateGraph()
@@ -182,6 +196,10 @@ namespace YobotChart
                 {
                     UpdateInterface();
                 }
+            }
+            catch (ArgumentNullException arg)
+            {
+
             }
             finally
             {

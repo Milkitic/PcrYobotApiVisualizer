@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:YobotChart"
+    xmlns:frontDialogComponent="clr-namespace:YobotChart.UiComponents.FrontDialogComponent"
     Title="MainWindow"
     Width="1600"
     Height="900"
@@ -222,13 +223,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <WebBrowser x:Name="Browser" Grid.Row="0">
+        <WebBrowser x:Name="Browser" Grid.Row="1">
             <WebBrowser.Visibility>Collapsed</WebBrowser.Visibility>
         </WebBrowser>
         <StackPanel
-            Grid.Row="0"
+            Grid.Row="1"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button
@@ -242,7 +244,7 @@
                 Click="Logout_Click"
                 Content="退出登录" />
         </StackPanel>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
@@ -270,7 +272,7 @@
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>-->
         <Label
-            Grid.Row="0"
+            Grid.Row="1"
             Grid.RowSpan="2"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
@@ -280,7 +282,7 @@
             Foreground="White"
             Visibility="{Binding Stats.IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Grid
-            Grid.Row="0"
+            Grid.Row="1"
             Grid.RowSpan="2"
             Margin="15">
             <Grid.ColumnDefinitions>
@@ -306,5 +308,9 @@
                 <ItemsControl ItemTemplate="{StaticResource ProviderItem}" ItemsSource="{Binding StatsProvidersList}" />
             </ScrollViewer>
         </Grid>
+        <frontDialogComponent:FrontDialogOverlay
+            x:Name="FrontDialogOverlay"
+            Grid.Row="1"
+            Grid.RowSpan="2" />
     </Grid>
 </Window>

@@ -1,0 +1,52 @@
+﻿<UserControl
+    x:Class="YobotChart.UserControls.InitUriControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttonComponent="clr-namespace:YobotChart.UiComponents.ButtonComponent"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:YobotChart.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:textBoxComponent="clr-namespace:YobotChart.UiComponents.TextBoxComponent"
+    d:DesignHeight="400"
+    d:DesignWidth="650"
+    mc:Ignorable="d">
+
+    <Grid VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            Content="登录链接 / API链接"
+            FontSize="24" />
+        <textBoxComponent:CommonTextBox
+            x:Name="TextBox"
+            Grid.Row="1"
+            Width="Auto"
+            Height="40"
+            Margin="40,0"
+            Padding="4,0,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            AcceptsReturn="True"
+            FontSize="18"
+            Hint="../login/c/#qqid=..&amp;key=.. 或 ../clan/../statistics/api/?apikey=.." />
+        <buttonComponent:CommonButton
+            Grid.Row="2"
+            Width="48"
+            Height="48"
+            Margin="0,20,0,0"
+            Padding="0"
+            HorizontalAlignment="Center"
+            BorderBrush="#505771"
+            BorderThickness="2"
+            Click="Button_Click"
+            Content="OK"
+            CornerRadius="24"
+            FontSize="18"
+            Foreground="#505771" />
+    </Grid>
+</UserControl>

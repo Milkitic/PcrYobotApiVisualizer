@@ -62,35 +62,20 @@ namespace YobotChart
 
         private static bool LoadConfig()
         {
-            var file = AppSettings.Files.ConfigFile;
-            if (!File.Exists(file))
+            try
             {
-                AppSettings.CreateNewConfig();
+                AppSettings.LoadFromDefaultFile();
             }
-            else
+            catch (Exception ex)
             {
-                try
+                var result = MessageBox.Show("载入配置文件时失败，用默认配置覆盖继续打开吗？" + Environment.NewLine + ex.Message,
+                    "YobotChart", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
                 {
-                    var content = File.ReadAllText(file);
-                    AppSettings.Load(JsonConvert.DeserializeObject<AppSettings>(content,
-                            new JsonSerializerSettings
-                            {
-                                TypeNameHandling = TypeNameHandling.Auto
-                            }
-                        )
-                    );
+                    AppSettings.CreateNewConfig();
                 }
-                catch (JsonException ex)
-                {
-                    var result = MessageBox.Show("载入配置文件时失败，用默认配置覆盖继续打开吗？" + Environment.NewLine + ex.Message,
-                        "YobotChart", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        AppSettings.CreateNewConfig();
-                    }
-                    else
-                        return false;
-                }
+                else
+                    return false;
             }
 
             return true;

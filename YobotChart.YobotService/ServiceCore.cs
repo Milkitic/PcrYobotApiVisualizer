@@ -199,6 +199,8 @@ namespace YobotChart.YobotService
             if (InitRequested == null) throw new Exception("登录失败，请检查链接是否已过期");
 
             var newUri = await InitRequested.Invoke();
+            if (newUri == null)
+                throw new ArgumentNullException();
             result = await LoginAsync(newUri);
             if (!result) throw new Exception("登录失败，请检查链接是否已过期");
         }
