@@ -99,7 +99,7 @@ namespace YobotChart
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            var newVersionWindow = new AutoUpdate.NewVersionWindow(_updater.NewRelease, this);
+                            var newVersionWindow = new NewVersionWindow(_updater.NewRelease, this);
                             newVersionWindow.ShowDialog();
                         });
                     }

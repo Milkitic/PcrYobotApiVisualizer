@@ -2,6 +2,7 @@
     x:Class="YobotChart.UiComponents.NotificationComponent.NotifyControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttonComponent="clr-namespace:YobotChart.UiComponents.ButtonComponent"
     xmlns:converters="clr-namespace:YobotChart.UiComponents.NotificationComponent.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,6 +10,9 @@
     Height="auto"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
+    <d:Object.DataContext>
+        <notificationComponent:NotificationOption />
+    </d:Object.DataContext>
     <UserControl.Resources>
         <Color
             x:Key="BackColor"
@@ -34,8 +38,8 @@
                         <Grid Cursor="Hand">
                             <Border
                                 x:Name="BtnBorder"
-                                Background="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource MixColorConverter}}"
-                                TextBlock.Foreground="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource FontColorConverter}}">
+                                Background="{Binding ElementName=MainButton, Path=Background, Converter={StaticResource MixColorConverter}}"
+                                TextBlock.Foreground="{Binding ElementName=MainButton, Path=Background, Converter={StaticResource FontColorConverter}}">
                                 <ContentPresenter
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
@@ -65,10 +69,11 @@
                                 Margin="2"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                                <ContentPresenter x:Name="Presenter" Content="{TemplateBinding Content}" />
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Cursor="{TemplateBinding Cursor}">
+                                <ContentPresenter x:Name="Presenter" />
                             </Border>
-                            <Border x:Name="BackBorder">
+                            <Border x:Name="BackBorder" IsHitTestVisible="False">
                                 <Border.Background>
                                     <SolidColorBrush x:Name="Scb" Color="Transparent" />
                                 </Border.Background>
@@ -158,8 +163,8 @@
             </Rectangle.Effect>
         </Rectangle>
         <Button
-            x:Name="MainBorder"
-            Margin="8" 
+            x:Name="MainButton"
+            Margin="8"
             Background="{StaticResource BackBrush}"
             BorderBrush="Transparent"
             BorderThickness="0"
@@ -167,127 +172,98 @@
             Style="{StaticResource NotifyStyle}">
             <Button.Cursor>
                 <MultiBinding Converter="{StaticResource Multi_ExplicitlyAndTypeToCursorConverter}">
-                    <Binding Path="CloseExplicitly" />
                     <Binding Path="Type" />
+                    <Binding Path="CloseExplicitly" />
                 </MultiBinding>
             </Button.Cursor>
-            <Grid
-                x:Name="VirtualInfoArea"
-                Margin="10,5"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                TextBlock.Foreground="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource FontColorConverter}}"
-                Visibility="Visible">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Viewbox
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Width="30"
-                    Height="30"
-                    Margin="10"
+            <Grid>
+                <buttonComponent:CommonButton
+                    x:Name="BtnClose"
+                    Width="12"
+                    Height="12"
+                    Margin="0,5,5,0"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Visibility="{Binding IconTemplate, Converter={StaticResource EmptyToVisibleConverter}}">
-
-                    <ContentControl Template="{Binding IconTemplate}" />
-                </Viewbox>
-                <StackPanel
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    VerticalAlignment="Center">
-                    <Label
-                        Content="{Binding Title}"
-                        FontSize="14"
-                        FontWeight="Bold"
-                        Foreground="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource FontColorConverter}}"
-                        Visibility="{Binding Title, Converter={StaticResource EmptyToVisibleConverter}}" />
-                    <Label
-                        Margin="0,0,5,0"
-                        FontSize="14"
-                        Foreground="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource FontColorConverter}}"
-                        Visibility="{Binding Content, Converter={StaticResource EmptyToVisibleConverter}}">
-                        <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
-                    </Label>
-                </StackPanel>
+                    Click="BtnClose_Click"
+                    Cursor="Hand"
+                    Foreground="{Binding ElementName=MainButton, Path=Background, Converter={StaticResource FontColorConverter}}"
+                    IconMargin="0"
+                    IconTemplate="{StaticResource CloseTempl}"
+                    Visibility="{Binding CloseExplicitly, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Rectangle
+                    x:Name="BoxFlag"
+                    Width="8"
+                    HorizontalAlignment="Left" />
+                <Border
+                    x:Name="MainGrid"
+                    Padding="10,5"
+                    BorderBrush="#C0FFFFFF"
+                    BorderThickness="1">
+                    <StackPanel x:Name="FunctionArea">
+                        <Grid
+                            x:Name="InfoArea"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            TextBlock.Foreground="{Binding ElementName=MainButton, Path=Background, Converter={StaticResource FontColorConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Viewbox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Width="30"
+                                Height="30"
+                                Margin="10"
+                                VerticalAlignment="Top"
+                                Visibility="{Binding IconTemplate, Converter={StaticResource EmptyToVisibleConverter}}">
+                                <Grid>
+                                    <ContentControl Template="{Binding IconTemplate}" />
+                                </Grid>
+                            </Viewbox>
+                            <StackPanel
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                VerticalAlignment="Center">
+                                <Label
+                                    Content="{Binding Title}"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="{Binding ElementName=MainButton, Path=Background, Converter={StaticResource FontColorConverter}}"
+                                    Visibility="{Binding Title, Converter={StaticResource EmptyToVisibleConverter}}" />
+                                <Label
+                                    Margin="0,0,5,0"
+                                    FontSize="14"
+                                    Foreground="{Binding ElementName=MainButton, Path=Background, Converter={StaticResource FontColorConverter}}"
+                                    Visibility="{Binding Content, Converter={StaticResource EmptyToVisibleConverter}}">
+                                    <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                                </Label>
+                            </StackPanel>
+                        </Grid>
+                        <Grid
+                            x:Name="YesNoPanel"
+                            Height="34"
+                            Visibility="{Binding Type, Converter={StaticResource NotificationTypeConverter}, ConverterParameter=Confirm}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Column="0"
+                                Margin="0,4,4,4"
+                                Click="YesButton_Click"
+                                Content="是"
+                                Style="{StaticResource BtnStyle}" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="4,4,0,4"
+                                Click="NoButton_Click"
+                                Content="否"
+                                Style="{StaticResource BtnStyle}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Button>
-        <Grid Margin="10">
-            <Rectangle
-                x:Name="BoxFlag"
-                Width="8"
-                HorizontalAlignment="Left" />
-            <Border
-                x:Name="MainGrid"
-                Padding="10,5"
-                BorderBrush="#C0FFFFFF"
-                BorderThickness="1">
-                <StackPanel x:Name="FunctionArea">
-                    <Grid
-                        x:Name="InfoArea"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        TextBlock.Foreground="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource FontColorConverter}}"
-                        Visibility="Hidden">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Viewbox
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Width="30"
-                            Height="30"
-                            Margin="10"
-                            VerticalAlignment="Top"
-                            Visibility="{Binding IconTemplate, Converter={StaticResource EmptyToVisibleConverter}}">
-                            <Grid>
-                                <ContentControl Template="{Binding IconTemplate}" />
-                            </Grid>
-                        </Viewbox>
-                        <StackPanel
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            VerticalAlignment="Center">
-                            <Label
-                                Content="{Binding Title}"
-                                FontSize="14"
-                                FontWeight="Bold"
-                                Foreground="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource FontColorConverter}}"
-                                Visibility="{Binding Title, Converter={StaticResource EmptyToVisibleConverter}}" />
-                            <Label
-                                Margin="0,0,5,0"
-                                FontSize="14"
-                                Foreground="{Binding ElementName=MainBorder, Path=Background, Converter={StaticResource FontColorConverter}}"
-                                Visibility="{Binding Content, Converter={StaticResource EmptyToVisibleConverter}}">
-                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
-                            </Label>
-                        </StackPanel>
-                    </Grid>
-                    <Grid
-                        x:Name="YesNoPanel"
-                        Height="34"
-                        Visibility="{Binding Type, Converter={StaticResource NotificationTypeConverter}, ConverterParameter=Confirm}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Button
-                            Grid.Column="0"
-                            Margin="0,4,4,4"
-                            Click="YesButton_Click"
-                            Content="是"
-                            Style="{StaticResource BtnStyle}" />
-                        <Button
-                            Grid.Column="1"
-                            Margin="4,4,0,4"
-                            Click="NoButton_Click"
-                            Content="否"
-                            Style="{StaticResource BtnStyle}" />
-                    </Grid>
-                </StackPanel>
-            </Border>
-        </Grid>
     </Grid>
 </UserControl>

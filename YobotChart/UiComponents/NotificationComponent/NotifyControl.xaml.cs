@@ -246,5 +246,10 @@ namespace YobotChart.UiComponents.NotificationComponent
             ViewModel.NoCallback?.Invoke();
             TriggerHide();
         }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            TriggerHide();
+        }
     }
 }
