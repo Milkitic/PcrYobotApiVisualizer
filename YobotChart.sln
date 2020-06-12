@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YobotChart.YobotService", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YobotChart.Shared.Win32", "YobotChart.Shared.Win32\YobotChart.Shared.Win32.csproj", "{44155F0B-18EC-415E-A03A-ED4056BE8D64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YamlDotNet.Comment", "YamlDotNet.Comment\YamlDotNet.Comment.csproj", "{9052C540-FA01-444A-A301-555DB27CBDD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{44155F0B-18EC-415E-A03A-ED4056BE8D64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44155F0B-18EC-415E-A03A-ED4056BE8D64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44155F0B-18EC-415E-A03A-ED4056BE8D64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9052C540-FA01-444A-A301-555DB27CBDD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9052C540-FA01-444A-A301-555DB27CBDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9052C540-FA01-444A-A301-555DB27CBDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9052C540-FA01-444A-A301-555DB27CBDD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

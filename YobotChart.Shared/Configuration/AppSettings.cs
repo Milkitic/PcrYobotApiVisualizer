@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
+using YamlDotNet.Comment;
+using YamlDotNet.Serialization;
 
 namespace YobotChart.Shared.Configuration
 {
@@ -27,16 +30,19 @@ namespace YobotChart.Shared.Configuration
             Default = this;
         }
 
-        [JsonProperty("general")]
+        [YamlMember(Alias = "general")]
+        [Description("通常设置")]
         public GeneralSection General { get; set; } = new GeneralSection();
 
         public void Save()
         {
             lock (FileSaveLock)
             {
-                var builder = new YamlDotNet.Serialization.SerializerBuilder();
+                var converter = new SerializerBuilder()
+                        .WithTypeInspector(inner => new CommentGatheringTypeInspector(inner))
+                        .WithEmissionPhaseObjectGraphVisitor(args => new CommentsObjectGraphVisitor(args.InnerVisitor))
+                        .Build();
                 //builder.WithTagMapping("tag:yaml.org,2002:test", typeof(Test));
-                var converter = builder.Build();
                 var content = converter.Serialize(this);
                 File.WriteAllText(Files.ConfigFile, content);
             }

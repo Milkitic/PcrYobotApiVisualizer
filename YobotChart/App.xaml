@@ -7,6 +7,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Colors/Theme/default.xaml"/>
+                <ResourceDictionary Source="Styles/BrushDictionary.xaml"/>
                 <ResourceDictionary Source="Styles/SvgDictionary.xaml" />
                 <ResourceDictionary Source="UiComponents/ButtonComponent/CommonButton.xaml" />
                 <ResourceDictionary Source="UiComponents/LoaderComponent/Loader.xaml" />
