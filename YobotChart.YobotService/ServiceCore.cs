@@ -65,11 +65,14 @@ namespace YobotChart.YobotService
 
             if (origin != Origin && !string.IsNullOrWhiteSpace(Origin) && OriginChangeRequested != null)
             {
-                var result = await OriginChangeRequested?.Invoke();
-                if (result)
+                if (OriginChangeRequested != null)
                 {
-                    AppSettings.Default.General.Origin = origin;
-                    AppSettings.SaveDefault();
+                    var result = await (OriginChangeRequested.Invoke().ConfigureAwait(false));
+                    if (result)
+                    {
+                        AppSettings.Default.General.Origin = origin;
+                        AppSettings.SaveDefault();
+                    }
                 }
             }
             else
@@ -81,18 +84,18 @@ namespace YobotChart.YobotService
             Host = uri.Host;
             Origin = origin;
 
-            await ValidateVersion();
+            await ValidateVersion().ConfigureAwait(false);
             _mre.Reset();
-            _hiddenWebBrowser.Navigate(loginUrl);
-            var waitResult = await Task.Run(() => _mre.Wait(_timeoutMilliseconds));
+            Execute.OnUiThread(() => _hiddenWebBrowser.Navigate(loginUrl));
+            var waitResult = await Task.Run(() => _mre.Wait(_timeoutMilliseconds)).ConfigureAwait(false);
             return waitResult;
         }
 
         public async Task<string> ValidateVersion()
         {
             var o = new HttpClient();
-            var result = await o.GetAsync(Origin + "/yobot/about/");
-            var str = await result.Content.ReadAsStringAsync();
+            var result = await o.GetAsync(Origin + "/yobot/about/").ConfigureAwait(false);
+            var str = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
             var ver1Index = str.IndexOf("版本：", StringComparison.Ordinal);
             if (ver1Index == -1) return null;
             var verIndex2 = str.IndexOf("</p>", ver1Index, StringComparison.Ordinal);
@@ -122,14 +125,14 @@ namespace YobotChart.YobotService
 
         public async Task<YobotApiObjectV1> GetApiInfo()
         {
-            var str = await InnerGetApiInfo(false);
+            var str = await InnerGetApiInfo(false).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<YobotApiObjectV1>(str);
         }
 
         public async Task<bool> LogoutAsync()
         {
             _hiddenWebBrowser.LoadCompleted += LoadCompleted;
-            _hiddenWebBrowser.Navigate($"{Origin}/yobot/logout/");
+            Execute.OnUiThread(() => _hiddenWebBrowser.Navigate($"{Origin}/yobot/logout/"));
             bool success = false;
             await Task.Run(() =>
             {
@@ -144,7 +147,7 @@ namespace YobotChart.YobotService
 
                     Thread.Sleep(10);
                 }
-            });
+            }).ConfigureAwait(false);
 
             Cookie = null;
             IsLogin = false;
@@ -163,14 +166,14 @@ namespace YobotChart.YobotService
 
         private async Task<string> InnerGetApiInfo(bool loop)
         {
-            await CheckIsLogin();
+            await CheckIsLogin().ConfigureAwait(false);
 
             var request = (HttpWebRequest)WebRequest.Create($"{Origin}/yobot/clan/{GroupId}/statistics/api/");
             request.Method = "GET";
             SetCookie(request);
 
             string responseFromServer;
-            using (var response = await request.GetResponseAsync())
+            using (var response = await request.GetResponseAsync().ConfigureAwait(false))
             using (var dataStream = response.GetResponseStream())
             using (var reader = new StreamReader(dataStream))
             {
@@ -183,7 +186,7 @@ namespace YobotChart.YobotService
                 var code = jp.Value.Value<long>();
                 if (code != 0)
                 {
-                    if (!loop) return await InnerGetApiInfo(true);
+                    if (!loop) return await InnerGetApiInfo(true).ConfigureAwait(false);
                     if (jObj.Last is JProperty jp2 && jp2.Name == "message")
                         throw new Exception($"[{code}] {jp2.Value.Value<string>()}");
                 }
@@ -196,12 +199,14 @@ namespace YobotChart.YobotService
         {
             if (IsLogin) return;
 
-            var result = await LoginAsync($"{Origin}/yobot/login/");
+            var result = await LoginAsync($"{Origin}/yobot/login/").ConfigureAwait(false);
             if (result) return;
 
             if (InitRequested == null) throw new Exception("登录失败，请检查链接是否已过期");
 
-            var newUri = await InitRequested.Invoke();
+            string newUri = null;
+            if (InitRequested != null)
+                newUri = await InitRequested.Invoke().ConfigureAwait(false);
             if (newUri == null)
             {
                 Origin = null;
@@ -210,7 +215,7 @@ namespace YobotChart.YobotService
                 throw new ArgumentNullException();
             }
 
-            result = await LoginAsync(newUri);
+            result = await LoginAsync(newUri).ConfigureAwait(false);
             if (!result) throw new Exception("登录失败，请检查链接是否已过期");
         }
 
@@ -227,7 +232,7 @@ namespace YobotChart.YobotService
 
         private void HiddenWebBrowser_Navigated(object sender, NavigationEventArgs e)
         {
-            _hiddenWebBrowser.SetSilent(true); // make it silent
+            Execute.OnUiThread(() => _hiddenWebBrowser.SetSilent(true)); // make it silent
             Console.WriteLine("Navigate to " + _hiddenWebBrowser.Source);
         }
 
@@ -238,7 +243,7 @@ namespace YobotChart.YobotService
                 var url = _hiddenWebBrowser.Source.ToString();
                 if (url.EndsWith("/yobot/user/reset-password/") && !IsLogin) // 用户未设定密码会自动跳转
                 {
-                    _hiddenWebBrowser.Navigate($"{Origin}/yobot/user/");
+                    Execute.OnUiThread(() => _hiddenWebBrowser.Navigate($"{Origin}/yobot/user/"));
                 }
                 else if (url.EndsWith("/yobot/user/") && !IsLogin)     // 爬取个人信息、公会信息
                 {
@@ -319,7 +324,7 @@ namespace YobotChart.YobotService
                             }
                         }
                     }
-                   
+
 
                     _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
                     // ↓ 如果跳转至公会信息，则上面爬取的内容无误

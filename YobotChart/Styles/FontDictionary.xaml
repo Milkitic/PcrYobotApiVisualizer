@@ -1,0 +1,7 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <FontFamily x:Key="FontExtraLight">pack://application:,,,/YobotChart;component/Resources/Fonts/#Source Sans Pro ExtraLight,微软雅黑</FontFamily>
+    <FontFamily x:Key="FontLight">pack://application:,,,/YobotChart;component/Resources/Fonts/#Source Sans Pro Light,微软雅黑</FontFamily>
+    <FontFamily x:Key="FontRegular">pack://application:,,,/YobotChart;component/Resources/Fonts/#Source Sans Pro,微软雅黑</FontFamily>
+    <FontFamily x:Key="FontSemiBold">pack://application:,,,/YobotChart;component/Resources/Fonts/#Source Sans Pro Semibold,微软雅黑</FontFamily>
+    <FontFamily x:Key="FontBlack">pack://application:,,,/YobotChart;component/Resources/Fonts/#Source Sans Pro Black,微软雅黑</FontFamily>
+</ResourceDictionary>

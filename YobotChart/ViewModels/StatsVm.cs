@@ -125,5 +125,23 @@ namespace YobotChart.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private static StatsVm _default;
+        private static object _defaultLock = new object();
+
+        public static StatsVm Default
+        {
+            get
+            {
+                lock (_defaultLock)
+                {
+                    return _default ?? (_default = new StatsVm());
+                }
+            }
+        }
+
+        private StatsVm()
+        {
+        }
     }
 }

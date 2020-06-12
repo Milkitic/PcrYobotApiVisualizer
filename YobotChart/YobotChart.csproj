@@ -94,6 +94,7 @@
     <Compile Include="ChartFramework\StatsMethodAcceptGranularityAttribute.cs" />
     <Compile Include="ChartFramework\StatsMethodThumbnailAttribute.cs" />
     <Compile Include="ChartFramework\StatsProviders\ClansStatsProvider.cs" />
+    <Compile Include="Converters\WindowMarginConverter.cs" />
     <Compile Include="IChartProvider.cs" />
     <Compile Include="ChartFramework\CartesianChartConfigModel.cs" />
     <Compile Include="ChartFramework\ChartConfigModel.cs" />
@@ -107,6 +108,9 @@
     <Compile Include="ChartFramework\StatsMethodAttribute.cs" />
     <Compile Include="ChartFramework\StatsProviderInfo.cs" />
     <Compile Include="ChartFramework\StatsProviderMetadataAttribute.cs" />
+    <Compile Include="Pages\SelectTemplatePage.xaml.cs">
+      <DependentUpon>SelectTemplatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UiComponents\ButtonComponent\CloseButton.cs" />
     <Compile Include="UiComponents\ButtonComponent\CommonButton.cs" />
     <Compile Include="UiComponents\ButtonComponent\MaxButton.cs" />
@@ -161,6 +165,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\SelectTemplatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\BrushDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -168,6 +176,14 @@
     <Page Include="Styles\Colors\Theme\default.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ConverterDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\FontDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\SvgDictionary.xaml">
       <SubType>Designer</SubType>
@@ -250,6 +266,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Fonts\SourceSansPro-Black.ttf" />
+    <Resource Include="Resources\Fonts\SourceSansPro-Bold.ttf" />
+    <Resource Include="Resources\Fonts\SourceSansPro-ExtraLight.ttf" />
+    <Resource Include="Resources\Fonts\SourceSansPro-Light.ttf" />
+    <Resource Include="Resources\Fonts\SourceSansPro-Regular.ttf" />
+    <Resource Include="Resources\Fonts\SourceSansPro-Semibold.ttf" />
     <None Include="template.json" />
   </ItemGroup>
   <ItemGroup>

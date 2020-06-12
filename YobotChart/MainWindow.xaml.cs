@@ -2,8 +2,8 @@
 using LiveCharts.Wpf;
 using LiveCharts.Wpf.Charts.Base;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -14,6 +14,7 @@ using System.Windows.Data;
 using YobotChart.Annotations;
 using YobotChart.AutoUpdate;
 using YobotChart.ChartFramework;
+using YobotChart.Pages;
 using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
 using YobotChart.Shared.YobotService.V1;
@@ -27,8 +28,7 @@ namespace YobotChart
 {
     public class MainWindowVm : INotifyPropertyChanged
     {
-        private StatsVm _stats = new StatsVm();
-        private HashSet<StatsProviderInfo> _statsProvidersList;
+        private StatsVm _stats = StatsVm.Default;
 
         public StatsVm Stats
         {
@@ -41,16 +41,6 @@ namespace YobotChart
             }
         }
 
-        public HashSet<StatsProviderInfo> StatsProvidersList
-        {
-            get => _statsProvidersList;
-            set
-            {
-                if (Equals(value, _statsProvidersList)) return;
-                _statsProvidersList = value;
-                OnPropertyChanged();
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -127,11 +117,11 @@ namespace YobotChart
                 ShowTitleBar = false
             }, (sender, args) => result = true,
                 (sender, args) => result = false);
-            await Task.Run(() =>
+            await Task.Factory.StartNew(() =>
             {
                 while (result == null)
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
             });
             return initUriControl.Text;
@@ -188,17 +178,15 @@ namespace YobotChart
 
             try
             {
-                bool updateInterface = _viewModel.Stats.ApiObj == null;
-                var apiObj = await _yobotService.GetApiInfo();
+                var apiObj = await _yobotService.GetApiInfo().ConfigureAwait(false);
                 _viewModel.Stats.ApiObj = apiObj;
                 _viewModel.Stats.ApiObj.Challenges = _viewModel.Stats.ApiObj.Challenges.OrderBy(k => k.ChallengeTime)
                     /*         .Where(k => k.ChallengeTime < new DateTime(2020, 5, 15))*/.ToArray();
                 _viewModel.Stats.CycleCount = _viewModel.Stats.ApiObj.Challenges.GroupBy(k => k.Cycle).Count();
 
-                if (updateInterface)
-                {
-                    UpdateInterface();
-                }
+                _viewModel.Stats.SelectedCycle = _viewModel.Stats.CycleCount;
+                _viewModel.Stats.SelectedDate =
+                    _viewModel.Stats.ApiObj.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
             }
             catch (ArgumentNullException arg)
             {
@@ -206,17 +194,8 @@ namespace YobotChart
             }
             finally
             {
-                btnUpdateData.IsEnabled = true;
+                Execute.OnUiThread(() => btnUpdateData.IsEnabled = true);
             }
-        }
-
-        private void UpdateInterface()
-        {
-            _viewModel.Stats.SelectedCycle = _viewModel.Stats.CycleCount;
-            _viewModel.Stats.SelectedDate =
-                _viewModel.Stats.ApiObj.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
-
-            _viewModel.StatsProvidersList = ChartProviderLoader.Load(_viewModel.Stats);
         }
 
         private Timer _loadTimer;
@@ -292,6 +271,11 @@ namespace YobotChart
         private async void Logout_Click(object sender, RoutedEventArgs e)
         {
             await _yobotService.LogoutAsync();
+        }
+
+        private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new SelectTemplatePage());
         }
     }
 }
