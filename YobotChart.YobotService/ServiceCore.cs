@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,15 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using YobotChart.Shared.Configuration;
+using YobotChart.Shared.Win32;
 using YobotChart.Shared.YobotService;
 using YobotChart.Shared.YobotService.V1;
-using YobotChart.Shared.Win32;
 
 namespace YobotChart.YobotService
 {
     public class ServiceCore : IYobotServiceV1
     {
-        public string Version { get; } = "3.6.3.4";
+        public string Version { get; } = "3.6.3.0.4";
         public string ApiVersion => "1";
 
         private WebBrowser _hiddenWebBrowser;
@@ -103,7 +104,9 @@ namespace YobotChart.YobotService
             var braceIndex2 = subStr.IndexOf(']', braceIndex1);
             if (braceIndex2 == -1) return null;
             var version = subStr.Substring(braceIndex1 + 1, braceIndex2 - braceIndex1 - 1);
-            version = version.Replace("-beta", "").Replace("-alpha", ".0").Trim('v');
+            version = version.Replace("-rc", "")
+                .Replace("-beta", ".0")
+                .Replace("-alpha", ".0.0").Trim('v');
             if (version != this.Version)
             {
                 Console.WriteLine("yobot版本：" + version + "，当前版本支持：" + this.Version + "。可能存在兼容问题");
@@ -200,7 +203,13 @@ namespace YobotChart.YobotService
 
             var newUri = await InitRequested.Invoke();
             if (newUri == null)
+            {
+                Origin = null;
+                AppSettings.Default.General.Origin = null;
+                AppSettings.SaveDefault();
                 throw new ArgumentNullException();
+            }
+
             result = await LoginAsync(newUri);
             if (!result) throw new Exception("登录失败，请检查链接是否已过期");
         }
@@ -219,66 +228,117 @@ namespace YobotChart.YobotService
         private void HiddenWebBrowser_Navigated(object sender, NavigationEventArgs e)
         {
             _hiddenWebBrowser.SetSilent(true); // make it silent
+            Console.WriteLine("Navigate to " + _hiddenWebBrowser.Source);
         }
 
         private void HiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
         {
-            var url = _hiddenWebBrowser.Source.ToString();
-            // ↓ 爬取个人信息、公会信息
-            if (url.EndsWith("/yobot/user/") && !IsLogin)
+            try
             {
-                var outerHtml = _hiddenWebBrowser.GetDocumentOuterHtml();
-
-                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                htmlDoc.LoadHtml(outerHtml);
-
-                var docNode = htmlDoc.DocumentNode;
-
-                var elRows = docNode.Descendants("el-row").ToList();
-                if (elRows.Count <= 1) return;
-
-                var elRowChildNodes = elRows[0].ChildNodes.Where(k => k.Name == "a").ToArray();
-                // 功能按钮列表
-                if (elRowChildNodes.Length <= 1) return;
-
-                var btnMyCenter = elRowChildNodes.First(); // 个人中心按钮
-                var href = btnMyCenter.GetAttributeValue("href", null);
-                if (href != null)
+                var url = _hiddenWebBrowser.Source.ToString();
+                if (url.EndsWith("/yobot/user/reset-password/") && !IsLogin) // 用户未设定密码会自动跳转
                 {
-                    QqId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                    if (!long.TryParse(QqId, out _))
-                    {
-                        Console.WriteLine("错误：非法的QQ号，可能页面已发生改变");
-                    }
+                    _hiddenWebBrowser.Navigate($"{Origin}/yobot/user/");
                 }
-
-                elRowChildNodes = elRows[1].ChildNodes.Where(k => k.Name == "a").ToArray();
-                // 公会（可能多个）按钮
-                if (elRowChildNodes.Length <= 1) return;
-
-                var btnClan = elRowChildNodes.Last(); // 选择最后一个
-                href = btnClan.GetAttributeValue("href", null);
-                if (href != null)
+                else if (url.EndsWith("/yobot/user/") && !IsLogin)     // 爬取个人信息、公会信息
                 {
-                    GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries)
-                        .LastOrDefault();
-                    if (!long.TryParse(GroupId, out _))
-                    {
-                        Console.WriteLine("错误：非法的QQ群号，可能页面已发生改变");
-                    }
-                }
+                    Console.WriteLine("用户中心界面加载完成");
+                    var outerHtml = _hiddenWebBrowser.GetDocumentOuterHtml();
 
-                _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
-                // ↓ 如果跳转至公会信息，则上面爬取的内容无误
+                    var htmlDoc = new HtmlDocument();
+                    htmlDoc.LoadHtml(outerHtml);
+
+                    var docNode = htmlDoc.DocumentNode;
+
+                    var elRows = docNode.Descendants("el-row").ToList();
+                    var elRowChildNodes = elRows[0].ChildNodes.Where(k => k.Name == "a").ToArray();
+                    // 功能按钮列表
+                    if (elRowChildNodes.Length <= 1) return;
+
+                    var btnMyCenter = elRowChildNodes.First(); // 个人中心按钮
+                    var href = btnMyCenter.GetAttributeValue("href", null);
+                    if (href != null)
+                    {
+                        QqId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                        if (!long.TryParse(QqId, out _))
+                        {
+                            Console.WriteLine("错误：非法的QQ号，可能页面已发生改变");
+                        }
+                        else
+                        {
+                            Console.WriteLine("QQ: " + QqId);
+                        }
+                    }
+                    if (elRows.Count <= 1)
+                    {
+                        if (elRowChildNodes.Length < 4)
+                        {
+                            Console.WriteLine("警告：没有加入公会");
+                            return;
+                        }
+
+                        var btnClan = elRowChildNodes[1]; // 选择最后一个
+                        href = btnClan.GetAttributeValue("href", null);
+                        if (href != null)
+                        {
+                            GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries)
+                                .LastOrDefault();
+                            if (!long.TryParse(GroupId, out _))
+                            {
+                                Console.WriteLine("错误：非法的QQ群号，可能页面已发生改变");
+                            }
+                            else
+                            {
+                                Console.WriteLine("QQ群: " + GroupId);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        elRowChildNodes = elRows[1].ChildNodes.Where(k => k.Name == "a").ToArray();
+                        // 公会（可能多个）按钮
+                        if (elRowChildNodes.Length < 1)
+                        {
+                            Console.WriteLine("警告：没有加入公会");
+                            return;
+                        }
+
+                        var btnClan = elRowChildNodes.Last(); // 选择最后一个
+                        href = btnClan.GetAttributeValue("href", null);
+                        if (href != null)
+                        {
+                            GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries)
+                                .LastOrDefault();
+                            if (!long.TryParse(GroupId, out _))
+                            {
+                                Console.WriteLine("错误：非法的QQ群号，可能页面已发生改变");
+                            }
+                            else
+                            {
+                                Console.WriteLine("QQ群: " + GroupId);
+                            }
+                        }
+                    }
+                   
+
+                    _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
+                    // ↓ 如果跳转至公会信息，则上面爬取的内容无误
+                }
+                else if (url.Contains("/yobot/clan/") && !IsLogin)
+                {
+                    Console.WriteLine("公会界面加载完成");
+                    var cookie = _hiddenWebBrowser.GetCookie();
+                    Cookie = cookie;
+                    IsLogin = true;
+                    _mre.Set();
+
+                    _hiddenWebBrowser.Navigate($"{Origin}/yobot/user/");
+                }
             }
-            else if (url.Contains("/yobot/clan/") && !IsLogin)
+            catch (Exception ex)
             {
-                var cookie = _hiddenWebBrowser.GetCookie();
-                Cookie = cookie;
-                IsLogin = true;
-                _mre.Set();
-
-                _hiddenWebBrowser.Navigate($"{Origin}/yobot/user/");
+                Console.WriteLine(ex.Message);
+                throw;
             }
         }
     }

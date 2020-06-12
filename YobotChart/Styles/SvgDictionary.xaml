@@ -8,4 +8,13 @@
             </Path>
         </Canvas>
     </ControlTemplate>
+    <ControlTemplate x:Key="ForwardTempl">
+        <Canvas Width="531.03113" Height="1024.0561">
+            <Path Fill="{TemplateBinding Foreground}">
+                <Path.Data>
+                    <PathGeometry Figures="M 466.49387 512.16521 9.4588392 55.130184 A 32.294514 32.294514 0 0 1 55.130179 9.4588442 L 512.16521 466.49387 a 64.32583 64.32583 0 0 1 0 91.02105 L 55.130179 1014.5499 A 32.181002 32.181002 0 0 1 9.4588392 969.20024 Z" FillRule="NonZero" />
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </ControlTemplate>
 </ResourceDictionary>

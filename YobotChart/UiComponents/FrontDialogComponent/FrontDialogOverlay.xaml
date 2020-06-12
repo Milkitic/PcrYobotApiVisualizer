@@ -76,14 +76,14 @@
             Opacity="0"
             Visibility="Hidden">
             <!--<Canvas.Background>#40F095BA</Canvas.Background>-->
-            <Canvas.Background>#40F0F0F0</Canvas.Background>
+            <Canvas.Background>#80000000</Canvas.Background>
             <Border
                 x:Name="Parallel"
                 Canvas.Left="{Binding (Canvas.Left), ElementName=BoxGrid, Mode=OneWay}"
                 Canvas.Top="{Binding (Canvas.Top), ElementName=BoxGrid, Mode=OneWay}"
                 Width="{Binding ActualWidth, ElementName=BoxGrid, Mode=OneWay}"
                 Height="{Binding ActualHeight, ElementName=BoxGrid, Mode=OneWay}"
-                Background="White"
+                Background="#f6f6f7"
                 Opacity="{Binding Opacity, ElementName=BoxGrid, Mode=OneWay}"
                 RenderTransformOrigin="0.5,0.5">
                 <Border.RenderTransform>
@@ -101,7 +101,7 @@
                 x:Name="BoxGrid"
                 Canvas.Left="0"
                 Canvas.Top="0"
-                Background="White"
+                Background="#f6f6f7"
                 Opacity="0"
                 RenderTransformOrigin="0.5,0.5">
                 <Grid.RenderTransform>

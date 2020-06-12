@@ -18,6 +18,7 @@ using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
 using YobotChart.Shared.YobotService.V1;
 using YobotChart.UiComponents.FrontDialogComponent;
+using YobotChart.UiComponents.NotificationComponent;
 using YobotChart.UserControls;
 using YobotChart.ViewModels;
 using YobotChart.YobotService;
@@ -86,6 +87,8 @@ namespace YobotChart
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            NotificationOverlay.ItemsSource = Notification.NotificationList;
+
             new Task(async () =>
             {
                 try
@@ -238,7 +241,7 @@ namespace YobotChart
                         if (functionInfo.AcceptGranularities == null)
                         {
                             granularityModel = new GranularityModel(0,
-                                _viewModel.Stats.ApiObj.Challenges.Max(k => k.ChallengeTime).Date);
+                                _viewModel.Stats.ApiObj.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
                         }
                         else if (functionInfo.AcceptGranularities.Contains(GranularityType.MultiRound))
                         {
@@ -247,7 +250,7 @@ namespace YobotChart
                         else
                         {
                             granularityModel = new GranularityModel(0,
-                                _viewModel.Stats.ApiObj.Challenges.Max(k => k.ChallengeTime).Date);
+                                _viewModel.Stats.ApiObj.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
                         }
 
                         result = await func.Invoke(granularityModel);

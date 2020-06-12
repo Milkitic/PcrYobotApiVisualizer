@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Windows;
 using YobotChart.Shared;
 using YobotChart.Shared.Configuration;
+using YobotChart.UiComponents.NotificationComponent;
 
 namespace YobotChart
 {
@@ -33,7 +32,7 @@ namespace YobotChart
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            MessageBox.Show(e.Exception?.Message, "Msgbox", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            Notification.Error(e.Exception?.InnerException?.Message ?? e.Exception?.Message);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

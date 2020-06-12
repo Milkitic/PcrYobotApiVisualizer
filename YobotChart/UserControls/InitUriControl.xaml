@@ -44,9 +44,10 @@
             BorderBrush="#505771"
             BorderThickness="2"
             Click="Button_Click"
-            Content="OK"
             CornerRadius="24"
             FontSize="18"
-            Foreground="#505771" />
+            Foreground="#505771"
+            IconMargin="0"
+            IconTemplate="{StaticResource ForwardTempl}" />
     </Grid>
 </UserControl>

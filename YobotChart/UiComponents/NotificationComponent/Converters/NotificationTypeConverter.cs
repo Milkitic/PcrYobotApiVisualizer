@@ -27,10 +27,10 @@ namespace YobotChart.UiComponents.NotificationComponent.Converters
                 }
 
                 var values = s[0].Split(',')
-                    .Select(k => (NotificationOption.NotificationLevel)Enum.Parse(typeof(NotificationOption.NotificationLevel), k))
+                    .Select(k => (NotificationType)Enum.Parse(typeof(NotificationType), k))
                     .ToArray();
 
-                return value is NotificationOption.NotificationLevel actualType && values.Contains(actualType)
+                return value is NotificationType actualType && values.Contains(actualType)
                     ? Visibility.Visible
                     : hidStyle;
             }

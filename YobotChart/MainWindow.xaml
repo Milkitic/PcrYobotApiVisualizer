@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:YobotChart"
     xmlns:frontDialogComponent="clr-namespace:YobotChart.UiComponents.FrontDialogComponent"
+    xmlns:notificationComponent="clr-namespace:YobotChart.UiComponents.NotificationComponent"
     Title="MainWindow"
     Width="1600"
     Height="900"
@@ -312,5 +313,14 @@
             x:Name="FrontDialogOverlay"
             Grid.Row="1"
             Grid.RowSpan="2" />
+        <notificationComponent:NotifyOverlay
+            x:Name="NotificationOverlay"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            Width="400"
+            Margin="10"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom" />
     </Grid>
 </Window>

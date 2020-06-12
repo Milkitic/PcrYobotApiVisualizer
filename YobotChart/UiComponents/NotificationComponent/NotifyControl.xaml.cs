@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace YobotChart.UiComponents.NotificationComponent
@@ -32,7 +33,22 @@ namespace YobotChart.UiComponents.NotificationComponent
                 return;
             }
 
-            if (notificationOption.Level == NotificationOption.NotificationLevel.Alert &&
+            switch (notificationOption.Level)
+            {
+                case NotificationLevel.Normal:
+                    BoxFlag.Fill = Brushes.Transparent;
+                    break;
+                case NotificationLevel.Warn:
+                    BoxFlag.Fill = (Brush)FindResource("OrangeBrush");
+                    break;
+                case NotificationLevel.Error:
+                    BoxFlag.Fill = (Brush)FindResource("RedBrush");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            if (notificationOption.Type == NotificationType.Alert &&
                 notificationOption.FadeoutTime > TimeSpan.FromSeconds(1))
             {
                 _timer = new Timer(obj =>
@@ -51,10 +67,13 @@ namespace YobotChart.UiComponents.NotificationComponent
 
         private void NotifyControl_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Level != NotificationOption.NotificationLevel.Alert)
+            if (ViewModel.Type != NotificationType.Alert)
             {
                 return;
             }
+
+            if (ViewModel.CloseExplicitly)
+                return;
 
             TriggerHide();
         }
@@ -75,7 +94,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = 0,
                 To = height,
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
 
             Storyboard.SetTargetName(vector, NotifyBorder.Name);
@@ -87,7 +106,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = 0,
                 To = 0,
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
             Storyboard.SetTargetName(fade, NotifyBorder.Name);
             Storyboard.SetTargetProperty(fade,
@@ -113,7 +132,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = 0,
                 To = 1,
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
             Storyboard.SetTargetName(fade, NotifyBorder.Name);
             Storyboard.SetTargetProperty(fade,
@@ -124,7 +143,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = new Thickness(width, 0, -width, 0),
                 To = new Thickness(0),
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
             Storyboard.SetTargetName(vector, NotifyBorder.Name);
             Storyboard.SetTargetProperty(vector,
@@ -152,7 +171,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = 1,
                 To = 0,
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
             Storyboard.SetTargetName(fade, NotifyBorder.Name);
             Storyboard.SetTargetProperty(fade,
@@ -163,7 +182,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = new Thickness(0),
                 To = new Thickness(width, 0, -width, 0),
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
             Storyboard.SetTargetName(vector, NotifyBorder.Name);
             Storyboard.SetTargetProperty(vector,
@@ -191,7 +210,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = height,
                 To = 0,
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
 
             Storyboard.SetTargetName(vector, NotifyBorder.Name);
@@ -202,7 +221,7 @@ namespace YobotChart.UiComponents.NotificationComponent
                 From = 0,
                 To = 0,
                 EasingFunction = easing,
-                Duration = /*CommonUtils.GetDuration*/(timing)
+                Duration = new Duration(timing)
             };
             Storyboard.SetTargetName(fade, NotifyBorder.Name);
             Storyboard.SetTargetProperty(fade,

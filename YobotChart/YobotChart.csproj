@@ -122,8 +122,10 @@
     <Compile Include="UiComponents\NotificationComponent\Converters\FontColorConverter.cs" />
     <Compile Include="UiComponents\NotificationComponent\Converters\MixColorConverter.cs" />
     <Compile Include="UiComponents\NotificationComponent\Converters\NotificationTypeConverter.cs" />
-    <Compile Include="UiComponents\NotificationComponent\Converters\NotificationTypeToCursorConverter.cs" />
+    <Compile Include="UiComponents\NotificationComponent\Converters\Multi_ExplicitlyAndTypeToCursorConverter.cs" />
     <Compile Include="UiComponents\NotificationComponent\Notification.cs" />
+    <Compile Include="UiComponents\NotificationComponent\NotificationLevel.cs" />
+    <Compile Include="UiComponents\NotificationComponent\NotificationType.cs" />
     <Compile Include="UiComponents\NotificationComponent\NotificationOption.cs" />
     <Compile Include="UiComponents\NotificationComponent\NotifyControl.xaml.cs">
       <DependentUpon>NotifyControl.xaml</DependentUpon>
