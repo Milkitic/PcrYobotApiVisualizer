@@ -3,7 +3,6 @@ using LiveCharts.Wpf;
 using LiveCharts.Wpf.Charts.Base;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -108,15 +107,19 @@ namespace YobotChart
         private async Task<string> YobotService_InitRequested()
         {
             bool? result = null;
-            var initUriControl = new InitUriControl();
-            FrontDialogOverlay.ShowContent(initUriControl, new FrontDialogOverlay.ShowContentOptions
+            InitUriControl initUriControl = null;
+            Execute.OnUiThread(() =>
             {
-                Height = 400,
-                Width = 650,
-                ShowDialogButtons = false,
-                ShowTitleBar = false
-            }, (sender, args) => result = true,
-                (sender, args) => result = false);
+                initUriControl = new InitUriControl();
+                FrontDialogOverlay.ShowContent(initUriControl, new FrontDialogOverlay.ShowContentOptions
+                {
+                    Height = 400,
+                    Width = 650,
+                    ShowDialogButtons = false,
+                    ShowTitleBar = false
+                }, (sender, args) => result = true,
+                    (sender, args) => result = false);
+            });
             await Task.Factory.StartNew(() =>
             {
                 while (result == null)
@@ -124,7 +127,7 @@ namespace YobotChart
                     Thread.Sleep(100);
                 }
             });
-            return initUriControl.Text;
+            return initUriControl?.Text;
         }
 
         private async Task Load()

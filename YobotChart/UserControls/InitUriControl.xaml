@@ -9,6 +9,7 @@
     xmlns:textBoxComponent="clr-namespace:YobotChart.UiComponents.TextBoxComponent"
     d:DesignHeight="400"
     d:DesignWidth="650"
+    Loaded="InitUriControl_OnLoaded"
     mc:Ignorable="d">
 
     <Grid VerticalAlignment="Center">
@@ -28,12 +29,12 @@
             Width="Auto"
             Height="40"
             Margin="40,0"
-            Padding="4,0,0,0"
+            Padding="3,0,0,0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            AcceptsReturn="True"
             FontSize="18"
-            Hint="../login/c/#qqid=..&amp;key=.. 或 ../clan/../statistics/api/?apikey=.." />
+            Hint="../login/c/#qqid=..&amp;key=.. 或 ../clan/../statistics/api/?apikey=.."
+            KeyDown="TextBox_OnKeyDown" />
         <buttonComponent:CommonButton
             Grid.Row="2"
             Width="48"

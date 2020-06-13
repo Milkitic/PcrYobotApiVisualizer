@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using YobotChart.UiComponents.FrontDialogComponent;
 
 namespace YobotChart.UserControls
@@ -33,5 +22,18 @@ namespace YobotChart.UserControls
         }
 
         public string Text { get; set; }
+
+        private void TextBox_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Return)
+            {
+                Button_Click(sender, e);
+            }
+        }
+
+        private void InitUriControl_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            TextBox.Focus();
+        }
     }
 }

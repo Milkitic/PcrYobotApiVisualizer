@@ -33,6 +33,7 @@ namespace YobotChart
         {
             e.Handled = true;
             Notification.Error(e.Exception?.InnerException?.Message ?? e.Exception?.Message);
+            Logger.Error(e.Exception, "发生未处理的异常");
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
