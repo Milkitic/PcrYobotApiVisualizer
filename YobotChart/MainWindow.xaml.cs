@@ -2,6 +2,7 @@
 using LiveCharts.Wpf;
 using LiveCharts.Wpf.Charts.Base;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -61,6 +62,9 @@ namespace YobotChart
         private IYobotServiceV1 _yobotService;
         private GiteeUpdater _updater;
 
+        private Timer _loadTimer;
+        private static Dictionary<Type, Page> _dic = new Dictionary<Type, Page>();
+
         public Chart Chart { get; private set; }
 
         public MainWindow()
@@ -101,6 +105,7 @@ namespace YobotChart
 
             _yobotService = new ServiceCore(Browser);
             _yobotService.InitRequested += YobotService_InitRequested;
+            MainFrame.Navigate(GetInstance<DashBoardPage>());
             await Load();
         }
 
@@ -201,8 +206,6 @@ namespace YobotChart
             }
         }
 
-        private Timer _loadTimer;
-
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             _loadTimer?.Dispose();
@@ -278,7 +281,23 @@ namespace YobotChart
 
         private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new SelectTemplatePage());
+            MainFrame.Navigate(GetInstance<SelectTemplatePage>());
+        }
+
+        private void BtnDashBoardPage_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(GetInstance<DashBoardPage>());
+        }
+
+        private T GetInstance<T>() where T : Page, new()
+        {
+            var type = typeof(T);
+            if (!_dic.ContainsKey(type))
+            {
+                _dic.Add(type, new T());
+            }
+
+            return (T)_dic[type];
         }
     }
 }

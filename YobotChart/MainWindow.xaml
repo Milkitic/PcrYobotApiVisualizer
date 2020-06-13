@@ -107,6 +107,11 @@
                     Click="BtnAddTemplatePage_OnClick"
                     Content="页-新增模板" />
                 <Button
+                    x:Name="btnDashBoardPage"
+                    VerticalAlignment="Top"
+                    Click="BtnDashBoardPage_OnClick"
+                    Content="页-仪表盘" />
+                <Button
                     x:Name="btnUpdateData"
                     VerticalAlignment="Top"
                     Click="UpdateData_Click"
