@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YobotChart.Services
+namespace YobotChart.Shared
 {
     public static class QQService
     {

@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using YobotChart.Annotations;
-using YobotChart.Shared.YobotService;
-using YobotChart.Shared.YobotService.V1;
+using YobotChart.Shared.Win32.Annotations;
 
-namespace YobotChart.ViewModels
+namespace YobotChart.Shared.Win32.ChartFramework
 {
     public class StatsVm : INotifyPropertyChanged
     {
-        private IYobotApiObject _apiObj;
 
         private int _cycleCount;
 
@@ -21,20 +18,8 @@ namespace YobotChart.ViewModels
         private bool _isLoading;
         private List<DateTime> _dateList;
 
-        /// <summary>
-        /// 数据源
-        /// </summary>
-        public IYobotApiObject ApiObj
-        {
-            get => _apiObj;
-            set
-            {
-                if (Equals(value, _apiObj)) return;
-                _apiObj = value;
-                OnPropertyChanged();
-            }
-        }
-
+        public YobotApiSource YobotApiSource { get; set; } = YobotApiSource.Default;
+        public StatsProviderInfo StatsProviderInfo { get; set; }
         /// <summary>
         /// 图表的图相关上下文
         /// </summary>
@@ -126,22 +111,5 @@ namespace YobotChart.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private static StatsVm _default;
-        private static object _defaultLock = new object();
-
-        public static StatsVm Default
-        {
-            get
-            {
-                lock (_defaultLock)
-                {
-                    return _default ?? (_default = new StatsVm());
-                }
-            }
-        }
-
-        private StatsVm()
-        {
-        }
     }
 }

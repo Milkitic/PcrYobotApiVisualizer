@@ -2,11 +2,10 @@
 using LiveCharts.Wpf;
 using System;
 using System.Linq;
-using YobotChart.Annotations;
+using YobotChart.Shared.Win32.Annotations;
 using YobotChart.Shared.YobotService;
-using YobotChart.ViewModels;
 
-namespace YobotChart.ChartFramework.StatsProviders
+namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
 {
     [StatsProviderMetadata("872c4594-aaf1-4453-a652-fb304cb936f7",
         Author = "yf_extension",
@@ -14,8 +13,8 @@ namespace YobotChart.ChartFramework.StatsProviders
         Description = "包含行会的伤害趋势、周目花费时间、行会横向比较等。")]
     public class ClansStatsProvider : IStatsProvider
     {
-        public StatsVm Stats { get; set; }
-        public IChallengeObject[] Challenges => Stats.ApiObj.Challenges;
+        public YobotApiSource YobotApiSource { get; set; }
+        public IChallengeObject[] Challenges => YobotApiSource.YobotApi.Challenges;
 
         [StatsMethod("行会每天伤害趋势")]
         [StatsMethodAcceptGranularity(GranularityType.Total)]
@@ -52,7 +51,7 @@ namespace YobotChart.ChartFramework.StatsProviders
         [UsedImplicitly]
         public CartesianChartConfigModel RoundCostTimeTrend()
         {
-            var totalDamageTrend = Stats.ApiObj.Challenges
+            var totalDamageTrend = Challenges
                 .GroupBy(k => k.Cycle).ToList();
 
             var cartesianConf = new CartesianChartConfigModel

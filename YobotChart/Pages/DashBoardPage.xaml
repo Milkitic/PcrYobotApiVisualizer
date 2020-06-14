@@ -15,40 +15,104 @@
         <local:DashBoardPageVm />
     </Page.DataContext>
     <Grid>
-
         <Border>
-            <ListBox
-                x:Name="Container"
-                MinWidth="300"
-                Background="Transparent"
-                BorderThickness="0"
-                ItemsSource="{Binding Collections}"
-                ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Label
-                            Width="{Binding L}"
-                            Height="{Binding L}"
-                            Margin="10"
-                            Background="#41134875" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.Resources>
-                    <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
-                    </Style>
-                </ItemsControl.Resources>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas
-                            Width="{Binding MaxWidth}"
-                            Height="{Binding MaxHeight}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ListBox>
+            <ScrollViewer
+                x:Name="ViewArea"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <ItemsControl
+                    x:Name="Container"
+                    MinWidth="300"
+                    Padding="20,40"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ItemsSource="{Binding Collections}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                Width="{Binding Width}"
+                                Height="{Binding Height}"
+                                Opacity="{Binding Opacity}">
+                                <Border
+                                    Margin="26,-5,26,26"
+                                    Background="#303950"
+                                    SnapsToDevicePixels="True"
+                                    UseLayoutRounding="True">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="15"
+                                            Opacity="0.3"
+                                            ShadowDepth="0" />
+                                    </Border.Effect>
+                                </Border>
+                                <Grid
+                                    Height="34"
+                                    Margin="27,-4,28,26"
+                                    VerticalAlignment="Top">
+                                    <Label
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Content="会内横向伤害图表"
+                                        Foreground="White" />
+                                    <Thumb
+                                        HorizontalAlignment="Center"
+                                        DragCompleted="Thumb_DragCompleted"
+                                        DragDelta="Thumb_DragDelta"
+                                        DragStarted="Thumb_DragStarted"
+                                        Tag="{Binding}">
+                                        <Thumb.Template>
+                                            <ControlTemplate>
+                                                <Viewbox Width="16" Height="16">
+                                                    <Border Background="Transparent">
+                                                        <ContentControl Foreground="White" Template="{StaticResource DragTempl}" />
+                                                    </Border>
+                                                </Viewbox>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                    <StackPanel
+                                        Margin="4,0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <buttonComponent:CommonButton
+                                            Height="auto"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="{StaticResource ThemeLightBrush}"
+                                            IconMargin="0"
+                                            IconTemplate="{StaticResource CloseTempl}" />
+                                    </StackPanel>
+                                </Grid>
+                                <Border Margin="30" Background="Gray">
+                                    <Image RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding ThumbnailPath}" />
+                                </Border>
+                                <!--<Label
+                                    Width="{Binding Width}"
+                                    Height="{Binding Height}"
+                                    Margin="30"
+                                    Background="#134875" />-->
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Canvas.Left" Value="{Binding X}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas
+                                Width="{Binding MaxWidth}"
+                                Height="{Binding MaxHeight}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
         </Border>
         <StackPanel
             Margin="2"

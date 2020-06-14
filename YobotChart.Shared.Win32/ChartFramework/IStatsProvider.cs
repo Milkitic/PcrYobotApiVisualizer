@@ -1,12 +1,10 @@
-﻿using YobotChart.ViewModels;
-
-namespace YobotChart.ChartFramework
+﻿namespace YobotChart.Shared.Win32.ChartFramework
 {
     public interface IStatsProvider
     {
         /// <summary>
         /// 数据源
         /// </summary>
-        StatsVm Stats { get; set; }
+        YobotApiSource YobotApiSource { get; set; }
     }
 }

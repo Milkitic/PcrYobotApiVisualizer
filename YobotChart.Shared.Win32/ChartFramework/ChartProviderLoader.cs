@@ -4,15 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using YobotChart.ViewModels;
-using YobotChart.Shared.YobotService;
-using YobotChart.Shared.YobotService.V1;
 
-namespace YobotChart.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework
 {
     internal class ChartProviderLoader
     {
-        public static HashSet<StatsProviderInfo> Load(StatsVm statsVm)
+        public static HashSet<StatsProviderInfo> Load()
         {
             var asm = Assembly.GetExecutingAssembly();
             var statsProviders = asm.GetExportedTypes()
@@ -31,7 +28,7 @@ namespace YobotChart.ChartFramework
 
                     var instance = (IStatsProvider)Activator.CreateInstance(statsProvider);
                     //instance.ChartProvider = this;
-                    instance.Stats = statsVm;
+                    instance.YobotApiSource = YobotApiSource.Default;
 
                     var methods = statsProvider.GetMethods();
                     foreach (var methodInfo in methods)

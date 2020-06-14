@@ -1,4 +1,4 @@
-﻿namespace YobotChart.ChartFramework
+﻿namespace YobotChart.Shared.Win32.ChartFramework
 {
     public enum GranularityType
     {

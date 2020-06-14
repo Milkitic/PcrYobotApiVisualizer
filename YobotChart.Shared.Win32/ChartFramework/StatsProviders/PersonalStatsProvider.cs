@@ -4,12 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YobotChart.Annotations;
-using YobotChart.Services;
+using YobotChart.Shared.Win32.Annotations;
 using YobotChart.Shared.YobotService;
-using YobotChart.ViewModels;
 
-namespace YobotChart.ChartFramework.StatsProviders
+namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
 {
     [StatsProviderMetadata("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a",
         Author = "yf_extension",
@@ -17,8 +15,8 @@ namespace YobotChart.ChartFramework.StatsProviders
         Description = "将会员的排名进行横向比较，包括每刀详情、每只Boss伤害详情。")]
     public class PersonalStatsProvider : IStatsProvider
     {
-        public StatsVm Stats { get; set; }
-        public IChallengeObject[] Challenges => Stats.ApiObj.Challenges;
+        public YobotApiSource YobotApiSource { get; set; }
+        public IChallengeObject[] Challenges => YobotApiSource.YobotApi.Challenges;
 
         [StatsMethod("个人每日刀伤横向比较")]
         [StatsMethodAcceptGranularity(GranularityType.SingleDate, GranularityType.MultiDate)]

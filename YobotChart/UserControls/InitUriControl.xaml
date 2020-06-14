@@ -11,7 +11,6 @@
     d:DesignWidth="650"
     Loaded="InitUriControl_OnLoaded"
     mc:Ignorable="d">
-
     <Grid VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

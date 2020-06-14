@@ -12,10 +12,16 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
 using YobotChart.Annotations;
+using YobotChart.Shared.Win32;
 
 namespace YobotChart.Pages
 {
@@ -62,7 +68,10 @@ namespace YobotChart.Pages
     {
         private double _x;
         private double _y;
-        private double _l;
+        private double _width;
+        private double _height;
+        private double _opacity = 1;
+        private int _zIndex;
 
         public double X
         {
@@ -86,20 +95,54 @@ namespace YobotChart.Pages
             }
         }
 
-        public double L
+        public double Width
         {
-            get => _l;
+            get => _width;
             set
             {
-                if (value.Equals(_l)) return;
-                _l = value;
+                if (value.Equals(_width)) return;
+                _width = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double Height
+        {
+            get => _height;
+            set
+            {
+                if (value.Equals(_height)) return;
+                _height = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double Opacity
+        {
+            get => _opacity;
+            set
+            {
+                if (value.Equals(_opacity)) return;
+                _opacity = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int ZIndex
+        {
+            get => _zIndex;
+            set
+            {
+                if (value == _zIndex) return;
+                _zIndex = value;
                 OnPropertyChanged();
             }
         }
 
         public int PointX { get; set; }
         public int PointY { get; set; }
-        public int PointScale { get; set; }
+        public int PointScaleX { get; set; }
+        public int PointScaleY { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -116,6 +159,10 @@ namespace YobotChart.Pages
     public partial class DashBoardPage : Page
     {
         private DashBoardPageVm _viewModel;
+        private (bool flag, int sourceX, int sourceY)[,] _m;
+        private int _xLen;
+        private int _yLen;
+        private int _columnCount;
 
         public DashBoardPage()
         {
@@ -123,9 +170,10 @@ namespace YobotChart.Pages
             _viewModel = (DashBoardPageVm)DataContext;
         }
 
-        private const int Unit = 300;
+        private const int UnitX = 350;
+        private const int UnitY = 270;
 
-        public void AppendItem(int scale)
+        public void AppendItem(int scaleX, int scaleY)
         {
             var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
 
@@ -135,11 +183,11 @@ namespace YobotChart.Pages
             {
                 for (int x = 0; x < xLen; x++)
                 {
-                    if (matrix[x, y]) continue;
+                    if (matrix[x, y].flag) continue;
                     bool innerBreak = false;
-                    for (int i = 0; i < scale; i++)
+                    for (int i = 0; i < scaleX; i++)
                     {
-                        for (int j = 0; j < scale; j++)
+                        for (int j = 0; j < scaleY; j++)
                         {
                             if (x + i >= xLen)
                             {
@@ -147,7 +195,7 @@ namespace YobotChart.Pages
                                 break;
                             }
 
-                            if (x + i < xLen && y + j < yLen && matrix[x + i, y + j])
+                            if (x + i < xLen && y + j < yLen && matrix[x + i, y + j].flag)
                             {
                                 innerBreak = true;
                                 break;
@@ -161,7 +209,7 @@ namespace YobotChart.Pages
                     else
                     {
                         @break = true;
-                        testBox = new TestBox { PointX = x, PointY = y, PointScale = scale };
+                        testBox = new TestBox { PointX = x, PointY = y, PointScaleX = scaleX, PointScaleY = scaleY };
                         break;
                     }
                 }
@@ -171,37 +219,38 @@ namespace YobotChart.Pages
 
             if (testBox != null)
             {
-                testBox.X = testBox.PointX * Unit;
-                testBox.Y = testBox.PointY * Unit;
-                testBox.L = 300 * scale - 20;
+                testBox.X = testBox.PointX * UnitX;
+                testBox.Y = testBox.PointY * UnitY;
+                testBox.Width = UnitX * scaleX;
+                testBox.Height = UnitY * scaleY;
                 _viewModel.Collections.Add(testBox);
             }
 
             matrix = GetMatrix(out xLen, out yLen, out columnCount);
-            _viewModel.MaxWidth = Unit * xLen;
-            _viewModel.MaxHeight = Unit * (yLen - 1);
+            _viewModel.MaxWidth = UnitX * Math.Max((xLen - 1), columnCount);
+            _viewModel.MaxHeight = UnitY * (yLen - 1);
         }
 
-        private bool[,] GetMatrix(out int xLen, out int yLen, out int columnCount)
+        private (bool flag, int sourceX, int sourceY)[,] GetMatrix(out int xLen, out int yLen, out int columnCount)
         {
-            var w = Container.ActualWidth;
-            var h = Container.ActualHeight;
+            var w = ViewArea.ActualWidth - Container.Padding.Left - Container.Padding.Right;
+            var h = ViewArea.ActualHeight - Container.Padding.Top - Container.Padding.Bottom;
             Console.WriteLine($"Canvas: {w}*{h}");
-            columnCount = (int)(w / 300);
+            columnCount = (int)(w / UnitX);
             Console.WriteLine($"Column count: " + columnCount);
 
             var collections = _viewModel.Collections;
-            var maxX = collections.Count == 0 ? 0 : collections.Max(k => k.PointX + k.PointScale - 1);
-            var maxY = collections.Count == 0 ? 0 : collections.Max(k => k.PointY + k.PointScale - 1);
-            var matrix = new bool[columnCount, maxY + 2];
+            var maxX = collections.Count == 0 ? 0 : collections.Max(k => k.PointX + k.PointScaleX - 1);
+            var maxY = collections.Count == 0 ? 0 : collections.Max(k => k.PointY + k.PointScaleY - 1);
+            var matrix = new (bool, int, int)[Math.Max(columnCount, maxX + 1), maxY + 2];
 
             foreach (var collection in collections)
             {
-                for (int i = 0; i < collection.PointScale; i++)
+                for (int i = 0; i < collection.PointScaleX; i++)
                 {
-                    for (int j = 0; j < collection.PointScale; j++)
+                    for (int j = 0; j < collection.PointScaleY; j++)
                     {
-                        matrix[collection.PointX + i, collection.PointY + j] = true;
+                        matrix[collection.PointX + i, collection.PointY + j] = (true, collection.PointX, collection.PointY);
                     }
                 }
             }
@@ -211,24 +260,127 @@ namespace YobotChart.Pages
             return matrix;
         }
 
+        private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            var thumb = (Thumb)sender;
+            var testBox = (TestBox)thumb.Tag;
+
+            testBox.Opacity = 0.5;
+            testBox.ZIndex = 1;
+            thumb.Cursor = Cursors.SizeAll;
+
+            _m = GetMatrix(out _xLen, out _yLen, out _columnCount);
+            _viewModel.MaxHeight = UnitY * (_yLen);
+        }
+
+        private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            var thumb = (Thumb)sender;
+            var testBox = (TestBox)thumb.Tag;
+
+            var preX = testBox.X;
+            var preY = testBox.Y;
+            double dx = e.HorizontalChange + preX;
+            double dy = e.VerticalChange + preY;
+            testBox.X = dx;
+            testBox.Y = dy;
+        }
+
+        private void Thumb_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            var thumb = (Thumb)sender;
+            var testBox = (TestBox)thumb.Tag;
+
+            testBox.Opacity = 1;
+            testBox.ZIndex = 0;
+            thumb.Cursor = Cursors.Arrow;
+            var centerX = testBox.X + testBox.Width / (2 * testBox.PointScaleX);
+            var centerY = testBox.Y + testBox.Height / (2 * testBox.PointScaleY);
+            var newPointX = (int)(centerX / UnitX);
+            var newPointY = (int)(centerY / UnitY);
+            Console.WriteLine($"new point: {newPointX},{newPointY}");
+            var matrix = _m;
+
+            bool change = true;
+            bool innerBreak = false;
+            for (int i = 0; i < testBox.PointScaleX; i++)
+            {
+                for (int j = 0; j < testBox.PointScaleY; j++)
+                {
+                    if (newPointX + i < _xLen && newPointY + j < _yLen && matrix[newPointX + i, newPointY + j].flag)
+                    {
+                        if (matrix[newPointX + i, newPointY + j].sourceX != testBox.PointX ||
+                            matrix[newPointX + i, newPointY + j].sourceY != testBox.PointY)
+                        {
+                            innerBreak = true;
+                            change = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (innerBreak) break;
+            }
+
+            if (change)
+            {
+                testBox.PointX = newPointX;
+                testBox.PointY = newPointY;
+            }
+
+            _m = null;
+            matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
+            _viewModel.MaxHeight = UnitY * (yLen - 1);
+
+            Task.Run(() =>
+            {
+                var sw = Stopwatch.StartNew();
+                var duration = TimeSpan.FromMilliseconds(700);
+
+                var oldX = testBox.X;
+                var oldY = testBox.Y;
+
+                var newX = testBox.PointX * UnitX;
+                var newY = testBox.PointY * UnitY;
+                while (sw.Elapsed < duration)
+                {
+                    var easing = new QuinticEase() { EasingMode = EasingMode.EaseOut };
+                    var ratio = easing.Ease(sw.ElapsedMilliseconds / duration.TotalMilliseconds);
+                    Execute.OnUiThread(() =>
+                    {
+                        testBox.X = oldX + (newX - oldX) * ratio;
+                        testBox.Y = oldY + (newY - oldY) * ratio;
+                    });
+                }
+
+                Execute.OnUiThread(() =>
+                {
+                    testBox.X = newX;
+                    testBox.Y = newY;
+                });
+
+                sw.Stop();
+            });
+        }
+
         private void AddScale1_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            AppendItem(1);
+            AppendItem(1, 1);
         }
 
         private void AddScale2_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            AppendItem(2);
+            AppendItem(2, 2);
         }
 
         private void AddScale3_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            AppendItem(3);
+            AppendItem(3, 2);
         }
 
         private void AddScale4_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            AppendItem(4);
+            AppendItem(4, 1);
         }
     }
 }

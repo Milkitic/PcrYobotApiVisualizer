@@ -1,0 +1,40 @@
+﻿<UserControl
+    x:Class="YobotChart.UserControls.GraphControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:YobotChart.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:chartFramework="clr-namespace:YobotChart.Shared.Win32.ChartFramework;assembly=yoshr.win32"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <d:UserControl.DataContext>
+        <chartFramework:StatsVm />
+    </d:UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Label
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            Content="{Binding StatsGraph.Title}"
+            FontSize="20" />
+        <Border
+            x:Name="ChartContainer"
+            Grid.Row="1"
+            Margin="15" />
+        <Label
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="#80303030"
+            Content="加载中"
+            FontSize="18"
+            Foreground="White"
+            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    </Grid>
+</UserControl>
