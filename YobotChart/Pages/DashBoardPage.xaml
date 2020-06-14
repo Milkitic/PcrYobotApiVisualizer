@@ -20,7 +20,10 @@
             <ListBox
                 x:Name="Container"
                 MinWidth="300"
-                ItemsSource="{Binding Collections}">
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding Collections}"
+                ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Label
@@ -38,7 +41,11 @@
                 </ItemsControl.Resources>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas />
+                        <Canvas
+                            Width="{Binding MaxWidth}"
+                            Height="{Binding MaxHeight}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ListBox>

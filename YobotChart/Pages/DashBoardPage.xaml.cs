@@ -21,8 +21,33 @@ namespace YobotChart.Pages
 {
     public class DashBoardPageVm : INotifyPropertyChanged
     {
+        private double _maxWidth;
+        private double _maxHeight;
+
         public ObservableCollection<TestBox> Collections { get; set; }
         = new ObservableCollection<TestBox>();
+
+        public double MaxWidth
+        {
+            get => _maxWidth;
+            set
+            {
+                if (value.Equals(_maxWidth)) return;
+                _maxWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double MaxHeight
+        {
+            get => _maxHeight;
+            set
+            {
+                if (value.Equals(_maxHeight)) return;
+                _maxHeight = value;
+                OnPropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -102,32 +127,10 @@ namespace YobotChart.Pages
 
         public void AppendItem(int scale)
         {
-            var w = Container.ActualWidth;
-            var h = Container.ActualHeight;
-            Console.WriteLine($"Canvas: {w}*{h}");
-            var columnCount = (int)(w / 300);
-            Console.WriteLine($"Column count: " + columnCount);
-
-            var collections = _viewModel.Collections;
-            var maxX = collections.Count == 0 ? 0 : collections.Max(k => k.PointX + k.PointScale - 1);
-            var maxY = collections.Count == 0 ? 0 : collections.Max(k => k.PointY + k.PointScale - 1);
-            var matrix = new bool[columnCount, maxY + 2];
-
-            foreach (var collection in collections)
-            {
-                for (int i = 0; i < collection.PointScale; i++)
-                {
-                    for (int j = 0; j < collection.PointScale; j++)
-                    {
-                        matrix[collection.PointX + i, collection.PointY + j] = true;
-                    }
-                }
-            }
+            var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
 
             var @break = false;
             TestBox testBox = null;
-            var yLen = matrix.GetLength(1);
-            var xLen = matrix.GetLength(0);
             for (int y = 0; y < yLen; y++)
             {
                 for (int x = 0; x < xLen; x++)
@@ -138,6 +141,12 @@ namespace YobotChart.Pages
                     {
                         for (int j = 0; j < scale; j++)
                         {
+                            if (x + i >= xLen)
+                            {
+                                innerBreak = true;
+                                break;
+                            }
+
                             if (x + i < xLen && y + j < yLen && matrix[x + i, y + j])
                             {
                                 innerBreak = true;
@@ -167,6 +176,39 @@ namespace YobotChart.Pages
                 testBox.L = 300 * scale - 20;
                 _viewModel.Collections.Add(testBox);
             }
+
+            matrix = GetMatrix(out xLen, out yLen, out columnCount);
+            _viewModel.MaxWidth = Unit * xLen;
+            _viewModel.MaxHeight = Unit * (yLen - 1);
+        }
+
+        private bool[,] GetMatrix(out int xLen, out int yLen, out int columnCount)
+        {
+            var w = Container.ActualWidth;
+            var h = Container.ActualHeight;
+            Console.WriteLine($"Canvas: {w}*{h}");
+            columnCount = (int)(w / 300);
+            Console.WriteLine($"Column count: " + columnCount);
+
+            var collections = _viewModel.Collections;
+            var maxX = collections.Count == 0 ? 0 : collections.Max(k => k.PointX + k.PointScale - 1);
+            var maxY = collections.Count == 0 ? 0 : collections.Max(k => k.PointY + k.PointScale - 1);
+            var matrix = new bool[columnCount, maxY + 2];
+
+            foreach (var collection in collections)
+            {
+                for (int i = 0; i < collection.PointScale; i++)
+                {
+                    for (int j = 0; j < collection.PointScale; j++)
+                    {
+                        matrix[collection.PointX + i, collection.PointY + j] = true;
+                    }
+                }
+            }
+
+            yLen = matrix.GetLength(1);
+            xLen = matrix.GetLength(0);
+            return matrix;
         }
 
         private void AddScale1_Click(object sender, System.Windows.RoutedEventArgs e)
