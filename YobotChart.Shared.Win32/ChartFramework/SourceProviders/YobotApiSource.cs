@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using YobotChart.Shared.Win32.Annotations;
+using YobotChart.Shared.Win32.Properties;
 using YobotChart.Shared.YobotService;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
 {
     public sealed class YobotApiSource : INotifyPropertyChanged
     {

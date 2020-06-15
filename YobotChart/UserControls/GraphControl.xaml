@@ -10,7 +10,7 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <d:UserControl.DataContext>
-        <chartFramework:StatsVm />
+        <chartFramework:StatisticsViewModel />
     </d:UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
@@ -20,7 +20,7 @@
         <Label
             Grid.Row="0"
             HorizontalAlignment="Center"
-            Content="{Binding StatsGraph.Title}"
+            Content="{Binding ConfigModel.Title}"
             FontSize="20" />
         <Border
             x:Name="ChartContainer"

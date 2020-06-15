@@ -78,12 +78,16 @@
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\WindowMarginConverter.cs" />
+    <Compile Include="Pages\ConfigTemplatePage.xaml.cs">
+      <DependentUpon>ConfigTemplatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\DashBoardPage.xaml.cs">
       <DependentUpon>DashBoardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SelectTemplatePage.xaml.cs">
       <DependentUpon>SelectTemplatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UiComponents\AnimatedFrame.cs" />
     <Compile Include="UiComponents\ButtonComponent\CloseButton.cs" />
     <Compile Include="UiComponents\ButtonComponent\CommonButton.cs" />
     <Compile Include="UiComponents\ButtonComponent\MaxButton.cs" />
@@ -138,6 +142,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\ConfigTemplatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\DashBoardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

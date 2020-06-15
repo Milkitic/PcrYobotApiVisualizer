@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:YobotChart"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:notificationComponent="clr-namespace:YobotChart.UiComponents.NotificationComponent"
+    xmlns:uiComponents="clr-namespace:YobotChart.UiComponents"
     Title="MainWindow"
     Width="1366"
     Height="768"
@@ -92,7 +93,7 @@
             <WebBrowser.Visibility>Collapsed</WebBrowser.Visibility>
         </WebBrowser>
         <Grid Grid.Row="1" Margin="1">
-            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+            <uiComponents:AnimatedFrame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
             <StackPanel
                 Grid.Row="0"
                 HorizontalAlignment="Right"

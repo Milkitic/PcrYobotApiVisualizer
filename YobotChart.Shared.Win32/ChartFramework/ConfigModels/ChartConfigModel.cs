@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using YobotChart.Shared.Win32.Properties;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
 {
     public abstract class ChartConfigModel<T> : IChartConfigModel where T : LiveCharts.Wpf.Charts.Base.Chart
     {
@@ -9,13 +12,13 @@ namespace YobotChart.Shared.Win32.ChartFramework
 
         public ChartConfigModel()
         {
-            if (GenericType == ChartConfigModelHelper.CartesianType ||
-                GenericType.IsSubclassOf(ChartConfigModelHelper.CartesianType))
+            if (GenericType == ChartConfigModelTypeHelper.CartesianType ||
+                GenericType.IsSubclassOf(ChartConfigModelTypeHelper.CartesianType))
             {
                 ChartType = ChartType.Cartesian;
             }
-            else if (GenericType == ChartConfigModelHelper.PieType ||
-                     GenericType.IsSubclassOf(ChartConfigModelHelper.PieType))
+            else if (GenericType == ChartConfigModelTypeHelper.PieType ||
+                     GenericType.IsSubclassOf(ChartConfigModelTypeHelper.PieType))
             {
                 ChartType = ChartType.Pie;
             }
@@ -33,6 +36,14 @@ namespace YobotChart.Shared.Win32.ChartFramework
         {
             get => o => ChartConfig?.Invoke((T)o);
             set => ChartConfig = value;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

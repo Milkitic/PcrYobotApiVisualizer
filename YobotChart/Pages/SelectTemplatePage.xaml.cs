@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using YobotChart.Annotations;
 using YobotChart.Shared.Win32.ChartFramework;
+using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
 
 namespace YobotChart.Pages
 {
@@ -47,8 +48,7 @@ namespace YobotChart.Pages
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var o = JsonConvert.SerializeObject(_viewModel, Formatting.Indented);
-            _viewModel = JsonConvert.DeserializeObject<SelectTemplatePageVm>(o);
+           
         }
     }
 }

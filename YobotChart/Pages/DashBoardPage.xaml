@@ -53,6 +53,7 @@
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
                                         Content="会内横向伤害图表"
+                                        FontSize="13"
                                         Foreground="White" />
                                     <Thumb
                                         HorizontalAlignment="Center"
@@ -62,11 +63,19 @@
                                         Tag="{Binding}">
                                         <Thumb.Template>
                                             <ControlTemplate>
-                                                <Viewbox Width="16" Height="16">
-                                                    <Border Background="Transparent">
+                                                <Border
+                                                    Width="26"
+                                                    Height="26"
+                                                    Padding="1,0,0,0"
+                                                    Background="Transparent">
+                                                    <Viewbox
+                                                        Width="16"
+                                                        Height="16"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center">
                                                         <ContentControl Foreground="White" Template="{StaticResource DragTempl}" />
-                                                    </Border>
-                                                </Viewbox>
+                                                    </Viewbox>
+                                                </Border>
                                             </ControlTemplate>
                                         </Thumb.Template>
                                     </Thumb>

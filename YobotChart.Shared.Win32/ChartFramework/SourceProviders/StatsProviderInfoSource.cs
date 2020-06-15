@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using YobotChart.Shared.Win32.Annotations;
+using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
+using YobotChart.Shared.Win32.Properties;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
 {
     public class StatsProviderInfoSource
     {

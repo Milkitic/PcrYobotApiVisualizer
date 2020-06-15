@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.Attributes
 {
     public class StatsProviderMetadataAttribute : Attribute
     {

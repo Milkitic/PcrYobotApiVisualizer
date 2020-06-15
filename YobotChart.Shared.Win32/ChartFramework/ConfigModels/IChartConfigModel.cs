@@ -1,8 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
 {
-    public interface IChartConfigModel
+    public interface IChartConfigModel : INotifyPropertyChanged
     {
         ChartType ChartType { get; }
         string Title { get; set; }

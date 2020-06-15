@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:YobotChart.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:chartFramework="clr-namespace:YobotChart.Shared.Win32.ChartFramework;assembly=yoshr.win32"
+    xmlns:statsProviders="clr-namespace:YobotChart.Shared.Win32.ChartFramework.StatsProviders;assembly=yoshr.win32"
     Title="SelectTemplatePage"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -16,7 +17,7 @@
     <Page.Resources>
         <ControlTemplate x:Key="ProviderNavItemTempl" TargetType="{x:Type ListBoxItem}">
             <d:Object.DataContext>
-                <chartFramework:StatsProviderInfo />
+                <statsProviders:StatsProviderInfo />
             </d:Object.DataContext>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -50,7 +51,7 @@
         </ControlTemplate>
         <ControlTemplate x:Key="ProviderMethodCardTempl">
             <d:Object.DataContext>
-                <chartFramework:StatsFunctionInfo />
+                <statsProviders:StatsFunctionInfo />
             </d:Object.DataContext>
             <Grid>
                 <Border
@@ -172,7 +173,7 @@
         <DataTemplate x:Key="ProviderItem">
             <StackPanel Tag="{Binding Metadata.Name}">
                 <d:Object.DataContext>
-                    <chartFramework:StatsProviderInfo />
+                    <statsProviders:StatsProviderInfo />
                 </d:Object.DataContext>
                 <StackPanel Orientation="Horizontal">
                     <Label FontSize="18" Foreground="#2B2B2B">
@@ -206,7 +207,7 @@
                                 Tag="{Binding}"
                                 Template="{StaticResource ProviderMethodCardTempl}">
                                 <d:Object.DataContext>
-                                    <chartFramework:StatsFunctionInfo />
+                                    <statsProviders:StatsFunctionInfo />
                                 </d:Object.DataContext>
                             </Button>
                         </DataTemplate>

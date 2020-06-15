@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YobotChart.Shared.Win32.Annotations;
+using YobotChart.Shared.Win32.ChartFramework.Attributes;
+using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
+using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
 using YobotChart.Shared.YobotService;
 
 namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders

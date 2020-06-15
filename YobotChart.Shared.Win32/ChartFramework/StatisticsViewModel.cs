@@ -3,36 +3,23 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using YobotChart.Shared.Win32.Annotations;
+using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
 
 namespace YobotChart.Shared.Win32.ChartFramework
 {
-    public class StatsVm : INotifyPropertyChanged
+    public class StatisticsViewModel : INotifyPropertyChanged
     {
-
         private int _cycleCount;
 
         private int? _selectedCycle = -1;
         private DateTime? _selectedDate;
 
-        private StatsGraphVm _statsGraph = new StatsGraphVm();
         private bool _isLoading;
         private List<DateTime> _dateList;
+        private IChartConfigModel _configModel;
 
-        public YobotApiSource YobotApiSource { get; set; } = YobotApiSource.Default;
-        public StatsProviderInfo StatsProviderInfo { get; set; }
-        /// <summary>
-        /// 图表的图相关上下文
-        /// </summary>
-        public StatsGraphVm StatsGraph
-        {
-            get => _statsGraph;
-            set
-            {
-                if (Equals(value, _statsGraph)) return;
-                _statsGraph = value;
-                OnPropertyChanged();
-            }
-        }
+        public Guid StatsProviderGuid { get; set; }
+        public string StatsProviderMethodName { get; set; }
 
         /// <summary>
         /// 周目数
@@ -100,6 +87,17 @@ namespace YobotChart.Shared.Win32.ChartFramework
             {
                 if (value == _isLoading) return;
                 _isLoading = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public IChartConfigModel ConfigModel
+        {
+            get => _configModel;
+            set
+            {
+                if (Equals(value, _configModel)) return;
+                _configModel = value;
                 OnPropertyChanged();
             }
         }

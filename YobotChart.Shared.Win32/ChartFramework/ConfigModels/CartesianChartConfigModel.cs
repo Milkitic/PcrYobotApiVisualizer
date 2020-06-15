@@ -1,18 +1,15 @@
 ﻿using LiveCharts;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using YobotChart.Shared.Win32.Annotations;
+using LiveCharts.Wpf;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
 {
-    public class StatsGraphVm : INotifyPropertyChanged
+    public class CartesianChartConfigModel : ChartConfigModel<CartesianChart>
     {
         private SeriesCollection _seriesCollection = new SeriesCollection();
         private string[] _axisXLabels;
-        private string[] _axisYLabels;
-        private string _axisYTitle;
         private string _axisXTitle;
-        private string _title;
+        private string _axisYTitle;
+        private string[] _axisYLabels;
 
         public SeriesCollection SeriesCollection
         {
@@ -67,25 +64,6 @@ namespace YobotChart.Shared.Win32.ChartFramework
                 _axisYLabels = value;
                 OnPropertyChanged();
             }
-        }
-
-        public string Title
-        {
-            get => _title;
-            set
-            {
-                if (value == _title) return;
-                _title = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

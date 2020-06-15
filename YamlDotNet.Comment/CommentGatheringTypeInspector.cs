@@ -10,71 +10,71 @@ namespace YamlDotNet.Comment
 {
     public class CommentGatheringTypeInspector : TypeInspectorSkeleton
     {
-        private readonly ITypeInspector innerTypeDescriptor;
+        private readonly ITypeInspector _innerTypeDescriptor;
 
         public CommentGatheringTypeInspector(ITypeInspector innerTypeDescriptor)
         {
             if (innerTypeDescriptor == null)
             {
-                throw new ArgumentNullException("innerTypeDescriptor");
+                throw new ArgumentNullException(nameof(innerTypeDescriptor));
             }
 
-            this.innerTypeDescriptor = innerTypeDescriptor;
+            _innerTypeDescriptor = innerTypeDescriptor;
         }
 
         public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object container)
         {
-            return innerTypeDescriptor
+            return _innerTypeDescriptor
                 .GetProperties(type, container)
                 .Select(d => new CommentsPropertyDescriptor(d));
         }
 
         private sealed class CommentsPropertyDescriptor : IPropertyDescriptor
         {
-            private readonly IPropertyDescriptor baseDescriptor;
+            private readonly IPropertyDescriptor _baseDescriptor;
 
             public CommentsPropertyDescriptor(IPropertyDescriptor baseDescriptor)
             {
-                this.baseDescriptor = baseDescriptor;
+                _baseDescriptor = baseDescriptor;
                 Name = baseDescriptor.Name;
             }
 
             public string Name { get; set; }
 
-            public Type Type { get { return baseDescriptor.Type; } }
+            public Type Type => _baseDescriptor.Type;
 
             public Type TypeOverride
             {
-                get { return baseDescriptor.TypeOverride; }
-                set { baseDescriptor.TypeOverride = value; }
+                get => _baseDescriptor.TypeOverride;
+                set => _baseDescriptor.TypeOverride = value;
             }
 
             public int Order { get; set; }
 
             public ScalarStyle ScalarStyle
             {
-                get { return baseDescriptor.ScalarStyle; }
-                set { baseDescriptor.ScalarStyle = value; }
+                get => _baseDescriptor.ScalarStyle;
+                set => _baseDescriptor.ScalarStyle = value;
             }
 
-            public bool CanWrite { get { return baseDescriptor.CanWrite; } }
+            public bool CanWrite => _baseDescriptor.CanWrite;
 
             public void Write(object target, object value)
             {
-                baseDescriptor.Write(target, value);
+                _baseDescriptor.Write(target, value);
             }
 
             public T GetCustomAttribute<T>() where T : Attribute
             {
-                return baseDescriptor.GetCustomAttribute<T>();
+                return _baseDescriptor.GetCustomAttribute<T>();
             }
 
             public IObjectDescriptor Read(object target)
             {
-                var description = baseDescriptor.GetCustomAttribute<DescriptionAttribute>();
+                var description = _baseDescriptor.GetCustomAttribute<DescriptionAttribute>();
                 return description != null
-                    ? new CommentsObjectDescriptor(baseDescriptor.Read(target), description.Description)
-                    : baseDescriptor.Read(target);
+                    ? new CommentsObjectDescriptor(_baseDescriptor.Read(target), description.Description)
+                    : _baseDescriptor.Read(target);
             }
         }
     }

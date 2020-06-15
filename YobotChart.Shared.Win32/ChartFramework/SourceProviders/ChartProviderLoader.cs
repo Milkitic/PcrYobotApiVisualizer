@@ -4,8 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using YobotChart.Shared.Win32.ChartFramework.Attributes;
+using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
+using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
 {
     internal class ChartProviderLoader
     {

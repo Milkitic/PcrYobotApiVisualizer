@@ -13,8 +13,7 @@ namespace YamlDotNet.Comment
 
         public override bool EnterMapping(IPropertyDescriptor key, IObjectDescriptor value, IEmitter context)
         {
-            var commentsDescriptor = value as CommentsObjectDescriptor;
-            if (commentsDescriptor != null && commentsDescriptor.Comment != null)
+            if (value is CommentsObjectDescriptor commentsDescriptor && commentsDescriptor.Comment != null)
             {
                 context.Emit(new Core.Events.Comment(commentsDescriptor.Comment, false));
             }

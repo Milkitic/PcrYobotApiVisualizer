@@ -292,7 +292,6 @@ namespace YobotChart.Pages
             var testBox = (TestBox)thumb.Tag;
 
             testBox.Opacity = 1;
-            testBox.ZIndex = 0;
             thumb.Cursor = Cursors.Arrow;
             var centerX = testBox.X + testBox.Width / (2 * testBox.PointScaleX);
             var centerY = testBox.Y + testBox.Height / (2 * testBox.PointScaleY);
@@ -357,6 +356,7 @@ namespace YobotChart.Pages
                 {
                     testBox.X = newX;
                     testBox.Y = newY;
+                    testBox.ZIndex = 0;
                 });
 
                 sw.Stop();

@@ -1,9 +1,9 @@
-﻿using LiveCharts.Wpf;
-using System;
+﻿using System;
+using LiveCharts.Wpf;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
 {
-    public static class ChartConfigModelHelper
+    public static class ChartConfigModelTypeHelper
     {
         public static readonly Type CartesianType = typeof(CartesianChart);
         public static readonly Type PieType = typeof(PieChart);

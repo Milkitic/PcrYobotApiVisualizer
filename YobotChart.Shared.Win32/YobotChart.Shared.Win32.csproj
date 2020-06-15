@@ -52,30 +52,29 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChartFramework\CartesianChartConfigModel.cs" />
-    <Compile Include="ChartFramework\ChartConfigModel.cs" />
-    <Compile Include="ChartFramework\ChartConfigModelHelper.cs" />
-    <Compile Include="ChartFramework\ChartProviderLoader.cs" />
-    <Compile Include="ChartFramework\ChartType.cs" />
-    <Compile Include="ChartFramework\GranularityModel.cs" />
-    <Compile Include="ChartFramework\GranularityType.cs" />
-    <Compile Include="ChartFramework\IChartConfigModel.cs" />
-    <Compile Include="ChartFramework\IStatsProvider.cs" />
-    <Compile Include="ChartFramework\StatsGraphVm.cs" />
-    <Compile Include="ChartFramework\StatsMethodAcceptGranularityAttribute.cs" />
-    <Compile Include="ChartFramework\StatsMethodAttribute.cs" />
-    <Compile Include="ChartFramework\StatsMethodThumbnailAttribute.cs" />
-    <Compile Include="ChartFramework\StatsProviderInfo.cs" />
-    <Compile Include="ChartFramework\StatsProviderInfoSource.cs" />
-    <Compile Include="ChartFramework\StatsProviderMetadataAttribute.cs" />
+    <Compile Include="ChartFramework\ConfigModels\CartesianChartConfigModel.cs" />
+    <Compile Include="ChartFramework\ConfigModels\ChartConfigModel.cs" />
+    <Compile Include="ChartFramework\ConfigModels\ChartConfigModelTypeHelper.cs" />
+    <Compile Include="ChartFramework\SourceProviders\ChartProviderLoader.cs" />
+    <Compile Include="ChartFramework\ConfigModels\ChartType.cs" />
+    <Compile Include="ChartFramework\StatsProviders\GranularityModel.cs" />
+    <Compile Include="ChartFramework\StatsProviders\GranularityType.cs" />
+    <Compile Include="ChartFramework\ConfigModels\IChartConfigModel.cs" />
+    <Compile Include="ChartFramework\StatsProviders\IStatsProvider.cs" />
+    <Compile Include="ChartFramework\Attributes\StatsMethodAcceptGranularityAttribute.cs" />
+    <Compile Include="ChartFramework\Attributes\StatsMethodAttribute.cs" />
+    <Compile Include="ChartFramework\Attributes\StatsMethodThumbnailAttribute.cs" />
+    <Compile Include="ChartFramework\StatsProviders\StatsProviderInfo.cs" />
+    <Compile Include="ChartFramework\SourceProviders\StatsProviderInfoSource.cs" />
+    <Compile Include="ChartFramework\Attributes\StatsProviderMetadataAttribute.cs" />
     <Compile Include="ChartFramework\StatsProviders\ClansStatsProvider.cs" />
     <Compile Include="ChartFramework\StatsProviders\PersonalStatsProvider.cs" />
     <Compile Include="Execute.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ChartFramework\StatsVm.cs" />
+    <Compile Include="ChartFramework\StatisticsViewModel.cs" />
     <Compile Include="WebBrowserExtension.cs" />
-    <Compile Include="ChartFramework\YobotApiSource.cs" />
+    <Compile Include="ChartFramework\SourceProviders\YobotApiSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\YobotChart.Shared\YobotChart.Shared.csproj">
@@ -86,5 +85,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

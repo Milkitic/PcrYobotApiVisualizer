@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using YobotChart.Shared.Win32.ChartFramework.Attributes;
+using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
 {
     public class StatsProviderInfo
     {

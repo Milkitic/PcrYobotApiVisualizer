@@ -5,11 +5,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Navigation;
+using System.Windows.Threading;
 using YobotChart.AutoUpdate;
 using YobotChart.Pages;
 using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
 using YobotChart.Shared.Win32.ChartFramework;
+using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
 using YobotChart.Shared.YobotService.V1;
 using YobotChart.UiComponents.FrontDialogComponent;
 using YobotChart.UiComponents.NotificationComponent;
@@ -122,8 +127,7 @@ namespace YobotChart
                 //apiSource.CycleCount = apiSource.YobotApi.Challenges.GroupBy(k => k.Cycle).Count();
 
                 //apiSource.SelectedCycle = apiSource.CycleCount;
-                //apiSource.SelectedDate =
-                apiSource.YobotApi.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
+                //apiSource.SelectedDate = apiSource.YobotApi.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
             }
             catch (ArgumentNullException arg)
             {
@@ -142,12 +146,12 @@ namespace YobotChart
 
         private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(GetInstance<SelectTemplatePage>());
+            MainFrame.AnimateNavigate(GetInstance<SelectTemplatePage>());
         }
 
         private void BtnDashBoardPage_OnClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(GetInstance<DashBoardPage>());
+            MainFrame.AnimateNavigate(GetInstance<DashBoardPage>());
         }
 
         private T GetInstance<T>() where T : Page, new()

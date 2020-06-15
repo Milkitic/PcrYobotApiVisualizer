@@ -1,6 +1,7 @@
 ﻿using System;
+using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
 
-namespace YobotChart.Shared.Win32.ChartFramework
+namespace YobotChart.Shared.Win32.ChartFramework.Attributes
 {
     public class StatsMethodAcceptGranularityAttribute : Attribute
     {
