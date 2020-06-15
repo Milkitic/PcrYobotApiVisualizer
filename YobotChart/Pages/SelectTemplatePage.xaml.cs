@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using YobotChart.Annotations;
+using YobotChart.Shared.Annotations;
 using YobotChart.Shared.Win32.ChartFramework;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
 using YobotChart.Shared.Win32.ChartFramework.StatsProviders;

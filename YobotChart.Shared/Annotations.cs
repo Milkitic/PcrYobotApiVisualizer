@@ -32,7 +32,8 @@ using System;
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable InconsistentNaming
 
-namespace YobotChart.Annotations
+// ReSharper disable once CheckNamespace
+namespace YobotChart.Shared.Annotations
 {
   /// <summary>
   /// Indicates that the value of the marked element could be <c>null</c> sometimes,

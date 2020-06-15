@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using YobotChart.Shared.Win32.Annotations;
+using YobotChart.Shared.Annotations;
 using YobotChart.Shared.YobotService;
 using YobotChart.Shared.YobotService.V1;
 

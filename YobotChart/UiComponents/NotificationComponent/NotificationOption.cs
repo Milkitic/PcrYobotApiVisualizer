@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
-using YobotChart.Annotations;
+using YobotChart.Shared.Annotations;
 
 namespace YobotChart.UiComponents.NotificationComponent
 {
