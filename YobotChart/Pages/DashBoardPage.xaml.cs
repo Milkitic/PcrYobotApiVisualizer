@@ -139,7 +139,6 @@ namespace YobotChart.Pages
             _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
         }
 
-
         public void AddStatsViewModelAndSave(StatsViewModel statsVm)
         {
             var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
@@ -192,12 +191,12 @@ namespace YobotChart.Pages
                 statsVm.DashboardInfo.Height = DashboardInfo.UnitY * statsVm.DashboardInfo.PointScaleY;
             }
 
+            _viewModel.Collections.Add(statsVm);
+            _viewModel.Save();
+
             matrix = GetMatrix(out xLen, out yLen, out columnCount);
             _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
             _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
-
-            _viewModel.Collections.Add(statsVm);
-            _viewModel.Save();
         }
 
         public void AppendItem(int scaleX, int scaleY)
@@ -311,6 +310,13 @@ namespace YobotChart.Pages
 
             _m = GetMatrix(out _xLen, out _yLen, out _columnCount);
             _viewModel.MaxHeight = DashboardInfo.UnitY * (_yLen);
+        }
+
+        private void Remove_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var thumb = (Button)sender;
+            var statsVm = (StatsViewModel)thumb.Tag;
+            _viewModel.RemoveStatsViewModelAndSave(statsVm);
         }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)

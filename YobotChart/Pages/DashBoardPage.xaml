@@ -103,9 +103,11 @@
                                             VerticalAlignment="Center"
                                             Background="Transparent"
                                             BorderThickness="0"
+                                            Click="Remove_Click"
                                             Foreground="{StaticResource ThemeLightBrush}"
                                             IconMargin="0"
-                                            IconTemplate="{StaticResource CloseTempl}" />
+                                            IconTemplate="{StaticResource CloseTempl}"
+                                            Tag="{Binding}" />
                                     </StackPanel>
                                 </Grid>
                                 <Border Margin="30" Background="Gray">
