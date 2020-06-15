@@ -18,6 +18,7 @@ namespace YobotChart.UiComponents
 
         public AnimatedFrame()
         {
+            Default = this;
             _fadeInStoryboard = new Storyboard { Name = "FadeInStoryboard" };
             _opacityInAnimation = new DoubleAnimation
             {
@@ -57,6 +58,8 @@ namespace YobotChart.UiComponents
             _fadeOutStoryboard.Children.Add(_opacityOutAnimation);
             Storyboard.SetTargetProperty(_opacityOutAnimation, new PropertyPath(OpacityProperty));
         }
+
+        public static AnimatedFrame Default { get; set; }
 
         public void AnimateNavigate(UIElement uiElement)
         {

@@ -7,9 +7,9 @@ namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
     {
         private SeriesCollection _seriesCollection = new SeriesCollection();
         private string[] _axisXLabels;
+        private string[] _axisYLabels;
         private string _axisXTitle;
         private string _axisYTitle;
-        private string[] _axisYLabels;
 
         public SeriesCollection SeriesCollection
         {
@@ -33,6 +33,17 @@ namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
             }
         }
 
+        public string[] AxisYLabels
+        {
+            get => _axisYLabels;
+            set
+            {
+                if (Equals(value, _axisYLabels)) return;
+                _axisYLabels = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string AxisXTitle
         {
             get => _axisXTitle;
@@ -51,17 +62,6 @@ namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
             {
                 if (value == _axisYTitle) return;
                 _axisYTitle = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string[] AxisYLabels
-        {
-            get => _axisYLabels;
-            set
-            {
-                if (Equals(value, _axisYLabels)) return;
-                _axisYLabels = value;
                 OnPropertyChanged();
             }
         }

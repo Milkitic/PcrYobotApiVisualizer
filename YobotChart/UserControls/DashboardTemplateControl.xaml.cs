@@ -14,22 +14,21 @@ using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
 
 namespace YobotChart.UserControls
 {
-
     /// <summary>
     /// GraphControl.xaml 的交互逻辑
     /// </summary>
-    public partial class GraphControl : UserControl
+    public partial class DashboardTemplateControl : UserControl
     {
-        private StatisticsViewModel _viewModel;
+        private StatsViewModel _viewModel;
         private Timer _loadTimer;
-        public StatisticsViewModel StatisticsViewModel => _viewModel;
+        public StatsViewModel StatsViewModel => _viewModel;
 
         public Chart Chart { get; private set; }
 
-        public GraphControl()
+        public DashboardTemplateControl()
         {
             InitializeComponent();
-            _viewModel = new StatisticsViewModel();
+            _viewModel = new StatsViewModel();
             DataContext = _viewModel;
         }
 
@@ -73,7 +72,7 @@ namespace YobotChart.UserControls
             var apiSource = YobotApiSource.Default;
 
             _loadTimer?.Dispose();
-            _loadTimer = new Timer((obj) => Dispatcher.Invoke(() => StatisticsViewModel.IsLoading = true), null, 1000,
+            _loadTimer = new Timer((obj) => Dispatcher.Invoke(() => StatsViewModel.IsLoading = true), null, 1000,
                 Timeout.Infinite);
 
             try
@@ -117,7 +116,7 @@ namespace YobotChart.UserControls
                     {
                         case ChartType.Cartesian:
                             var cartesianResult = (CartesianChartConfigModel)result;
-                            StatisticsViewModel.ConfigModel = cartesianResult;
+                            StatsViewModel.ConfigModel = cartesianResult;
                             //StatsVm.StatsGraph.SeriesCollection = cartesianResult.SeriesCollection;
                             //StatsVm.StatsGraph.Title = cartesianResult.Title;
                             //StatsVm.StatsGraph.AxisXLabels = cartesianResult.AxisXLabels;
@@ -134,7 +133,7 @@ namespace YobotChart.UserControls
             }
             finally
             {
-                StatisticsViewModel.IsLoading = false;
+                StatsViewModel.IsLoading = false;
                 _loadTimer?.Dispose();
             }
         }

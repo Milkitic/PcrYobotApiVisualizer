@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
 using System.Windows.Threading;
 using YobotChart.AutoUpdate;
 using YobotChart.Pages;
 using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
-using YobotChart.Shared.Win32.ChartFramework;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
-using YobotChart.Shared.YobotService.V1;
 using YobotChart.UiComponents.FrontDialogComponent;
 using YobotChart.UiComponents.NotificationComponent;
 using YobotChart.UserControls;
@@ -30,10 +22,7 @@ namespace YobotChart
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private IYobotServiceV1 _yobotService;
         private GiteeUpdater _updater;
-
-        private static Dictionary<Type, Page> _dic = new Dictionary<Type, Page>();
 
         public MainWindow()
         {
@@ -71,9 +60,9 @@ namespace YobotChart
                 }
             }).Start();
 
-            _yobotService = new ServiceCore(Browser);
-            _yobotService.InitRequested += YobotService_InitRequested;
-            MainFrame.Navigate(GetInstance<DashBoardPage>());
+            YobotApiSource.Default.YobotService = new ServiceCore(Browser);
+            YobotApiSource.Default.YobotService.InitRequested += YobotService_InitRequested;
+            MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
             await Load();
         }
 
@@ -119,15 +108,7 @@ namespace YobotChart
 
             try
             {
-                var apiObj = await _yobotService.GetApiInfo().ConfigureAwait(false);
-                var apiSource = YobotApiSource.Default;
-                apiSource.YobotApi = apiObj;
-                apiSource.YobotApi.Challenges = apiSource.YobotApi.Challenges.OrderBy(k => k.ChallengeTime)
-                    /*         .Where(k => k.ChallengeTime < new DateTime(2020, 5, 15))*/.ToArray();
-                //apiSource.CycleCount = apiSource.YobotApi.Challenges.GroupBy(k => k.Cycle).Count();
-
-                //apiSource.SelectedCycle = apiSource.CycleCount;
-                //apiSource.SelectedDate = apiSource.YobotApi.Challenges.FirstOrDefault()?.ChallengeTime.AddHours(-5);
+                await YobotApiSource.Default.UpdateDataAsync();
             }
             catch (ArgumentNullException arg)
             {
@@ -135,34 +116,24 @@ namespace YobotChart
             }
             finally
             {
-                Execute.OnUiThread(() => btnUpdateData.IsEnabled = true);
+                btnUpdateData.IsEnabled = true;
             }
         }
 
         private async void Logout_Click(object sender, RoutedEventArgs e)
         {
-            await _yobotService.LogoutAsync();
+            await YobotApiSource.Default.YobotService.LogoutAsync();
         }
 
         private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.AnimateNavigate(GetInstance<SelectTemplatePage>());
+            MainFrame.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
         }
 
         private void BtnDashBoardPage_OnClick(object sender, RoutedEventArgs e)
         {
-            MainFrame.AnimateNavigate(GetInstance<DashBoardPage>());
+            MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
         }
 
-        private T GetInstance<T>() where T : Page, new()
-        {
-            var type = typeof(T);
-            if (!_dic.ContainsKey(type))
-            {
-                _dic.Add(type, new T());
-            }
-
-            return (T)_dic[type];
-        }
     }
 }

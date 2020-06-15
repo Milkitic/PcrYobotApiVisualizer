@@ -35,7 +35,7 @@
                     Margin="0,7"
                     FontSize="16"
                     Foreground="#3480e8"
-                    Text="{Binding Metadata.Name}" />
+                    Text="{Binding Name}" />
             </Grid>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -96,7 +96,7 @@
                             HorizontalAlignment="Center"
                             FontSize="13"
                             Foreground="#5fb3f3">
-                            <TextBlock Text="{Binding Attribute.Name}" />
+                            <TextBlock Text="{Binding Name}" />
                         </Label>
                     </Grid>
                 </Border>
@@ -171,25 +171,25 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <DataTemplate x:Key="ProviderItem">
-            <StackPanel Tag="{Binding Metadata.Name}">
+            <StackPanel Tag="{Binding Name}">
                 <d:Object.DataContext>
                     <statsProviders:StatsProviderInfo />
                 </d:Object.DataContext>
                 <StackPanel Orientation="Horizontal">
                     <Label FontSize="18" Foreground="#2B2B2B">
                         <TextBlock>
-                            <Run Text="{Binding Metadata.Name}" />
+                            <Run Text="{Binding Name}" />
                         </TextBlock>
                     </Label>
                     <Label VerticalAlignment="Bottom" Foreground="#909090">
                         <TextBlock>
                             <Run Text="by " />
-                            <Run Text="{Binding Metadata.Author}" />
+                            <Run Text="{Binding Author}" />
                         </TextBlock>
                     </Label>
                 </StackPanel>
                 <Label
-                    Content="{Binding Metadata.Description}"
+                    Content="{Binding Description}"
                     FontSize="13"
                     Foreground="#484848" />
                 <ItemsControl Margin="-6,4,-6,10" ItemsSource="{Binding FunctionList}">

@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using YobotChart.Shared.Win32.Annotations;
 using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
-using YobotChart.Shared.Win32.Properties;
 
 namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
 {
-    public class StatsProviderInfoSource
+    public sealed class StatsProviderInfoSource
     {
         public static void LoadSource()
         {
@@ -43,7 +45,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

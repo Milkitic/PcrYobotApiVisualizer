@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using YobotChart.Annotations;
 using YobotChart.Shared.Win32.ChartFramework;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
+using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
+using YobotChart.UiComponents;
 
 namespace YobotChart.Pages
 {
@@ -48,7 +49,17 @@ namespace YobotChart.Pages
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-           
+            var button = (Button)sender;
+            var functionInfo = (StatsFunctionInfo)button.Tag;
+
+            var func = functionInfo.Function;
+            var statsVm = new StatsViewModel
+            {
+                StatsProviderGuid = functionInfo.ProviderGuid,
+                StatsProviderMethodName = functionInfo.Name
+            };
+
+            AnimatedFrame.Default?.AnimateNavigate(new ConfigTemplatePage(statsVm));
         }
     }
 }

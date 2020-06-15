@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using YobotChart.Shared.Win32.ChartFramework.Attributes;
-using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
 
 namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
 {
     public class StatsProviderInfo
     {
-        public StatsProviderMetadataAttribute Metadata { get; set; }
+        public string Name { get; internal set; }
+        public string Author { get; internal set; }
+        public Version Version { get; internal set; }
+        public Guid Guid { get; internal set; }
+        public string Description { get; internal set; }
 
         public List<StatsFunctionInfo> FunctionList { get; set; } = new List<StatsFunctionInfo>();
-    }
-
-    public class StatsFunctionInfo
-    {
-        public StatsMethodAttribute Attribute { get; set; }
-        public Func<GranularityModel, Task<IChartConfigModel>> Function { get; set; }
-        public GranularityType[] AcceptGranularities { get; set; }
-        public string ThumbnailPath { get; set; }
     }
 }

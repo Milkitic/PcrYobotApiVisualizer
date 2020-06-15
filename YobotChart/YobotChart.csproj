@@ -87,6 +87,7 @@
     <Compile Include="Pages\SelectTemplatePage.xaml.cs">
       <DependentUpon>SelectTemplatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SingletonPageHelper.cs" />
     <Compile Include="UiComponents\AnimatedFrame.cs" />
     <Compile Include="UiComponents\ButtonComponent\CloseButton.cs" />
     <Compile Include="UiComponents\ButtonComponent\CommonButton.cs" />
@@ -115,8 +116,8 @@
       <DependentUpon>NotifyOverlay.xaml</DependentUpon>
     </Compile>
     <Compile Include="UiComponents\TextBoxComponent\CommonTextBox.cs" />
-    <Compile Include="UserControls\GraphControl.xaml.cs">
-      <DependentUpon>GraphControl.xaml</DependentUpon>
+    <Compile Include="UserControls\DashboardTemplateControl.xaml.cs">
+      <DependentUpon>DashboardTemplateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\InitUriControl.xaml.cs">
       <DependentUpon>InitUriControl.xaml</DependentUpon>
@@ -198,7 +199,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControls\GraphControl.xaml">
+    <Page Include="UserControls\DashboardTemplateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

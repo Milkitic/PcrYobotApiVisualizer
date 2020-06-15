@@ -15,7 +15,15 @@
         <local:DashBoardPageVm />
     </Page.DataContext>
     <Grid>
-        <Border>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+            <Button Content="更新" />
+            <Button Content="新增" Click="BtnAdd_Click" />
+        </StackPanel>
+        <Border Grid.Row="1">
             <ScrollViewer
                 x:Name="ViewArea"
                 HorizontalScrollBarVisibility="Auto"
@@ -124,6 +132,7 @@
             </ScrollViewer>
         </Border>
         <StackPanel
+            Grid.Row="1"
             Margin="2"
             VerticalAlignment="Bottom"
             Orientation="Horizontal">

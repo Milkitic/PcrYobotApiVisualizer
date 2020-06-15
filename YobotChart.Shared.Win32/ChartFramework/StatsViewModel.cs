@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using YamlDotNet.Serialization;
 using YobotChart.Shared.Win32.Annotations;
 using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
+using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
 
 namespace YobotChart.Shared.Win32.ChartFramework
 {
-    public class StatisticsViewModel : INotifyPropertyChanged
+    public sealed class StatsViewModel : INotifyPropertyChanged
     {
         private int _cycleCount;
 
@@ -20,6 +22,11 @@ namespace YobotChart.Shared.Win32.ChartFramework
 
         public Guid StatsProviderGuid { get; set; }
         public string StatsProviderMethodName { get; set; }
+
+        [YamlIgnore]
+        public StatsProviderInfo SourceStatsProvider { get; set; }
+        [YamlIgnore]
+        public StatsFunctionInfo SourceStatsFunction { get; set; }
 
         /// <summary>
         /// 周目数
@@ -91,6 +98,9 @@ namespace YobotChart.Shared.Win32.ChartFramework
             }
         }
 
+        /// <summary>
+        /// 图表信息模型
+        /// </summary>
         public IChartConfigModel ConfigModel
         {
             get => _configModel;
@@ -104,7 +114,7 @@ namespace YobotChart.Shared.Win32.ChartFramework
 
         public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

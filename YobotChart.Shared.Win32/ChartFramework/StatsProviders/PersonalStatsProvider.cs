@@ -12,7 +12,7 @@ using YobotChart.Shared.YobotService;
 
 namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
 {
-    [StatsProviderMetadata("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a",
+    [StatsProvider("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a",
         Author = "yf_extension",
         Name = "会内比较统计",
         Description = "将会员的排名进行横向比较，包括每刀详情、每只Boss伤害详情。")]

@@ -22,6 +22,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using YobotChart.Annotations;
 using YobotChart.Shared.Win32;
+using YobotChart.UiComponents;
 
 namespace YobotChart.Pages
 {
@@ -381,6 +382,11 @@ namespace YobotChart.Pages
         private void AddScale4_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             AppendItem(4, 1);
+        }
+
+        private void BtnAdd_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            AnimatedFrame.Default?.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
         }
     }
 }

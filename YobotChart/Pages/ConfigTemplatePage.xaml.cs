@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using YobotChart.Shared.Win32.ChartFramework;
 
 namespace YobotChart.Pages
 {
@@ -20,9 +21,13 @@ namespace YobotChart.Pages
     /// </summary>
     public partial class ConfigTemplatePage : Page
     {
-        public ConfigTemplatePage()
+        private readonly StatsViewModel _statsVm;
+
+        public ConfigTemplatePage(StatsViewModel statsVm)
         {
             InitializeComponent();
+            _statsVm = statsVm;
+            DataContext = statsVm;
         }
     }
 }

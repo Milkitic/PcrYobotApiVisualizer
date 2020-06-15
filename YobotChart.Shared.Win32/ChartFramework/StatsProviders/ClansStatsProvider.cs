@@ -2,15 +2,15 @@
 using LiveCharts.Wpf;
 using System;
 using System.Linq;
+using YobotChart.Shared.Win32.Annotations;
 using YobotChart.Shared.Win32.ChartFramework.Attributes;
 using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
-using YobotChart.Shared.Win32.Properties;
 using YobotChart.Shared.YobotService;
 
 namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
 {
-    [StatsProviderMetadata("872c4594-aaf1-4453-a652-fb304cb936f7",
+    [StatsProvider("872c4594-aaf1-4453-a652-fb304cb936f7",
         Author = "yf_extension",
         Name = "行会数据分析",
         Description = "包含行会的伤害趋势、周目花费时间、行会横向比较等。")]

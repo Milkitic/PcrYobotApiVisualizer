@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using YobotChart.Shared.Win32.Properties;
+using YobotChart.Shared.Win32.Annotations;
 
 namespace YobotChart.Shared.Win32.ChartFramework.ConfigModels
 {

@@ -23,11 +23,18 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
             {
                 try
                 {
-                    var statisticsProviderInfo = new StatsProviderInfo();
-                    var attr = statsProvider.GetCustomAttribute<StatsProviderMetadataAttribute>();
+                    var attr = statsProvider.GetCustomAttribute<StatsProviderAttribute>();
+                    if (attr == null) continue;
+                    var statisticsProviderInfo = new StatsProviderInfo
+                    {
+                        Guid = attr.Guid,
+                        Name = attr.Name,
+                        Author = attr.Author,
+                        Description = attr.Description,
+                        Version = attr.Version
+                    };
 
                     statsProviderInfos.Add(statisticsProviderInfo);
-                    statisticsProviderInfo.Metadata = attr;
 
                     var instance = (IStatsProvider)Activator.CreateInstance(statsProvider);
                     //instance.ChartProvider = this;
@@ -39,7 +46,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
                         var o = methodInfo.GetCustomAttribute<StatsMethodAttribute>();
                         if (o == null) continue;
 
-                        var statsFunctionInfo = new StatsFunctionInfo { Attribute = o };
+                        var statsFunctionInfo = new StatsFunctionInfo(attr.Guid) { Name = o.Name, Guid = o.Guid };
                         var granularityAttr = methodInfo.GetCustomAttribute<StatsMethodAcceptGranularityAttribute>();
                         if (granularityAttr != null)
                         {
@@ -50,7 +57,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
                         if (thumbnailAttr != null)
                         {
                             var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "providers",
-                                statisticsProviderInfo.Metadata.Guid.ToString());
+                                statisticsProviderInfo.Guid.ToString());
                             if (!Directory.Exists(dir))
                                 Directory.CreateDirectory(dir);
                             statsFunctionInfo.ThumbnailPath = Path.Combine(dir, thumbnailAttr.Path);

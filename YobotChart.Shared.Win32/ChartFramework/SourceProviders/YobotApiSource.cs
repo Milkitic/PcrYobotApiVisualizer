@@ -1,13 +1,16 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using YobotChart.Shared.Win32.Properties;
+using System.Threading.Tasks;
+using YobotChart.Shared.Win32.Annotations;
 using YobotChart.Shared.YobotService;
+using YobotChart.Shared.YobotService.V1;
 
 namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
 {
     public sealed class YobotApiSource : INotifyPropertyChanged
     {
-
+        public IYobotServiceV1 YobotService { get; set; }
         private IYobotApiObject _yobotApi;
         /// <summary>
         /// 数据源
@@ -22,6 +25,14 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
                 OnPropertyChanged();
             }
         }
+
+        public async Task UpdateDataAsync()
+        {
+            var apiObj = await YobotService.GetApiInfo().ConfigureAwait(false);
+            YobotApi = apiObj;
+            YobotApi.Challenges = YobotApi.Challenges.OrderBy(k => k.ChallengeTime).ToArray();
+        }
+
         private static YobotApiSource _default;
         private static object _defaultLock = new object();
 
