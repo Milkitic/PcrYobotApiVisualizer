@@ -22,6 +22,7 @@ namespace YobotChart.Shared.Win32.ChartFramework
         private GranularityModel _granularityModel;
 
         private bool _isLoading;
+        private DashboardInfo _dashboardInfo = new DashboardInfo();
 
         [YamlIgnore]
         public StatsProviderInfo SourceStatsProvider
@@ -92,6 +93,7 @@ namespace YobotChart.Shared.Win32.ChartFramework
         /// <summary>
         /// 图表信息模型
         /// </summary>
+        [YamlIgnore]
         public IChartConfigModel ConfigModel
         {
             get => _configModel;
@@ -113,6 +115,17 @@ namespace YobotChart.Shared.Win32.ChartFramework
             {
                 if (value == _isLoading) return;
                 _isLoading = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DashboardInfo DashboardInfo
+        {
+            get => _dashboardInfo;
+            set
+            {
+                if (Equals(value, _dashboardInfo)) return;
+                _dashboardInfo = value;
                 OnPropertyChanged();
             }
         }
@@ -140,6 +153,116 @@ namespace YobotChart.Shared.Win32.ChartFramework
         public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class DashboardInfo : INotifyPropertyChanged
+    {
+        public const int UnitX = 350;
+        public const int UnitY = 270;
+
+        private double _x;
+        private double _y;
+        private double _width;
+        private double _height;
+        private double _opacity = 1;
+        private int _zIndex;
+
+        [YamlIgnore]
+        public double X
+        {
+            get => _x;
+            set
+            {
+                if (value.Equals(_x)) return;
+                _x = value;
+                OnPropertyChanged();
+                
+            }
+        }
+
+        [YamlIgnore]
+        public double Y
+        {
+            get => _y;
+            set
+            {
+                if (value.Equals(_y)) return;
+                _y = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [YamlIgnore]
+        public double Width
+        {
+            get => _width;
+            set
+            {
+                if (value.Equals(_width)) return;
+                _width = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [YamlIgnore]
+        public double Height
+        {
+            get => _height;
+            set
+            {
+                if (value.Equals(_height)) return;
+                _height = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [YamlIgnore]
+        public double Opacity
+        {
+            get => _opacity;
+            set
+            {
+                if (value.Equals(_opacity)) return;
+                _opacity = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [YamlIgnore]
+        public int ZIndex
+        {
+            get => _zIndex;
+            set
+            {
+                if (value == _zIndex) return;
+                _zIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int PointX { get; set; }
+
+        public int PointY { get; set; }
+
+        public int PointScaleX { get; set; }
+
+        public int PointScaleY { get; set; }
+
+        public void ResetInterface()
+        {
+           X = PointX * DashboardInfo.UnitX;
+           Y = PointY * DashboardInfo.UnitY;
+           Width = DashboardInfo.UnitX * PointScaleX;
+           Height = DashboardInfo.UnitY * PointScaleY;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

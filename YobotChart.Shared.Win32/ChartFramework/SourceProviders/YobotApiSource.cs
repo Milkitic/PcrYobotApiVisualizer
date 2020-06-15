@@ -14,7 +14,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
     {
         public IYobotServiceV1 YobotService { get; set; }
         private IYobotApiObject _yobotApi;
-        private int _cycleCount;
+        private List<int> _roundList;
         private List<DateTime> _dateList;
         private List<int> _phaseList;
 
@@ -35,13 +35,13 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
         /// <summary>
         /// 周目数
         /// </summary>
-        public int CycleCount
+        public List<int> RoundList
         {
-            get => _cycleCount;
+            get => _roundList;
             set
             {
-                if (value == _cycleCount) return;
-                _cycleCount = value;
+                if (value == _roundList) return;
+                _roundList = value;
                 OnPropertyChanged();
             }
         }
@@ -75,7 +75,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
         {
             YobotApi = await YobotService.GetApiInfo().ConfigureAwait(false);
             YobotApi.Challenges = YobotApi.Challenges.OrderBy(k => k.ChallengeTime).ToArray();
-            CycleCount = YobotApi.Challenges.GroupBy(k => k.Cycle).Count();
+            RoundList = YobotApi.Challenges.GroupBy(k => k.Cycle).Select(k=>k.Key).ToList();
             DateList = YobotApi.Challenges.GroupBy(k => k.ChallengeTime.AddHours(-5).Date)
                 .Select(k => k.Key).ToList();
             PhaseList = YobotApi.Challenges.GroupBy(k => k.BattleId).Select(k=>k.Key).ToList();

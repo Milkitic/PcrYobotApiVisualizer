@@ -77,6 +77,9 @@
     <Compile Include="AutoUpdate\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\DateTimeToFormatStringConverter.cs" />
+    <Compile Include="Converters\RatioConverter.cs" />
+    <Compile Include="Converters\TimeSpanToFormatStringConverter.cs" />
     <Compile Include="Converters\WindowMarginConverter.cs" />
     <Compile Include="Pages\ConfigTemplatePage.xaml.cs">
       <DependentUpon>ConfigTemplatePage.xaml</DependentUpon>
@@ -267,6 +270,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\YamlDotNet.Comment\YamlDotNet.Comment.csproj">
+      <Project>{9052C540-FA01-444A-A301-555DB27CBDD7}</Project>
+      <Name>YamlDotNet.Comment</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YobotChart.Shared.Win32\YobotChart.Shared.Win32.csproj">
       <Project>{44155F0B-18EC-415E-A03A-ED4056BE8D64}</Project>
       <Name>YobotChart.Shared.Win32</Name>

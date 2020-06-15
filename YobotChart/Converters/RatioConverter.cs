@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
 
 namespace YobotChart.Converters
 {
-    public class WindowMarginConverter : IValueConverter
+    public class RatioConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var state = (WindowState)value;
-            return state == WindowState.Maximized ? new Thickness(6, 7, 6, 6) : new Thickness(0);
+            try
+            {
+                var d = System.Convert.ToDouble(parameter);
+                return (double?)value * d;
+            }
+            catch (Exception ex)
+            {
+                return value;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

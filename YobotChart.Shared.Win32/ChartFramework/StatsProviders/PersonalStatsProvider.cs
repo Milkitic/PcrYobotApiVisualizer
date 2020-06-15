@@ -40,7 +40,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
             {
                 var qqId = kvp.Key;
 
-                var byDate = kvp.GroupBy(k => k.ChallengeTime.Date);
+                var byDate = kvp.GroupBy(k => k.ChallengeTime.AddHours(-5).Date);
                 // multi date support
 
                 var damageModel = new PersonalDamageModel

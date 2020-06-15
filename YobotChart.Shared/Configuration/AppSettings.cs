@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
@@ -13,6 +12,7 @@ namespace YobotChart.Shared.Configuration
         public static class Files
         {
             public static string ConfigFile { get; } = Path.Combine(Directories.CurrentDir, "appsettings.yml");
+            public static string StatsFile { get; } = Path.Combine(Directories.CurrentDir, "stats.yml");
         }
 
         public class Directories
