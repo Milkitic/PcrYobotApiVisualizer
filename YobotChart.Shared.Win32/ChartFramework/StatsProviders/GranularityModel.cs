@@ -6,11 +6,15 @@ namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
 {
     public class GranularityModel
     {
+        public GranularityModel()
+        {
+        }
+        
         public GranularityModel(int phase, IList<string> userIds = null)
         {
             SelectedPhase = phase;
             GranularityType = GranularityType.Total;
-            SelectedUserIds = new ReadOnlyCollection<string>(userIds ?? Array.Empty<string>());
+            SelectedUserIds = new List<string>(userIds ?? Array.Empty<string>());
         }
 
         public GranularityModel(int phase, int round, IList<string> userIds = null)
@@ -18,7 +22,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
             SelectedPhase = phase;
             SelectedRound = round;
             GranularityType = GranularityType.SingleRound;
-            SelectedUserIds = new ReadOnlyCollection<string>(userIds ?? Array.Empty<string>());
+            SelectedUserIds = new List<string>(userIds ?? Array.Empty<string>());
         }
 
         public GranularityModel(int phase, DateTime date, IList<string> userIds = null)
@@ -26,7 +30,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
             SelectedPhase = phase;
             SelectedDate = date;
             GranularityType = GranularityType.SingleDate;
-            SelectedUserIds = new ReadOnlyCollection<string>(userIds ?? Array.Empty<string>());
+            SelectedUserIds = new List<string>(userIds ?? Array.Empty<string>());
         }
 
         public GranularityModel(int phase, int startRound, int endRound, IList<string> userIds = null)
@@ -35,7 +39,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
             StartRound = startRound;
             EndRound = endRound;
             GranularityType = GranularityType.MultiRound;
-            SelectedUserIds = new ReadOnlyCollection<string>(userIds ?? Array.Empty<string>());
+            SelectedUserIds = new List<string>(userIds ?? Array.Empty<string>());
         }
 
         public GranularityModel(int phase, DateTime startDate, DateTime endDate, IList<string> userIds = null)
@@ -44,22 +48,43 @@ namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
             StartDate = startDate;
             EndDate = endDate;
             GranularityType = GranularityType.MultiDate;
-            SelectedUserIds = new ReadOnlyCollection<string>(userIds ?? Array.Empty<string>());
+            SelectedUserIds = new List<string>(userIds ?? Array.Empty<string>());
         }
 
-        public GranularityType GranularityType { get; }
+        public GranularityType GranularityType { get; set; }
 
-        public int SelectedPhase { get; }
+        public int SelectedPhase { get; set; }
 
-        public int? SelectedRound { get; }
-        public DateTime? SelectedDate { get; }
+        /// <summary>
+        /// 已选周目，null默认为latest
+        /// </summary>
+        public int? SelectedRound { get; set; }
 
-        public int? StartRound { get; }
-        public int? EndRound { get; }
+        /// <summary>
+        /// 已选日期，null默认为latest
+        /// </summary>
+        public DateTime? SelectedDate { get; set; }
 
-        public DateTime? StartDate { get; }
-        public DateTime? EndDate { get; }
+        /// <summary>
+        /// 已选开始周目，null默认为earliest
+        /// </summary>
+        public int? StartRound { get; set; }
 
-        public ReadOnlyCollection<string> SelectedUserIds { get; }
+        /// <summary>
+        /// 已选结束周目，null默认为latest
+        /// </summary>
+        public int? EndRound { get; set; }
+
+        /// <summary>
+        /// 已选开始日期，null默认为earliest
+        /// </summary>
+        public DateTime? StartDate { get; set; }
+
+        /// <summary>
+        /// 已选结束日期，null默认为latest
+        /// </summary>
+        public DateTime? EndDate { get; set; }
+
+        public List<string> SelectedUserIds { get; set; }
     }
 }

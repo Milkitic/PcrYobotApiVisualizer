@@ -5,6 +5,7 @@ namespace YobotChart.Shared.YobotService
     public interface IChallengeObject
     {
         // ReSharper disable InconsistentNaming
+        int BattleId { get; }
         long QQId { get; set; }
         long? BehalfQQId { get; }
         // ReSharper restore InconsistentNaming

@@ -2,15 +2,15 @@
 using LiveCharts.Wpf;
 using LiveCharts.Wpf.Charts.Base;
 using System;
-using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using YobotChart.Shared.Win32.ChartFramework;
 using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
-using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
+using YobotChart.UiComponents.NotificationComponent;
 
 namespace YobotChart.UserControls
 {
@@ -19,17 +19,14 @@ namespace YobotChart.UserControls
     /// </summary>
     public partial class DashboardTemplateControl : UserControl
     {
-        private StatsViewModel _viewModel;
         private Timer _loadTimer;
-        public StatsViewModel StatsViewModel => _viewModel;
+        public StatsViewModel StatsViewModel => (StatsViewModel)DataContext;
 
         public Chart Chart { get; private set; }
 
         public DashboardTemplateControl()
         {
             InitializeComponent();
-            _viewModel = new StatsViewModel();
-            DataContext = _viewModel;
         }
 
         public void RecreateGraph()
@@ -58,16 +55,7 @@ namespace YobotChart.UserControls
             ChartContainer.Child = Chart;
         }
 
-        public void RecreateGraph(Chart chart)
-        {
-            ChartContainer.Child = null;
-
-            Chart = chart;
-            ChartContainer.Child = Chart;
-            Grid.SetRow(Chart, 3);
-        }
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        public async Task UpdateGraph()
         {
             var apiSource = YobotApiSource.Default;
 
@@ -77,7 +65,7 @@ namespace YobotChart.UserControls
 
             try
             {
-                var functionInfo = (StatsFunctionInfo)((Button)sender).Tag;
+                var functionInfo = StatsViewModel.SourceStatsFunction;
                 var func = functionInfo.Function;
 
                 if (func != null)
@@ -85,27 +73,28 @@ namespace YobotChart.UserControls
                     IChartConfigModel result;
                     try
                     {
-                        GranularityModel granularityModel;
-                        if (functionInfo.AcceptGranularities == null)
-                        {
-                            granularityModel = new GranularityModel(0,
-                                apiSource.YobotApi.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
-                        }
-                        else if (functionInfo.AcceptGranularities.Contains(GranularityType.MultiRound))
-                        {
-                            granularityModel = new GranularityModel(0, 1, 4);
-                        }
-                        else
-                        {
-                            granularityModel = new GranularityModel(0,
-                                apiSource.YobotApi.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
-                        }
+                        //GranularityModel granularityModel;
+                        //if (functionInfo.AcceptGranularities == null)
+                        //{
+                        //    granularityModel = new GranularityModel(0,
+                        //        apiSource.YobotApi.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
+                        //}
+                        //else if (functionInfo.AcceptGranularities.Contains(GranularityType.MultiRound))
+                        //{
+                        //    granularityModel = new GranularityModel(0, 1, 4);
+                        //}
+                        //else
+                        //{
+                        //    granularityModel = new GranularityModel(0,
+                        //        apiSource.YobotApi.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
+                        //}
 
-                        result = await func.Invoke(granularityModel);
+                        //result = await func.Invoke(granularityModel);
+                        result = await func.Invoke(StatsViewModel.GranularityModel);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        Notification.Error(ex.Message);
                         return;
                     }
 

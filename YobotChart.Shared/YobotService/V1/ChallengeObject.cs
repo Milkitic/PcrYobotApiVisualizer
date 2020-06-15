@@ -7,7 +7,7 @@ namespace YobotChart.Shared.YobotService.V1
     public class ChallengeObject : IChallengeObject
     {
         [JsonProperty("battle_id")]
-        public long BattleId { get; set; }
+        public int BattleId { get; set; }
 
         [JsonProperty("behalf")]
         public long? BehalfQQId { get; set; }
