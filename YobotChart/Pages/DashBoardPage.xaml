@@ -8,12 +8,15 @@
     xmlns:local="clr-namespace:YobotChart.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:userControls="clr-namespace:YobotChart.UserControls"
-    xmlns:yobotChart="clr-namespace:YobotChart"
     Title="DashBoardPage"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Initialized="Page_Initialized"
     mc:Ignorable="d">
+    <Page.Resources>
+        <Duration x:Key="SelectingDuration">00:00:00.22</Duration>
+        <QuadraticEase x:Key="QuadraticEaseOut" EasingMode="EaseOut" />
+    </Page.Resources>
     <Page.DataContext>
         <local:DashBoardPageVm />
     </Page.DataContext>
@@ -27,10 +30,124 @@
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button Content="更新" />
-            <ToggleButton Content="编辑" IsChecked="{Binding EditMode}" />
+            <ToggleButton Content="编辑" IsChecked="{Binding EditMode, Mode=TwoWay}" />
             <Button Click="BtnAdd_Click" Content="新增" />
         </StackPanel>
-        <Border Grid.Row="1">
+        <ContentControl Grid.Row="1">
+            <ContentControl.Template>
+                <ControlTemplate TargetType="ContentControl">
+                    <Border
+                        x:Name="Border"
+                        SnapsToDevicePixels="True"
+                        UseLayoutRounding="True">
+                        <Border.Background>
+                            <SolidColorBrush Color="Transparent" />
+                        </Border.Background>
+                        <ContentControl
+                            x:Name="Container"
+                            Content="{TemplateBinding Content}"
+                            RenderTransformOrigin="0.5,0.5">
+                            <ContentControl.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </ContentControl.RenderTransform>
+                        </ContentControl>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding EditMode}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard Storyboard.TargetName="Container">
+                                        <ColorAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="Background.Color"
+                                            To="#20303030"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleX"
+                                            To="0.95"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleY"
+                                            To="0.95"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard Storyboard.TargetName="Container">
+                                        <ColorAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="Background.Color"
+                                            To="Transparent"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleX"
+                                            To="1"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleY"
+                                            To="1"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding EditMode}" Value="False">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard Storyboard.TargetName="Container">
+                                        <ColorAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="Background.Color"
+                                            To="Transparent"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleX"
+                                            To="1"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleY"
+                                            To="1"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard Storyboard.TargetName="Container">
+                                        <ColorAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="Background.Color"
+                                            To="#20303030"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleX"
+                                            To="0.95"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                        <DoubleAnimation
+                                            EasingFunction="{StaticResource QuadraticEaseOut}"
+                                            Storyboard.TargetProperty="(RenderTransform).ScaleY"
+                                            To="0.95"
+                                            Duration="{StaticResource SelectingDuration}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </ContentControl.Template>
             <ScrollViewer
                 x:Name="ViewArea"
                 HorizontalScrollBarVisibility="Auto"
@@ -52,7 +169,7 @@
                                     <chartFramework:StatsViewModel />
                                 </d:Object.DataContext>
                                 <Border
-                                    Margin="16,-10,16,16"
+                                    Margin="15,-10,15,15"
                                     Background="White"
                                     BorderBrush="#303950"
                                     BorderThickness="6,30,6,6"
@@ -122,11 +239,8 @@
                                         </StackPanel>
                                     </Grid>
                                 </Border>
-                                <Border
-                                    Margin="20"
-                                    BorderBrush="Black"
-                                    BorderThickness="1">
-                                    <userControls:DashboardTemplateControl />
+                                <Border Margin="20">
+                                    <userControls:DashboardTemplateControl SnapsToDevicePixels="True" UseLayoutRounding="True" />
                                 </Border>
                                 <!--<Label
                                     Width="{Binding Width}"
@@ -154,7 +268,7 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
             </ScrollViewer>
-        </Border>
+        </ContentControl>
         <StackPanel
             Grid.Row="1"
             Margin="2"

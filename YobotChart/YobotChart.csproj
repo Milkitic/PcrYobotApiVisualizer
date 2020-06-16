@@ -77,6 +77,8 @@
     <Compile Include="AutoUpdate\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\ComboBoxPopupMinWidthConverter.cs" />
+    <Compile Include="Converters\ComboBoxPopupVerticalOffsetConverter.cs" />
     <Compile Include="Converters\DateTimeToFormatStringConverter.cs" />
     <Compile Include="Converters\RatioConverter.cs" />
     <Compile Include="Converters\TimeSpanToFormatStringConverter.cs" />
@@ -173,6 +175,10 @@
     <Page Include="Styles\FontDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\SvgDictionary.xaml">
       <SubType>Designer</SubType>

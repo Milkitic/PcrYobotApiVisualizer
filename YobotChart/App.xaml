@@ -13,6 +13,7 @@
 
                 <ResourceDictionary Source="Styles/BrushDictionary.xaml"/>
                 <ResourceDictionary Source="Styles/SvgDictionary.xaml" />
+                <ResourceDictionary Source="Styles/Generic.xaml" />
 
                 <ResourceDictionary Source="UiComponents/ButtonComponent/CommonButton.xaml" />
                 <ResourceDictionary Source="UiComponents/LoaderComponent/Loader.xaml" />

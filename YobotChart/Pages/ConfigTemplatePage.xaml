@@ -14,10 +14,11 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <Page.Resources>
-        <Style x:Key="SettingsComboBox" TargetType="ComboBox">
+        <Style
+            x:Key="SettingsComboBox"
+            BasedOn="{StaticResource UwpComboBox}"
+            TargetType="ComboBox">
             <Setter Property="Margin" Value="3,0" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
     </Page.Resources>
     <d:Page.DataContext>
@@ -60,10 +61,11 @@
             DataContext="{Binding}" />
         <StackPanel
             Grid.Row="1"
-            Margin="10"
+            Margin="10,0,10,10"
             TextBlock.FontSize="14">
             <Grid
                 x:Name="RoundAdjust"
+                Margin="0,0,0,10"
                 HorizontalAlignment="Center"
                 Selector.SelectionChanged="RoundAdjust_SelectionChanged">
                 <Grid.Resources>
@@ -80,6 +82,7 @@
             </Grid>
             <Grid
                 x:Name="DateAdjust"
+                Margin="0,0,0,10"
                 HorizontalAlignment="Center"
                 Selector.SelectionChanged="RoundAdjust_SelectionChanged">
                 <Grid.Resources>
@@ -107,13 +110,33 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <Label Margin="3,0" Content="图表宽" />
+                    <Label Margin="3,0" Content="色彩主题" />
+                    <ComboBox
+                        x:Name="CbColorScheme"
+                        Width="120"
+                        SelectedItem="{Binding DashboardInfo.PointScaleX}"
+                        Style="{StaticResource SettingsComboBox}" />
+                    <CheckBox
+                        Margin="23,0,3,0"
+                        VerticalAlignment="Center"
+                        Content="标题" />
+                    <CheckBox
+                        Margin="23,0,3,0"
+                        VerticalAlignment="Center"
+                        Content="图例" />
+                    <Label Margin="3,0" Content="位置" />
+                    <ComboBox
+                        x:Name="CbLegendPosition"
+                        Width="80"
+                        SelectedItem="{Binding DashboardInfo.PointScaleX}"
+                        Style="{StaticResource SettingsComboBox}" />
+                    <Label Margin="23,0,3,0" Content="图表  宽" />
                     <ComboBox
                         x:Name="CbWidth"
                         Width="50"
                         SelectedItem="{Binding DashboardInfo.PointScaleX}"
                         Style="{StaticResource SettingsComboBox}" />
-                    <Label Margin="10,0,3,0" Content="图表高" />
+                    <Label Margin="3,0" Content="高" />
                     <ComboBox
                         x:Name="CbHeight"
                         Width="50"
