@@ -30,11 +30,6 @@ namespace YobotChart.Providers
         public async Task<CartesianChartConfigModel> PersonalDivideByChallengeTimesDayComparision(
             GranularityModel granularity)
         {
-            if (granularity.SelectedDate is null &&
-                granularity.StartDate is null &&
-                granularity.EndDate is null)
-                throw new Exception("未指定日期");
-
             var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
 
             var list = new List<PersonalDamageModel>();
@@ -100,11 +95,6 @@ namespace YobotChart.Providers
         [UsedImplicitly]
         public async Task<CartesianChartConfigModel> PersonalDivideByBossDayComparision(GranularityModel granularity)
         {
-            if (granularity.SelectedDate is null &&
-                granularity.StartDate is null &&
-                granularity.EndDate is null)
-                throw new Exception("未指定日期");
-
             var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
 
             var personBossDic = personsGrouping.ToDictionary(k => k.Key,
@@ -170,11 +160,6 @@ namespace YobotChart.Providers
         public async Task<CartesianChartConfigModel> PersonalDivideByChallengeTimesRoundComparision(
             GranularityModel granularity)
         {
-            if (granularity.SelectedRound is null &&
-                granularity.StartRound is null &&
-                granularity.EndRound is null)
-                throw new Exception("未指定周目");
-
             var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
 
             var list = new List<PersonalDamageModel>();
@@ -241,11 +226,6 @@ namespace YobotChart.Providers
         [UsedImplicitly]
         public async Task<CartesianChartConfigModel> PersonalDivideByBossRoundComparision(GranularityModel granularity)
         {
-            if (granularity.SelectedRound is null &&
-                granularity.StartRound is null &&
-                granularity.EndRound is null)
-                throw new Exception("未指定周目");
-
             var personsGrouping = GetPersonalDictionary(granularity, out var titlePrefix);
 
             var personBossDic = personsGrouping.ToDictionary(k => k.Key,
@@ -312,6 +292,13 @@ namespace YobotChart.Providers
                 case GranularityType.SingleDate:
                 case GranularityType.MultiDate:
                     {
+                        if (granularity.SelectedDate is null)
+                            granularity.SelectedDate = YobotApiSource.DateList.LastOrDefault();
+                        if (granularity.StartDate is null)
+                            granularity.StartDate = YobotApiSource.DateList.FirstOrDefault();
+                        if (granularity.EndDate is null)
+                            granularity.EndDate = YobotApiSource.DateList.LastOrDefault();
+
                         var grouped = Challenges
                             .GroupBy(k => k.ChallengeTime.AddHours(-5).Date);
                         List<IChallengeObject> challengeModels;
@@ -347,6 +334,13 @@ namespace YobotChart.Providers
                 case GranularityType.SingleRound:
                 case GranularityType.MultiRound:
                     {
+                        if (granularity.SelectedRound is null)
+                            granularity.SelectedRound = YobotApiSource.RoundList.LastOrDefault();
+                        if (granularity.StartRound is null)
+                            granularity.StartRound = YobotApiSource.RoundList.FirstOrDefault();
+                        if (granularity.EndRound is null)
+                            granularity.EndRound = YobotApiSource.RoundList.LastOrDefault();
+
                         var grouped = Challenges
                             .GroupBy(k => k.Cycle);
                         List<IChallengeObject> challengeModels;

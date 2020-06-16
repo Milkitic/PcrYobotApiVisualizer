@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
-using YobotChart.Providers;
 using YobotChart.Shared;
 using YobotChart.Shared.Configuration;
 using YobotChart.UiComponents.NotificationComponent;
@@ -22,7 +21,6 @@ namespace YobotChart
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             CheckBrowserVersion();
-            YobotChart.Providers.ClansStatsProvider a = new ClansStatsProvider();
             if (!LoadConfig())
             {
                 Environment.Exit(0);

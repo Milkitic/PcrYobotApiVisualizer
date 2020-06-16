@@ -29,13 +29,13 @@ namespace YobotChart.Pages
         {
             _canCbTrigger = false;
             _statsVm.InitProvider();
-            var dateList = new DateTime?[] { null }.Concat(YobotApiSource.Default.DateList.Cast<DateTime?>()).ToList();
+            var dateList = new[] { DateTime.MinValue }.Concat(YobotApiSource.Default.DateList).ToList();
             CbStartDate.ItemsSource = dateList;
             CbEndDate.ItemsSource = dateList;
             CbStartDate.SelectedIndex = 1;
             CbEndDate.SelectedIndex = dateList.Count - 1;
 
-            var roundList = new int?[] { null }.Concat(YobotApiSource.Default.RoundList.Cast<int?>()).ToList();
+            var roundList = new[] { -1 }.Concat(YobotApiSource.Default.RoundList).ToList();
             CbStartRound.ItemsSource = roundList;
             CbEndRound.ItemsSource = roundList;
             CbStartRound.SelectedIndex = 1;
@@ -76,8 +76,8 @@ namespace YobotChart.Pages
                         _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.MultiDate,
-                            StartDate = startDate,
-                            EndDate = endDate
+                            StartDate = startDate == DateTime.MinValue ? null : startDate,
+                            EndDate = endDate == DateTime.MinValue ? null : endDate
                         };
                     }
                     else if (!acceptGranularities.Contains(GranularityType.MultiDate))
@@ -85,17 +85,17 @@ namespace YobotChart.Pages
                         _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.SingleDate,
-                            SelectedDate = startDate
+                            SelectedDate = startDate == DateTime.MinValue ? null : startDate,
                         };
                     }
                     else
                     {
-                        if (startDate == endDate)
+                        if (startDate == endDate && startDate != DateTime.MinValue)
                         {
                             _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.SingleDate,
-                                SelectedDate = startDate
+                                SelectedDate = startDate == DateTime.MinValue ? null : startDate,
                             };
                         }
                         else
@@ -103,8 +103,8 @@ namespace YobotChart.Pages
                             _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.MultiDate,
-                                StartDate = startDate,
-                                EndDate = endDate
+                                StartDate = startDate == DateTime.MinValue ? null : startDate,
+                                EndDate = endDate == DateTime.MinValue ? null : endDate
                             };
                         }
                     }
@@ -124,8 +124,8 @@ namespace YobotChart.Pages
                         _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.MultiRound,
-                            StartRound = startRound,
-                            EndRound = endRound
+                            StartRound = startRound == -1 ? null : startRound,
+                            EndRound = endRound == -1 ? null : endRound
                         };
                     }
                     else if (!acceptGranularities.Contains(GranularityType.MultiRound))
@@ -133,17 +133,17 @@ namespace YobotChart.Pages
                         _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.SingleRound,
-                            SelectedRound = startRound
+                            SelectedRound = startRound == -1 ? null : startRound,
                         };
                     }
                     else
                     {
-                        if (startRound == endRound)
+                        if (startRound == endRound && startRound != -1)
                         {
                             _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.SingleRound,
-                                SelectedRound = startRound
+                                SelectedRound = startRound == -1 ? null : startRound,
                             };
                         }
                         else
@@ -151,8 +151,8 @@ namespace YobotChart.Pages
                             _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.MultiRound,
-                                StartRound = startRound,
-                                EndRound = endRound
+                                StartRound = startRound == -1 ? null : startRound,
+                                EndRound = endRound == -1 ? null : endRound
                             };
                         }
                     }

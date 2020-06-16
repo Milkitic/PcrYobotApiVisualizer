@@ -32,15 +32,14 @@ namespace YobotChart
         private async void Window_Initialized(object sender, EventArgs e)
         {
             Execute.SetMainThreadContext();
+            StatsProviderInfoSource.LoadSource();
             NotificationOverlay.ItemsSource = Notification.NotificationList;
 
             YobotApiSource.Default.YobotService = new ServiceCore(Browser);
             YobotApiSource.Default.YobotService.InitRequested += YobotService_InitRequested;
 
             await UpdateApiData();
-
-            StatsProviderInfoSource.LoadSource();
-
+            
             new Task(async () =>
             {
                 try
