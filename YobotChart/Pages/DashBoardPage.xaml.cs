@@ -130,13 +130,14 @@ namespace YobotChart.Pages
         public DashBoardPage()
         {
             InitializeComponent();
+        }
+
+        private void Page_Initialized(object sender, EventArgs e)
+        {
             _viewModel = (DashBoardPageVm)DataContext;
             _viewModel.LoadStatsViewModels();
 
-
-            var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
-            _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
-            _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
+            ResizeCanvas();
         }
 
         public void AddStatsViewModelAndSave(StatsViewModel statsVm)
@@ -194,108 +195,16 @@ namespace YobotChart.Pages
             _viewModel.Collections.Add(statsVm);
             _viewModel.Save();
 
-            matrix = GetMatrix(out xLen, out yLen, out columnCount);
-            _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
-            _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
+            ResizeCanvas();
         }
 
-        public void AppendItem(int scaleX, int scaleY)
+        private void BtnRemove_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
+            var thumb = (Button)sender;
+            var statsVm = (StatsViewModel)thumb.Tag;
+            _viewModel.RemoveStatsViewModelAndSave(statsVm);
 
-            var @break = false;
-            StatsViewModel statsVm = null;
-            DashboardInfo dashboardInfo = null;
-            for (int y = 0; y < yLen; y++)
-            {
-                for (int x = 0; x < xLen; x++)
-                {
-                    if (matrix[x, y].flag) continue;
-                    bool innerBreak = false;
-                    for (int i = 0; i < scaleX; i++)
-                    {
-                        for (int j = 0; j < scaleY; j++)
-                        {
-                            if (x + i >= xLen)
-                            {
-                                innerBreak = true;
-                                break;
-                            }
-
-                            if (x + i < xLen && y + j < yLen && matrix[x + i, y + j].flag)
-                            {
-                                innerBreak = true;
-                                break;
-                            }
-                        }
-
-                        if (innerBreak) break;
-                    }
-
-                    if (innerBreak) continue;
-                    else
-                    {
-                        @break = true;
-                        dashboardInfo = new DashboardInfo
-                        { PointX = x, PointY = y, PointScaleX = scaleX, PointScaleY = scaleY };
-                        statsVm = new StatsViewModel()
-                        {
-                            DashboardInfo = dashboardInfo
-                        };
-                        break;
-                    }
-                }
-
-                if (@break) break;
-            }
-
-            if (statsVm != null)
-            {
-                dashboardInfo.X = dashboardInfo.PointX * DashboardInfo.UnitX;
-                dashboardInfo.Y = dashboardInfo.PointY * DashboardInfo.UnitY;
-                dashboardInfo.Width = DashboardInfo.UnitX * scaleX;
-                dashboardInfo.Height = DashboardInfo.UnitY * scaleY;
-                _viewModel.Collections.Add(statsVm);
-            }
-
-            matrix = GetMatrix(out xLen, out yLen, out columnCount);
-            _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
-            _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
-        }
-
-        private (bool flag, int sourceX, int sourceY)[,] GetMatrix(out int xLen, out int yLen, out int columnCount)
-        {
-            var w = ViewArea.ActualWidth - Container.Padding.Left - Container.Padding.Right;
-            var h = ViewArea.ActualHeight - Container.Padding.Top - Container.Padding.Bottom;
-            Console.WriteLine($"Canvas: {w}*{h}");
-            columnCount = (int)(w / DashboardInfo.UnitX);
-            Console.WriteLine($"Column count: " + columnCount);
-
-            var collections = _viewModel.Collections;
-            var maxX = collections.Count == 0
-                ? 0
-                : collections.Max(k => k.DashboardInfo.PointX + k.DashboardInfo.PointScaleX - 1);
-            var maxY = collections.Count == 0
-                ? 0
-                : collections.Max(k => k.DashboardInfo.PointY + k.DashboardInfo.PointScaleY - 1);
-            var matrix = new (bool, int, int)[Math.Max(columnCount, maxX + 1), maxY + 2];
-
-            foreach (var collection in collections)
-            {
-                var dashboardInfo = collection.DashboardInfo;
-                for (int i = 0; i < dashboardInfo.PointScaleX; i++)
-                {
-                    for (int j = 0; j < dashboardInfo.PointScaleY; j++)
-                    {
-                        matrix[dashboardInfo.PointX + i, dashboardInfo.PointY + j] =
-                            (true, dashboardInfo.PointX, dashboardInfo.PointY);
-                    }
-                }
-            }
-
-            yLen = matrix.GetLength(1);
-            xLen = matrix.GetLength(0);
-            return matrix;
+            ResizeCanvas();
         }
 
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
@@ -310,17 +219,6 @@ namespace YobotChart.Pages
 
             _m = GetMatrix(out _xLen, out _yLen, out _columnCount);
             _viewModel.MaxHeight = DashboardInfo.UnitY * (_yLen);
-        }
-
-        private void Remove_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            var thumb = (Button)sender;
-            var statsVm = (StatsViewModel)thumb.Tag;
-            _viewModel.RemoveStatsViewModelAndSave(statsVm);
-
-            var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
-            _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
-            _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
         }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -417,6 +315,55 @@ namespace YobotChart.Pages
             _viewModel.Save();
         }
 
+        private void ResizeCanvas()
+        {
+            GetMatrix(out int xLen, out int yLen, out int columnCount);
+            _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
+            _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
+        }
+
+        private (bool flag, int sourceX, int sourceY)[,] GetMatrix(out int xLen, out int yLen, out int columnCount)
+        {
+            var w = ViewArea.ActualWidth - Container.Padding.Left - Container.Padding.Right;
+            var h = ViewArea.ActualHeight - Container.Padding.Top - Container.Padding.Bottom;
+            Console.WriteLine($"Canvas: {w}*{h}");
+            columnCount = (int)(w / DashboardInfo.UnitX);
+            Console.WriteLine($"Column count: " + columnCount);
+
+            var collections = _viewModel.Collections;
+            var maxX = collections.Count == 0
+                ? 0
+                : collections.Max(k => k.DashboardInfo.PointX + k.DashboardInfo.PointScaleX - 1);
+            var maxY = collections.Count == 0
+                ? 0
+                : collections.Max(k => k.DashboardInfo.PointY + k.DashboardInfo.PointScaleY - 1);
+            var matrix = new (bool, int, int)[Math.Max(columnCount, maxX + 1), maxY + 2];
+
+            foreach (var collection in collections)
+            {
+                var dashboardInfo = collection.DashboardInfo;
+                for (int i = 0; i < dashboardInfo.PointScaleX; i++)
+                {
+                    for (int j = 0; j < dashboardInfo.PointScaleY; j++)
+                    {
+                        matrix[dashboardInfo.PointX + i, dashboardInfo.PointY + j] =
+                            (true, dashboardInfo.PointX, dashboardInfo.PointY);
+                    }
+                }
+            }
+
+            yLen = matrix.GetLength(1);
+            xLen = matrix.GetLength(0);
+            return matrix;
+        }
+
+        private void BtnAdd_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            AnimatedFrame.Default?.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
+        }
+
+        #region Debug
+
         private void AddScale1_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             AppendItem(1, 1);
@@ -437,9 +384,70 @@ namespace YobotChart.Pages
             AppendItem(4, 1);
         }
 
-        private void BtnAdd_Click(object sender, System.Windows.RoutedEventArgs e)
+        public void AppendItem(int scaleX, int scaleY)
         {
-            AnimatedFrame.Default?.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
+            var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
+
+            var @break = false;
+            StatsViewModel statsVm = null;
+            DashboardInfo dashboardInfo = null;
+            for (int y = 0; y < yLen; y++)
+            {
+                for (int x = 0; x < xLen; x++)
+                {
+                    if (matrix[x, y].flag) continue;
+                    bool innerBreak = false;
+                    for (int i = 0; i < scaleX; i++)
+                    {
+                        for (int j = 0; j < scaleY; j++)
+                        {
+                            if (x + i >= xLen)
+                            {
+                                innerBreak = true;
+                                break;
+                            }
+
+                            if (x + i < xLen && y + j < yLen && matrix[x + i, y + j].flag)
+                            {
+                                innerBreak = true;
+                                break;
+                            }
+                        }
+
+                        if (innerBreak) break;
+                    }
+
+                    if (innerBreak) continue;
+                    else
+                    {
+                        @break = true;
+                        dashboardInfo = new DashboardInfo
+                        { PointX = x, PointY = y, PointScaleX = scaleX, PointScaleY = scaleY };
+                        statsVm = new StatsViewModel()
+                        {
+                            DashboardInfo = dashboardInfo
+                        };
+                        break;
+                    }
+                }
+
+                if (@break) break;
+            }
+
+            if (statsVm != null)
+            {
+                dashboardInfo.X = dashboardInfo.PointX * DashboardInfo.UnitX;
+                dashboardInfo.Y = dashboardInfo.PointY * DashboardInfo.UnitY;
+                dashboardInfo.Width = DashboardInfo.UnitX * scaleX;
+                dashboardInfo.Height = DashboardInfo.UnitY * scaleY;
+                _viewModel.Collections.Add(statsVm);
+            }
+
+            matrix = GetMatrix(out xLen, out yLen, out columnCount);
+            _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
+            _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
         }
+
+        #endregion
     }
 }

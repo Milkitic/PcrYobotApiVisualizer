@@ -61,7 +61,7 @@ namespace YobotChart
                     Logger.Error(ex, "检测更新出现错误");
                 }
             }).Start();
-
+            
             MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
         }
 

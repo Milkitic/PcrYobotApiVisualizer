@@ -61,5 +61,18 @@ namespace YobotChart.Pages
 
             AnimatedFrame.Default?.AnimateNavigate(new ConfigTemplatePage(statsVm));
         }
+
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        {
+            var animatedFrame = AnimatedFrame.Default;
+            if (animatedFrame != null)
+            {
+                var stack = animatedFrame.BackStack;
+                if (stack != null)
+                {
+                    AnimatedFrame.Default?.AnimateNavigateBack();
+                }
+            }
+        }
     }
 }

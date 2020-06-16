@@ -57,6 +57,8 @@ namespace YobotChart.UiComponents
             };
             _fadeOutStoryboard.Children.Add(_opacityOutAnimation);
             Storyboard.SetTargetProperty(_opacityOutAnimation, new PropertyPath(OpacityProperty));
+
+            Navigated += AnimatedFrame_Navigated;
         }
 
         public static AnimatedFrame Default { get; set; }
@@ -84,8 +86,41 @@ namespace YobotChart.UiComponents
             }
         }
 
+        public void AnimateNavigateBack()
+        {
+            var ui = (UIElement)Content;
+            if (ui != null)
+            {
+                Storyboard.SetTarget(_opacityOutAnimation, ui);
+
+                _fadeOutStoryboard.Completed += OnSbOnCompleted;
+                _fadeOutStoryboard.Begin();
+
+                void OnSbOnCompleted(object obj, EventArgs args)
+                {
+                    InnerAnimateNavigateBack();
+                    _fadeOutStoryboard.Completed -= OnSbOnCompleted;
+                }
+            }
+            else
+            {
+                InnerAnimateNavigateBack();
+            }
+        }
+
         private void InnerAnimateNavigate(UIElement uiElement)
         {
+            NavigationService.Navigate(uiElement);
+        }
+
+        private void InnerAnimateNavigateBack()
+        {
+            NavigationService.GoBack();
+        }
+
+        private void AnimatedFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            var uiElement = (UIElement)Content;
             var endOpacity = uiElement.Opacity;
             var originTransform = uiElement.RenderTransform;
             uiElement.RenderTransformOrigin = new Point(0.5, 0.5);
@@ -94,12 +129,11 @@ namespace YobotChart.UiComponents
             Storyboard.SetTarget(_scaleYInAnimation, uiElement);
             if (uiElement.RenderTransform.GetType() != typeof(ScaleTransform))
                 uiElement.RenderTransform = new ScaleTransform();
-            NavigationService.Navigate(uiElement);
 
             _fadeInStoryboard.Completed += OnSbOnCompleted;
             _fadeInStoryboard.Begin();
 
-            void OnSbOnCompleted(object sender, EventArgs args)
+            void OnSbOnCompleted(object obj, EventArgs args)
             {
                 uiElement.RenderTransform = originTransform;
                 _fadeInStoryboard.Completed -= OnSbOnCompleted;
