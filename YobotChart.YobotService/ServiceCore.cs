@@ -41,12 +41,14 @@ namespace YobotChart.YobotService
         public ServiceCore(WebBrowser wb)
         {
             _hiddenWebBrowser = wb;
+            _hiddenWebBrowser.Navigating += HiddenWebBrowser_Navigating;
             _hiddenWebBrowser.Navigated += HiddenWebBrowser_Navigated;
             _hiddenWebBrowser.LoadCompleted += HiddenWebBrowser_LoadCompleted;
 
             Origin = AppSettings.Default.General.Origin;
         }
         private int _timeoutMilliseconds = 3000;
+        private bool _loading;
 
         public async Task<bool> LoginAsync(string loginUrl)
         {
@@ -87,7 +89,20 @@ namespace YobotChart.YobotService
             await ValidateVersion().ConfigureAwait(false);
             _mre.Reset();
             Execute.OnUiThread(() => _hiddenWebBrowser.Navigate(loginUrl));
-            var waitResult = await Task.Run(() => _mre.Wait(_timeoutMilliseconds)).ConfigureAwait(false);
+            var waitResult = await Task.Run(() =>
+            {
+                bool result = true;
+                if (_loading)
+                    while (_loading)
+                    {
+                        result = _mre.Wait(_timeoutMilliseconds);
+                    }
+                else
+                {
+                    result = _mre.Wait(_timeoutMilliseconds);
+                }
+                return result;
+            }).ConfigureAwait(false);
             return waitResult;
         }
 
@@ -230,6 +245,11 @@ namespace YobotChart.YobotService
             }
         }
 
+        private void HiddenWebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
+        {
+            _loading = true;
+        }
+
         private void HiddenWebBrowser_Navigated(object sender, NavigationEventArgs e)
         {
             Execute.OnUiThread(() => _hiddenWebBrowser.SetSilent(true)); // make it silent
@@ -240,6 +260,7 @@ namespace YobotChart.YobotService
         {
             try
             {
+                _loading = false;
                 var url = _hiddenWebBrowser.Source.ToString();
                 if (url.EndsWith("/yobot/user/reset-password/") && !IsLogin) // 用户未设定密码会自动跳转
                 {
@@ -324,8 +345,7 @@ namespace YobotChart.YobotService
                             }
                         }
                     }
-
-
+                    
                     _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
                     // ↓ 如果跳转至公会信息，则上面爬取的内容无误
                 }

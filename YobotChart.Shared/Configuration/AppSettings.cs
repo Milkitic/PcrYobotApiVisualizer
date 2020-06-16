@@ -18,6 +18,7 @@ namespace YobotChart.Shared.Configuration
         public class Directories
         {
             public static string CurrentDir { get; } = AppDomain.CurrentDomain.BaseDirectory;
+            public static string ProvidersDir { get; } = Path.Combine(CurrentDir, "providers");
         }
 
         public AppSettings()

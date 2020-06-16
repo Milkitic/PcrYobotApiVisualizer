@@ -2,6 +2,5 @@
 {
     public interface IYobotServiceV1 : IYobotService<YobotApiObjectV1>
     {
-
     }
 }

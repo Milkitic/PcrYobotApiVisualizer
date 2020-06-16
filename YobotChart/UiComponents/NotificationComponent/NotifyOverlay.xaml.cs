@@ -51,10 +51,5 @@ namespace YobotChart.UiComponents.NotificationComponent
             var sb = new NotifyControl(newItem, _itemsSource);
             NotifyStack.Children.Add(sb);
         }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

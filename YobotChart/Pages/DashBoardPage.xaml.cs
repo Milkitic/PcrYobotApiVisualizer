@@ -36,6 +36,7 @@ namespace YobotChart.Pages
         private double _maxWidth;
         private double _maxHeight;
         private ObservableCollection<StatsViewModel> _collections = new ObservableCollection<StatsViewModel>();
+        private bool _editMode;
 
         public ObservableCollection<StatsViewModel> Collections
         {
@@ -103,6 +104,17 @@ namespace YobotChart.Pages
             {
                 if (value.Equals(_maxHeight)) return;
                 _maxHeight = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool EditMode
+        {
+            get => _editMode;
+            set
+            {
+                if (value == _editMode) return;
+                _editMode = value;
                 OnPropertyChanged();
             }
         }

@@ -61,7 +61,7 @@ namespace YobotChart
                     Logger.Error(ex, "检测更新出现错误");
                 }
             }).Start();
-            
+
             MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
         }
 
@@ -117,7 +117,6 @@ namespace YobotChart
 
         private async Task UpdateApiData()
         {
-
             btnUpdateData.IsEnabled = false;
 
             try
@@ -126,7 +125,6 @@ namespace YobotChart
             }
             catch (ArgumentNullException arg)
             {
-
             }
             finally
             {

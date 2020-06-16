@@ -47,12 +47,11 @@ namespace YobotChart.Pages
             _viewModel = (SelectTemplatePageVm)DataContext;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void BtnSelectTemplate_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
             var functionInfo = (StatsFunctionInfo)button.Tag;
 
-            var func = functionInfo.Function;
             var statsVm = new StatsViewModel
             {
                 StatsProviderGuid = functionInfo.ProviderGuid,

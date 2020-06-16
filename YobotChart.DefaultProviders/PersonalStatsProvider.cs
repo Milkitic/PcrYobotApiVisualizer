@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YobotChart.Shared;
 using YobotChart.Shared.Annotations;
 using YobotChart.Shared.Win32.ChartFramework.Attributes;
 using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
+using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
 using YobotChart.Shared.YobotService;
 
-namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
+namespace YobotChart.Providers
 {
     [StatsProvider("9b3a41ae-1ac3-4fad-84ec-e8b26164e58a",
         Author = "yf_extension",

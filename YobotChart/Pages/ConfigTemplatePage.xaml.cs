@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using YobotChart.Shared.Win32;
 using YobotChart.Shared.Win32.ChartFramework;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
 using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
@@ -30,15 +29,17 @@ namespace YobotChart.Pages
         {
             _canCbTrigger = false;
             _statsVm.InitProvider();
-            CbStartDate.ItemsSource = YobotApiSource.Default.DateList;
-            CbEndDate.ItemsSource = YobotApiSource.Default.DateList;
-            CbStartDate.SelectedIndex = 0;
-            CbEndDate.SelectedIndex = YobotApiSource.Default.DateList.Count - 1;
+            var dateList = new DateTime?[] { null }.Concat(YobotApiSource.Default.DateList.Cast<DateTime?>()).ToList();
+            CbStartDate.ItemsSource = dateList;
+            CbEndDate.ItemsSource = dateList;
+            CbStartDate.SelectedIndex = 1;
+            CbEndDate.SelectedIndex = dateList.Count - 1;
 
-            CbStartRound.ItemsSource = YobotApiSource.Default.RoundList;
-            CbEndRound.ItemsSource = YobotApiSource.Default.RoundList;
-            CbStartRound.SelectedIndex = 0;
-            CbEndRound.SelectedIndex = YobotApiSource.Default.RoundList.Count - 1;
+            var roundList = new int?[] { null }.Concat(YobotApiSource.Default.RoundList.Cast<int?>()).ToList();
+            CbStartRound.ItemsSource = roundList;
+            CbEndRound.ItemsSource = roundList;
+            CbStartRound.SelectedIndex = 1;
+            CbEndRound.SelectedIndex = roundList.Count - 1;
 
             CbWidth.ItemsSource = Enumerable.Range(1, 4);
             CbHeight.ItemsSource = Enumerable.Range(1, 4);
@@ -68,11 +69,11 @@ namespace YobotChart.Pages
                 }
                 else
                 {
-                    var startDate = (DateTime)CbStartDate.SelectedItem;
-                    var endDate = (DateTime)CbEndDate.SelectedItem;
+                    var startDate = (DateTime?)CbStartDate.SelectedItem;
+                    var endDate = (DateTime?)CbEndDate.SelectedItem;
                     if (!acceptGranularities.Contains(GranularityType.SingleDate))
                     {
-                        _statsVm.GranularityModel = new GranularityModel()
+                        _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.MultiDate,
                             StartDate = startDate,
@@ -81,7 +82,7 @@ namespace YobotChart.Pages
                     }
                     else if (!acceptGranularities.Contains(GranularityType.MultiDate))
                     {
-                        _statsVm.GranularityModel = new GranularityModel()
+                        _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.SingleDate,
                             SelectedDate = startDate
@@ -91,7 +92,7 @@ namespace YobotChart.Pages
                     {
                         if (startDate == endDate)
                         {
-                            _statsVm.GranularityModel = new GranularityModel()
+                            _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.SingleDate,
                                 SelectedDate = startDate
@@ -99,7 +100,7 @@ namespace YobotChart.Pages
                         }
                         else
                         {
-                            _statsVm.GranularityModel = new GranularityModel()
+                            _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.MultiDate,
                                 StartDate = startDate,
@@ -116,11 +117,11 @@ namespace YobotChart.Pages
                 }
                 else
                 {
-                    var startRound = (int)CbStartRound.SelectedItem;
-                    var endRound = (int)CbEndRound.SelectedItem;
+                    var startRound = (int?)CbStartRound.SelectedItem;
+                    var endRound = (int?)CbEndRound.SelectedItem;
                     if (!acceptGranularities.Contains(GranularityType.SingleRound))
                     {
-                        _statsVm.GranularityModel = new GranularityModel()
+                        _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.MultiRound,
                             StartRound = startRound,
@@ -129,7 +130,7 @@ namespace YobotChart.Pages
                     }
                     else if (!acceptGranularities.Contains(GranularityType.MultiRound))
                     {
-                        _statsVm.GranularityModel = new GranularityModel()
+                        _statsVm.GranularityModel = new GranularityModel
                         {
                             GranularityType = GranularityType.SingleRound,
                             SelectedRound = startRound
@@ -139,7 +140,7 @@ namespace YobotChart.Pages
                     {
                         if (startRound == endRound)
                         {
-                            _statsVm.GranularityModel = new GranularityModel()
+                            _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.SingleRound,
                                 SelectedRound = startRound
@@ -147,7 +148,7 @@ namespace YobotChart.Pages
                         }
                         else
                         {
-                            _statsVm.GranularityModel = new GranularityModel()
+                            _statsVm.GranularityModel = new GranularityModel
                             {
                                 GranularityType = GranularityType.MultiRound,
                                 StartRound = startRound,
@@ -172,6 +173,19 @@ namespace YobotChart.Pages
             var page = SingletonPageHelper.Get<DashBoardPage>();
             page.AddStatsViewModelAndSave(_statsVm);
             AnimatedFrame.Default?.AnimateNavigate(page);
+        }
+
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        {
+            var animatedFrame = AnimatedFrame.Default;
+            if (animatedFrame != null)
+            {
+                var stack = animatedFrame.BackStack;
+                if (stack != null)
+                {
+                    AnimatedFrame.Default?.AnimateNavigateBack();
+                }
+            }
         }
     }
 }

@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:buttonComponent="clr-namespace:YobotChart.UiComponents.ButtonComponent"
-    xmlns:chartFramework="clr-namespace:YobotChart.Shared.Win32.ChartFramework;assembly=yoshr.win32"
+    xmlns:chartFramework="clr-namespace:YobotChart.Shared.Win32.ChartFramework;assembly=YobotChartShared.win32"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:YobotChart.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -23,11 +23,36 @@
     <d:Page.DataContext>
         <chartFramework:StatsViewModel />
     </d:Page.DataContext>
-    <Grid>
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <StackPanel
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+            <buttonComponent:CommonButton
+                Width="Auto"
+                Height="Auto"
+                Padding="7,2"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                BorderThickness="0"
+                Click="BtnBack_Click"
+                Content="返回"
+                CornerRadius="0"
+                FontSize="19"
+                FontWeight="Light"
+                Foreground="#3480e8"
+                IconMargin="0"
+                IconSize="18"
+                IconTemplate="{StaticResource BackTempl}"
+                MouseDownBackground="#25303030"
+                MouseOverBackground="#10303030"
+                MouseOverForeground="#505771"
+                RenderTransformOrigin="0.5,0.5" />
+        </StackPanel>
         <userControls:DashboardTemplateControl
             x:Name="TemplateControl"
             Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight, Converter={StaticResource RatioConverter}, ConverterParameter=1.5}"

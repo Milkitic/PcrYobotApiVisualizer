@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Navigation;
+using YobotChart.Pages;
 
 namespace YobotChart.UiComponents
 {
@@ -138,6 +140,27 @@ namespace YobotChart.UiComponents
                 uiElement.RenderTransform = originTransform;
                 _fadeInStoryboard.Completed -= OnSbOnCompleted;
             }
+
+            if (Content is DashBoardPage)
+            {
+                ClearHistory();
+            }
+        }
+        private void ClearHistory()
+        {
+            if (!this.CanGoBack && !this.CanGoForward)
+            {
+                return;
+            }
+
+            var entry = this.RemoveBackEntry();
+            while (entry != null)
+            {
+                Console.WriteLine("Removed " + entry.Name);
+                entry = this.RemoveBackEntry();
+            }
+
+            //this.Navigate(new PageFunction<string> { RemoveFromJournal = true });
         }
     }
 }

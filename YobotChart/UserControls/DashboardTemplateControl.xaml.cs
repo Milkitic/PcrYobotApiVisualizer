@@ -36,6 +36,7 @@ namespace YobotChart.UserControls
 
             Chart = new CartesianChart
             {
+                DisableAnimations = true,
                 LegendLocation = LegendLocation.Top,
                 AxisX = new AxesCollection { new Axis() },
                 AxisY = new AxesCollection { new Axis() }

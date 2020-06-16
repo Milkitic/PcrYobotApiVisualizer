@@ -6,9 +6,10 @@ using YobotChart.Shared.Annotations;
 using YobotChart.Shared.Win32.ChartFramework.Attributes;
 using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
+using YobotChart.Shared.Win32.ChartFramework.StatsProviders;
 using YobotChart.Shared.YobotService;
 
-namespace YobotChart.Shared.Win32.ChartFramework.StatsProviders
+namespace YobotChart.Providers
 {
     [StatsProvider("872c4594-aaf1-4453-a652-fb304cb936f7",
         Author = "yf_extension",

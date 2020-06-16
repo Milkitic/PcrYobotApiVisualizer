@@ -274,6 +274,10 @@
       <Project>{9052C540-FA01-444A-A301-555DB27CBDD7}</Project>
       <Name>YamlDotNet.Comment</Name>
     </ProjectReference>
+    <ProjectReference Include="..\YobotChart.DefaultProviders\YobotChart.DefaultProviders.csproj">
+      <Project>{897a07ec-0ec8-4d3c-a8f4-338a9691fd11}</Project>
+      <Name>YobotChart.DefaultProviders</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YobotChart.Shared.Win32\YobotChart.Shared.Win32.csproj">
       <Project>{44155F0B-18EC-415E-A03A-ED4056BE8D64}</Project>
       <Name>YobotChart.Shared.Win32</Name>
@@ -301,7 +305,6 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Styles\Colors\Graph\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
