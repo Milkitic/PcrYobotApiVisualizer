@@ -29,15 +29,17 @@ namespace YobotChart
             InitializeComponent();
         }
 
-        private void Window_Initialized(object sender, EventArgs e)
+        private async void Window_Initialized(object sender, EventArgs e)
         {
             Execute.SetMainThreadContext();
-            StatsProviderInfoSource.LoadSource();
-        }
-
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
-        {
             NotificationOverlay.ItemsSource = Notification.NotificationList;
+
+            YobotApiSource.Default.YobotService = new ServiceCore(Browser);
+            YobotApiSource.Default.YobotService.InitRequested += YobotService_InitRequested;
+
+            await UpdateApiData();
+
+            StatsProviderInfoSource.LoadSource();
 
             new Task(async () =>
             {
@@ -60,10 +62,11 @@ namespace YobotChart
                 }
             }).Start();
 
-            YobotApiSource.Default.YobotService = new ServiceCore(Browser);
-            YobotApiSource.Default.YobotService.InitRequested += YobotService_InitRequested;
             MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
-            await Load();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
         }
 
         private async Task<string> YobotService_InitRequested()
@@ -92,18 +95,29 @@ namespace YobotChart
             return initUriControl?.Text;
         }
 
-        private async Task Load()
+        private async void Logout_Click(object sender, RoutedEventArgs e)
         {
-            await UpdateDataAsync();
+            await YobotApiSource.Default.YobotService.LogoutAsync();
         }
 
         private async void UpdateData_Click(object sender, RoutedEventArgs e)
         {
-            await UpdateDataAsync();
+            await UpdateApiData();
         }
 
-        private async Task UpdateDataAsync()
+        private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
         {
+            MainFrame.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
+        }
+
+        private void BtnDashBoardPage_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
+        }
+
+        private async Task UpdateApiData()
+        {
+
             btnUpdateData.IsEnabled = false;
 
             try
@@ -119,21 +133,5 @@ namespace YobotChart
                 btnUpdateData.IsEnabled = true;
             }
         }
-
-        private async void Logout_Click(object sender, RoutedEventArgs e)
-        {
-            await YobotApiSource.Default.YobotService.LogoutAsync();
-        }
-
-        private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
-        {
-            MainFrame.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
-        }
-
-        private void BtnDashBoardPage_OnClick(object sender, RoutedEventArgs e)
-        {
-            MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
-        }
-
     }
 }

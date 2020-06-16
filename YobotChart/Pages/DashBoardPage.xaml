@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:YobotChart.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userControls="clr-namespace:YobotChart.UserControls"
     xmlns:yobotChart="clr-namespace:YobotChart"
     Title="DashBoardPage"
     d:DesignHeight="450"
@@ -52,7 +53,8 @@
                                     Margin="26,-5,26,26"
                                     Background="#303950"
                                     SnapsToDevicePixels="True"
-                                    UseLayoutRounding="True">
+                                    UseLayoutRounding="True"
+                                    Visibility="Hidden">
                                     <Border.Effect>
                                         <DropShadowEffect
                                             BlurRadius="15"
@@ -63,7 +65,8 @@
                                 <Grid
                                     Height="34"
                                     Margin="27,-4,28,26"
-                                    VerticalAlignment="Top">
+                                    VerticalAlignment="Top"
+                                    Visibility="Hidden">
                                     <Label
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
@@ -110,8 +113,8 @@
                                             Tag="{Binding}" />
                                     </StackPanel>
                                 </Grid>
-                                <Border Margin="30" Background="Gray">
-                                    <Image RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding SourceStatsFunction.ThumbnailPath}" />
+                                <Border Margin="30">
+                                    <userControls:DashboardTemplateControl />
                                 </Border>
                                 <!--<Label
                                     Width="{Binding Width}"

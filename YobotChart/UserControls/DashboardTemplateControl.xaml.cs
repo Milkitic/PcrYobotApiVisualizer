@@ -20,6 +20,7 @@ namespace YobotChart.UserControls
     public partial class DashboardTemplateControl : UserControl
     {
         private Timer _loadTimer;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public StatsViewModel StatsViewModel => (StatsViewModel)DataContext;
 
         public Chart Chart { get; private set; }
@@ -40,16 +41,21 @@ namespace YobotChart.UserControls
                 AxisY = new AxesCollection { new Axis() }
             };
 
-            var binding = new Binding("Text") { Path = new PropertyPath("ConfigModel.SeriesCollection") };
+            var binding = new Binding("Text")
+            { IsAsync = true, Path = new PropertyPath("ConfigModel.SeriesCollection") };
             Chart.SetBinding(Chart.SeriesProperty, binding);
-            var bindAxisXTitle = new Binding("Title") { Path = new PropertyPath("ConfigModel.AxisXTitle") };
+            var bindAxisXTitle = new Binding("Title")
+            { Path = new PropertyPath("ConfigModel.AxisXTitle") };
             Chart.AxisX[0].SetBinding(Axis.TitleProperty, bindAxisXTitle);
-            var bindAxisXLabels = new Binding("Labels") { Path = new PropertyPath("ConfigModel.AxisXLabels") };
+            var bindAxisXLabels = new Binding("Labels")
+            { Path = new PropertyPath("ConfigModel.AxisXLabels") };
             Chart.AxisX[0].SetBinding(Axis.LabelsProperty, bindAxisXLabels);
 
-            var bindAxisYTitle = new Binding("Title") { Path = new PropertyPath("ConfigModel.AxisYTitle") };
+            var bindAxisYTitle = new Binding("Title")
+            { Path = new PropertyPath("ConfigModel.AxisYTitle") };
             Chart.AxisY[0].SetBinding(Axis.TitleProperty, bindAxisYTitle);
-            var bindAxisYLabels = new Binding("Labels") { Path = new PropertyPath("ConfigModel.AxisYLabels") };
+            var bindAxisYLabels = new Binding("Labels")
+            { Path = new PropertyPath("ConfigModel.AxisYLabels") };
             Chart.AxisY[0].SetBinding(Axis.LabelsProperty, bindAxisYLabels);
 
             ChartContainer.Child = Chart;
@@ -73,28 +79,12 @@ namespace YobotChart.UserControls
                     IChartConfigModel result;
                     try
                     {
-                        //GranularityModel granularityModel;
-                        //if (functionInfo.AcceptGranularities == null)
-                        //{
-                        //    granularityModel = new GranularityModel(0,
-                        //        apiSource.YobotApi.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
-                        //}
-                        //else if (functionInfo.AcceptGranularities.Contains(GranularityType.MultiRound))
-                        //{
-                        //    granularityModel = new GranularityModel(0, 1, 4);
-                        //}
-                        //else
-                        //{
-                        //    granularityModel = new GranularityModel(0,
-                        //        apiSource.YobotApi.Challenges.Max(k => k.ChallengeTime).AddHours(-5).Date);
-                        //}
-
-                        //result = await func.Invoke(granularityModel);
                         result = await func.Invoke(StatsViewModel.GranularityModel);
                     }
                     catch (Exception ex)
                     {
-                        Notification.Error(ex.Message);
+                        Notification.Error(ex?.InnerException?.Message ?? ex.Message);
+                        Logger.Error(ex, "调用组件方法时异常");
                         return;
                     }
 
@@ -106,12 +96,6 @@ namespace YobotChart.UserControls
                         case ChartType.Cartesian:
                             var cartesianResult = (CartesianChartConfigModel)result;
                             StatsViewModel.ConfigModel = cartesianResult;
-                            //StatsVm.StatsGraph.SeriesCollection = cartesianResult.SeriesCollection;
-                            //StatsVm.StatsGraph.Title = cartesianResult.Title;
-                            //StatsVm.StatsGraph.AxisXLabels = cartesianResult.AxisXLabels;
-                            //StatsVm.StatsGraph.AxisYLabels = cartesianResult.AxisYLabels;
-                            //StatsVm.StatsGraph.AxisXTitle = cartesianResult.AxisXTitle;
-                            //StatsVm.StatsGraph.AxisYTitle = cartesianResult.AxisYTitle;
                             break;
                         case ChartType.Pie:
                             break;
@@ -125,6 +109,11 @@ namespace YobotChart.UserControls
                 StatsViewModel.IsLoading = false;
                 _loadTimer?.Dispose();
             }
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            await UpdateGraph();
         }
     }
 }

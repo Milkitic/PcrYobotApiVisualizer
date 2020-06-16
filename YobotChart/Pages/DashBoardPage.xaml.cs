@@ -317,6 +317,10 @@ namespace YobotChart.Pages
             var thumb = (Button)sender;
             var statsVm = (StatsViewModel)thumb.Tag;
             _viewModel.RemoveStatsViewModelAndSave(statsVm);
+
+            var matrix = GetMatrix(out int xLen, out int yLen, out int columnCount);
+            _viewModel.MaxWidth = DashboardInfo.UnitX * Math.Max((xLen - 1), columnCount);
+            _viewModel.MaxHeight = DashboardInfo.UnitY * (yLen - 1);
         }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)

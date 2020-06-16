@@ -30,6 +30,7 @@
         </Grid.RowDefinitions>
         <userControls:DashboardTemplateControl
             x:Name="TemplateControl"
+            Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight, Converter={StaticResource RatioConverter}, ConverterParameter=1.5}"
             Margin="20"
             DataContext="{Binding}" />
         <StackPanel
