@@ -51,8 +51,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:SystemButton}">
-                    <Border x:Name="MainBorder">
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border x:Name="MainBorder" Padding="{TemplateBinding Padding}">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
                             <Viewbox
                                 x:Name="IconViewBox"
                                 Width="{TemplateBinding IconSize}"

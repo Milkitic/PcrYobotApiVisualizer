@@ -63,7 +63,7 @@ namespace YobotChart
         {
             try
             {
-                AppSettings.LoadFromDefaultFile();
+                AppSettings.LoadFromDefaultFile(out _);
             }
             catch (Exception ex)
             {

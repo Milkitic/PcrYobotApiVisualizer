@@ -25,93 +25,119 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border Background="{StaticResource ThemeBrush2}">
-            <StackPanel
-                Margin="5,6"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
-                <buttonComponent:CommonButton
-                    Width="26"
-                    Height="26"
-                    Margin="3,0"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    CornerRadius="2"
-                    Foreground="#A0F0F0F0"
-                    IconMargin="0"
-                    IconSize="20"
-                    IconTemplate="{StaticResource RefreshTempl}"
-                    MouseDownBackground="#10F0F0F0"
-                    MouseDownForeground="#F0F0F0F0"
-                    MouseOverBackground="#20F0F0F0"
-                    MouseOverForeground="#E0F0F0F0"  />
-                <ToggleButton
-                    Width="26"
-                    Height="26"
-                    Margin="3,0"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Foreground="#A0F0F0F0"
-                    IsChecked="{Binding EditMode, Mode=TwoWay}">
-                    <ToggleButton.Template>
-                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Grid>
-                                <Border
-                                    x:Name="BorderMain"
-                                    Width="{TemplateBinding Width}"
-                                    Height="{TemplateBinding Height}"
-                                    Padding="{TemplateBinding Padding}"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="2">
-                                    <Viewbox
-                                        x:Name="IconViewBox"
-                                        Width="16"
-                                        Height="16"
-                                        Margin="0"
-                                        VerticalAlignment="Center"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                        UseLayoutRounding="True">
-                                        <ContentControl Template="{StaticResource EditTempl}" />
-                                    </Viewbox>
-                                </Border>
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="BorderMain" Property="Background" Value="#30F0F0F0" />
-                                    <Setter TargetName="BorderMain" Property="TextBlock.Foreground" Value="#F0F0F0F0" />
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="BorderMain" Property="Background" Value="#20F0F0F0" />
-                                    <Setter TargetName="BorderMain" Property="TextBlock.Foreground" Value="#E0F0F0F0" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="BorderMain" Property="Opacity" Value="0.5" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </ToggleButton.Template>
-                </ToggleButton>
-                <buttonComponent:CommonButton
-                    Width="26"
-                    Height="26"
-                    Margin="3,0"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Click="BtnAdd_Click"
-                    CornerRadius="2"
-                    Foreground="#A0F0F0F0"
-                    IconMargin="0"
-                    IconSize="18"
-                    IconTemplate="{StaticResource AddTempl}"
-                    MouseDownBackground="#10F0F0F0"
-                    MouseDownForeground="#F0F0F0F0"
-                    MouseOverBackground="#20F0F0F0"
-                    MouseOverForeground="#E0F0F0F0" />
-            </StackPanel>
+        <Border Panel.ZIndex="10" Background="White">
+            <Border.Effect>
+                <DropShadowEffect
+                    BlurRadius="10"
+                    Direction="-90"
+                    Opacity="0.3"
+                    ShadowDepth="3" />
+            </Border.Effect>
         </Border>
-        <ContentControl Grid.Row="1" Margin="15">
+        <Border Panel.ZIndex="10" Background="{StaticResource ThemeBrush2}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel
+                    Grid.Column="1"
+                    Height="30"
+                    Margin="5,6"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <buttonComponent:CommonButton
+                        x:Name="btnUpdateData"
+                        Width="26"
+                        Height="26"
+                        Margin="3,0"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="BtnUpdateData_Click"
+                        CornerRadius="2"
+                        Foreground="#A0F0F0F0"
+                        IconMargin="0"
+                        IconSize="20"
+                        IconTemplate="{StaticResource RefreshTempl}"
+                        MouseDownBackground="#10F0F0F0"
+                        MouseDownForeground="#F0F0F0F0"
+                        MouseOverBackground="#20F0F0F0"
+                        MouseOverForeground="#E0F0F0F0" />
+                    <ToggleButton
+                        Width="26"
+                        Height="26"
+                        Margin="3,0"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="#A0F0F0F0"
+                        IsChecked="{Binding EditMode, Mode=TwoWay}">
+                        <ToggleButton.Template>
+                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                <Grid>
+                                    <Border
+                                        x:Name="BorderMain"
+                                        Width="{TemplateBinding Width}"
+                                        Height="{TemplateBinding Height}"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="2">
+                                        <Viewbox
+                                            x:Name="IconViewBox"
+                                            Width="16"
+                                            Height="16"
+                                            Margin="0"
+                                            VerticalAlignment="Center"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                            UseLayoutRounding="True">
+                                            <ContentControl Template="{StaticResource EditTempl}" />
+                                        </Viewbox>
+                                    </Border>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="BorderMain" Property="Background" Value="#30F0F0F0" />
+                                        <Setter TargetName="BorderMain" Property="TextBlock.Foreground" Value="#F0F0F0F0" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BorderMain" Property="Background" Value="#30F0F0F0" />
+                                        <Setter TargetName="BorderMain" Property="TextBlock.Foreground" Value="#F0F0F0F0" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="BorderMain" Property="Background" Value="#20F0F0F0" />
+                                        <Setter TargetName="BorderMain" Property="TextBlock.Foreground" Value="#E0F0F0F0" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter TargetName="BorderMain" Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
+                    </ToggleButton>
+                    <buttonComponent:CommonButton
+                        Width="26"
+                        Height="26"
+                        Margin="3,-1,3,0"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="BtnAdd_Click"
+                        CornerRadius="2"
+                        Foreground="#A0F0F0F0"
+                        IconMargin="0"
+                        IconSize="18"
+                        IconTemplate="{StaticResource AddTempl}"
+                        MouseDownBackground="#10F0F0F0"
+                        MouseDownForeground="#F0F0F0F0"
+                        MouseOverBackground="#20F0F0F0"
+                        MouseOverForeground="#E0F0F0F0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <ContentControl Grid.Row="1">
             <ContentControl.Template>
                 <ControlTemplate TargetType="ContentControl">
                     <Border
@@ -161,7 +187,7 @@
                                             EasingFunction="{StaticResource QuadraticEaseOut}"
                                             Storyboard.TargetName="Border"
                                             Storyboard.TargetProperty="Background.Color"
-                                            To="Transparent"
+                                            To="#00303030"
                                             Duration="{StaticResource SelectingDuration}" />
                                         <DoubleAnimation
                                             EasingFunction="{StaticResource QuadraticEaseOut}"
@@ -185,7 +211,7 @@
                                             EasingFunction="{StaticResource QuadraticEaseOut}"
                                             Storyboard.TargetName="Border"
                                             Storyboard.TargetProperty="Background.Color"
-                                            To="Transparent"
+                                            To="#00303030"
                                             Duration="{StaticResource SelectingDuration}" />
                                         <DoubleAnimation
                                             EasingFunction="{StaticResource QuadraticEaseOut}"

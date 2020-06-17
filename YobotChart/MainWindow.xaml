@@ -18,6 +18,9 @@
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <local:MainWindowVm />
+    </Window.DataContext>
     <WindowChrome.WindowChrome>
         <WindowChrome
             CaptionHeight="40"
@@ -45,15 +48,16 @@
             x:Name="TitleBarGrid"
             Grid.Row="0"
             Height="40"
+            Panel.ZIndex="99"
             Background="{StaticResource ThemeBrush3}"
             SnapsToDevicePixels="True"
             TextBlock.Foreground="{StaticResource ThemeLightBrush}"
             UseLayoutRounding="True">
             <DockPanel>
-                <buttonComponent:CommonButton
+                <buttonComponent:SystemButton
                     Width="35"
                     Height="35"
-                    Margin="22,0"
+                    Margin="22,0,7,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Background="Transparent"
@@ -63,10 +67,6 @@
                     IconMargin="0"
                     IconSize="24"
                     IconTemplate="{StaticResource SettingsTempl}"
-                    MouseDownBackground="#30303030"
-                    MouseDownForeground="{StaticResource ThemeLightBrush}"
-                    MouseOverBackground="#20303030"
-                    MouseOverForeground="{StaticResource ThemeLightBrush}"
                     WindowChrome.IsHitTestVisibleInChrome="True" />
                 <TextBlock
                     Margin="0,1,0,0"
@@ -75,15 +75,55 @@
                     FontSize="20"
                     FontWeight="Bold"
                     Text="YobotChart" />
-
                 <StackPanel
-                    Margin="2,0"
+                    Margin="4,0"
                     HorizontalAlignment="Right"
                     DockPanel.Dock="Right"
                     Orientation="Horizontal">
-                    <buttonComponent:MinButton Margin="2,0" WindowChrome.IsHitTestVisibleInChrome="True" />
-                    <buttonComponent:MaxButton Margin="2,0" WindowChrome.IsHitTestVisibleInChrome="True" />
-                    <buttonComponent:CloseButton Margin="2,0" WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <buttonComponent:SystemButton
+                        Width="Auto"
+                        Padding="4,0"
+                        Content="{Binding SharedVm.LoginUser.QQNick}"
+                        FontSize="14"
+                        IconMargin="0,0,5,0"
+                        IconSize="26"
+                        SnapsToDevicePixels="True"
+                        WindowChrome.IsHitTestVisibleInChrome="True">
+                        <buttonComponent:SystemButton.IconTemplate>
+                            <ControlTemplate>
+                                <Border>
+                                    <Image
+                                        Width="30"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        SnapsToDevicePixels="True"
+                                        Source="{Binding SharedVm.LoginUser.AvatarUri}"
+                                        UseLayoutRounding="True">
+                                        <Image.Clip>
+                                            <EllipseGeometry
+                                                Center="15,15"
+                                                RadiusX="15"
+                                                RadiusY="15" />
+                                        </Image.Clip>
+                                    </Image>
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="5"
+                                            Direction="0"
+                                            Opacity="0.4"
+                                            ShadowDepth="0"
+                                            Color="Black" />
+                                    </Border.Effect>
+                                </Border>
+                            </ControlTemplate>
+                        </buttonComponent:SystemButton.IconTemplate>
+                    </buttonComponent:SystemButton>
+                    <Border
+                        Margin="5,10,0,10"
+                        BorderBrush="#59FFFFFF"
+                        BorderThickness="0,0,1,0" />
+                    <buttonComponent:MinButton WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <buttonComponent:MaxButton WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <buttonComponent:CloseButton WindowChrome.IsHitTestVisibleInChrome="True" />
                 </StackPanel>
                 <StackPanel
                     HorizontalAlignment="Right"
@@ -91,21 +131,6 @@
                     DockPanel.Dock="Right"
                     Orientation="Horizontal"
                     WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Button
-                        x:Name="btnAddTemplatePage"
-                        VerticalAlignment="Top"
-                        Click="BtnAddTemplatePage_OnClick"
-                        Content="页-新增模板" />
-                    <Button
-                        x:Name="btnDashBoardPage"
-                        VerticalAlignment="Top"
-                        Click="BtnDashBoardPage_OnClick"
-                        Content="页-仪表盘" />
-                    <Button
-                        x:Name="btnUpdateData"
-                        VerticalAlignment="Top"
-                        Click="UpdateData_Click"
-                        Content="更新数据" />
                     <Button
                         x:Name="btnLogout"
                         VerticalAlignment="Top"

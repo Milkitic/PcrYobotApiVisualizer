@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -27,6 +28,7 @@ using YobotChart.Shared.Annotations;
 using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
 using YobotChart.Shared.Win32.ChartFramework;
+using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
 using YobotChart.UiComponents;
 
 namespace YobotChart.Pages
@@ -37,6 +39,7 @@ namespace YobotChart.Pages
         private double _maxHeight;
         private ObservableCollection<StatsViewModel> _collections = new ObservableCollection<StatsViewModel>();
         private bool _editMode;
+        private SharedVm _sharedVm = SharedVm.Default;
 
         public ObservableCollection<StatsViewModel> Collections
         {
@@ -119,6 +122,17 @@ namespace YobotChart.Pages
             }
         }
 
+        public SharedVm SharedVm
+        {
+            get => _sharedVm;
+            set
+            {
+                if (Equals(value, _sharedVm)) return;
+                _sharedVm = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -144,12 +158,13 @@ namespace YobotChart.Pages
             InitializeComponent();
         }
 
-        private void Page_Initialized(object sender, EventArgs e)
+        private async void Page_Initialized(object sender, EventArgs e)
         {
             _viewModel = (DashBoardPageVm)DataContext;
             _viewModel.LoadStatsViewModels();
 
             ResizeCanvas();
+            await UpdateApiData();
         }
 
         public void AddStatsViewModelAndSave(StatsViewModel statsVm)
@@ -372,6 +387,29 @@ namespace YobotChart.Pages
         private void BtnAdd_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             AnimatedFrame.Default?.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
+        }
+
+
+        private async void BtnUpdateData_Click(object sender, RoutedEventArgs e)
+        {
+            await UpdateApiData();
+        }
+
+        private async Task UpdateApiData()
+        {
+            btnUpdateData.IsEnabled = false;
+
+            try
+            {
+                await YobotApiSource.Default.UpdateDataAsync();
+            }
+            catch (ArgumentNullException arg)
+            {
+            }
+            finally
+            {
+                btnUpdateData.IsEnabled = true;
+            }
         }
 
         #region Debug

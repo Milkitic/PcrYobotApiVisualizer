@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using YobotChart.Shared;
 using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
 using YobotChart.Shared.YobotService;
@@ -85,6 +86,7 @@ namespace YobotChart.YobotService
 
             Host = uri.Host;
             Origin = origin;
+            SharedVm.Default.LoginUser = new User();
 
             await ValidateVersion().ConfigureAwait(false);
             _mre.Reset();
@@ -103,6 +105,12 @@ namespace YobotChart.YobotService
                 }
                 return result;
             }).ConfigureAwait(false);
+
+            if (!waitResult)
+            {
+                SharedVm.Default.LoginUser = null;
+            }
+
             return waitResult;
         }
 
@@ -166,6 +174,7 @@ namespace YobotChart.YobotService
 
             Cookie = null;
             IsLogin = false;
+            SharedVm.Default.LoginUser = null;
             return success;
 
             void LoadCompleted(object sender, NavigationEventArgs e)
@@ -256,7 +265,7 @@ namespace YobotChart.YobotService
             Console.WriteLine("Navigate to " + _hiddenWebBrowser.Source);
         }
 
-        private void HiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
+        private async void HiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
         {
             try
             {
@@ -286,15 +295,31 @@ namespace YobotChart.YobotService
                     if (href != null)
                     {
                         QqId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                        if (!long.TryParse(QqId, out _))
+                        if (!long.TryParse(QqId, out var lQqId))
                         {
                             Console.WriteLine("错误：非法的QQ号，可能页面已发生改变");
                         }
                         else
                         {
+                            Execute.OnUiThread(() =>
+                            {
+                                SharedVm.Default.LoginUser.QQ = lQqId;
+                                SharedVm.Default.LoginUser.AvatarUri =
+                                    $"http://q1.qlogo.cn/g?b=qq&nk={lQqId}&s=640";
+                            });
+                            new Task(() =>
+                            {
+                                Execute.ToUiThread(async () =>
+                                {
+                                    SharedVm.Default.LoginUser.QQNick =
+                                        await QQService.GetQqNickNameAsync(lQqId);
+                                });
+                            }).Start();
+
                             Console.WriteLine("QQ: " + QqId);
                         }
                     }
+
                     if (elRows.Count <= 1)
                     {
                         if (elRowChildNodes.Length < 4)
@@ -309,12 +334,15 @@ namespace YobotChart.YobotService
                         {
                             GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries)
                                 .LastOrDefault();
-                            if (!long.TryParse(GroupId, out _))
+                            var groupName = btnClan.InnerText.Trim('\n').Trim().Replace("公会：", "");
+                            SharedVm.Default.LoginUser.ClanNick = groupName;
+                            if (!long.TryParse(GroupId, out var lGroupId))
                             {
                                 Console.WriteLine("错误：非法的QQ群号，可能页面已发生改变");
                             }
                             else
                             {
+                                SharedVm.Default.LoginUser.ClanId = lGroupId;
                                 Console.WriteLine("QQ群: " + GroupId);
                             }
                         }
@@ -335,17 +363,20 @@ namespace YobotChart.YobotService
                         {
                             GroupId = href.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries)
                                 .LastOrDefault();
-                            if (!long.TryParse(GroupId, out _))
+                            var groupName = btnClan.InnerText.Trim('\n').Trim().Replace("公会：", "");
+                            SharedVm.Default.LoginUser.ClanNick = groupName;
+                            if (!long.TryParse(GroupId, out var lGroupId))
                             {
                                 Console.WriteLine("错误：非法的QQ群号，可能页面已发生改变");
                             }
                             else
                             {
+                                SharedVm.Default.LoginUser.ClanId = lGroupId;
                                 Console.WriteLine("QQ群: " + GroupId);
                             }
                         }
                     }
-                    
+
                     _hiddenWebBrowser.Navigate($"{Origin}/yobot/clan/{GroupId}");
                     // ↓ 如果跳转至公会信息，则上面爬取的内容无误
                 }

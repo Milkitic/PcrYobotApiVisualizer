@@ -1,10 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using YobotChart.AutoUpdate;
 using YobotChart.Pages;
+using YobotChart.Shared.Annotations;
 using YobotChart.Shared.Configuration;
 using YobotChart.Shared.Win32;
 using YobotChart.Shared.Win32.ChartFramework.SourceProviders;
@@ -15,6 +18,30 @@ using YobotChart.YobotService;
 
 namespace YobotChart
 {
+    public class MainWindowVm : INotifyPropertyChanged
+    {
+        private SharedVm _sharedVm = SharedVm.Default;
+
+        public SharedVm SharedVm
+        {
+            get => _sharedVm;
+            set
+            {
+                if (Equals(value, _sharedVm)) return;
+                _sharedVm = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
@@ -38,8 +65,16 @@ namespace YobotChart
             YobotApiSource.Default.YobotService = new ServiceCore(Browser);
             YobotApiSource.Default.YobotService.InitRequested += YobotService_InitRequested;
 
-            await UpdateApiData();
-            
+            SharedVm.Default.IsUpdatingData = true;
+            try
+            {
+                await YobotApiSource.Default.UpdateDataAsync();
+            }
+            finally
+            {
+                SharedVm.Default.IsUpdatingData = false;
+            }
+
             new Task(async () =>
             {
                 try
@@ -99,11 +134,6 @@ namespace YobotChart
             await YobotApiSource.Default.YobotService.LogoutAsync();
         }
 
-        private async void UpdateData_Click(object sender, RoutedEventArgs e)
-        {
-            await UpdateApiData();
-        }
-
         private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
         {
             MainFrame.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
@@ -114,21 +144,5 @@ namespace YobotChart
             MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
         }
 
-        private async Task UpdateApiData()
-        {
-            btnUpdateData.IsEnabled = false;
-
-            try
-            {
-                await YobotApiSource.Default.UpdateDataAsync();
-            }
-            catch (ArgumentNullException arg)
-            {
-            }
-            finally
-            {
-                btnUpdateData.IsEnabled = true;
-            }
-        }
     }
 }

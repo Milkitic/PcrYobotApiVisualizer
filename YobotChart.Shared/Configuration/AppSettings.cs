@@ -89,6 +89,8 @@ namespace YobotChart.Shared.Configuration
                     return false;
                 }
             }
+
+            return true;
         }
 
         public static void Load(AppSettings config)
