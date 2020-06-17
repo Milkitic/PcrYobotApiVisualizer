@@ -65,11 +65,11 @@ namespace YobotChart.Shared.Configuration
             Default?.Save();
         }
 
-        public static void LoadFromDefaultFile()
+        public static bool LoadFromDefaultFile(out AppSettings settings)
         {
             if (!File.Exists(Files.ConfigFile))
             {
-                CreateNewConfig();
+                settings = CreateNewConfig();
             }
             else
             {
@@ -77,9 +77,18 @@ namespace YobotChart.Shared.Configuration
                 var builder = new YamlDotNet.Serialization.DeserializerBuilder();
                 //builder.WithTagMapping("tag:yaml.org,2002:test", typeof(Test));
                 var ymlDeserializer = builder.Build();
-                Load(ymlDeserializer.Deserialize<AppSettings>(content));
+                try
+                {
+                    settings = ymlDeserializer.Deserialize<AppSettings>(content);
+                    Load(settings);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    settings = null;
+                    return false;
+                }
             }
-
         }
 
         public static void Load(AppSettings config)
@@ -87,16 +96,19 @@ namespace YobotChart.Shared.Configuration
             Default = config ?? new AppSettings();
         }
 
-        private static void LoadNew()
+        private static AppSettings LoadNew()
         {
             File.WriteAllText(Files.ConfigFile, "");
-            Load(new AppSettings());
+            var appSettings = new AppSettings();
+            Load(appSettings);
+            return appSettings;
         }
 
-        public static void CreateNewConfig()
+        public static AppSettings CreateNewConfig()
         {
-            LoadNew();
+            var appSettings = LoadNew();
             SaveDefault();
+            return appSettings;
         }
     }
 }

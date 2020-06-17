@@ -20,20 +20,98 @@
     <Page.DataContext>
         <local:DashBoardPageVm />
     </Page.DataContext>
-    <Grid Margin="15">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel
-            Margin="5"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
-            <Button Content="更新" />
-            <ToggleButton Content="编辑" IsChecked="{Binding EditMode, Mode=TwoWay}" />
-            <Button Click="BtnAdd_Click" Content="新增" />
-        </StackPanel>
-        <ContentControl Grid.Row="1">
+        <Border Background="{StaticResource ThemeBrush2}">
+            <StackPanel
+                Margin="5,6"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <buttonComponent:CommonButton
+                    Width="26"
+                    Height="26"
+                    Margin="3,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    CornerRadius="2"
+                    Foreground="#A0F0F0F0"
+                    IconMargin="0"
+                    IconSize="20"
+                    IconTemplate="{StaticResource RefreshTempl}"
+                    MouseDownBackground="#10F0F0F0"
+                    MouseDownForeground="#F0F0F0F0"
+                    MouseOverBackground="#20F0F0F0"
+                    MouseOverForeground="#E0F0F0F0"  />
+                <ToggleButton
+                    Width="26"
+                    Height="26"
+                    Margin="3,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Foreground="#A0F0F0F0"
+                    IsChecked="{Binding EditMode, Mode=TwoWay}">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Grid>
+                                <Border
+                                    x:Name="BorderMain"
+                                    Width="{TemplateBinding Width}"
+                                    Height="{TemplateBinding Height}"
+                                    Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="2">
+                                    <Viewbox
+                                        x:Name="IconViewBox"
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0"
+                                        VerticalAlignment="Center"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                        UseLayoutRounding="True">
+                                        <ContentControl Template="{StaticResource EditTempl}" />
+                                    </Viewbox>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="BorderMain" Property="Background" Value="#30F0F0F0" />
+                                    <Setter TargetName="BorderMain" Property="TextBlock.Foreground" Value="#F0F0F0F0" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="BorderMain" Property="Background" Value="#20F0F0F0" />
+                                    <Setter TargetName="BorderMain" Property="TextBlock.Foreground" Value="#E0F0F0F0" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="BorderMain" Property="Opacity" Value="0.5" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+                <buttonComponent:CommonButton
+                    Width="26"
+                    Height="26"
+                    Margin="3,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="BtnAdd_Click"
+                    CornerRadius="2"
+                    Foreground="#A0F0F0F0"
+                    IconMargin="0"
+                    IconSize="18"
+                    IconTemplate="{StaticResource AddTempl}"
+                    MouseDownBackground="#10F0F0F0"
+                    MouseDownForeground="#F0F0F0F0"
+                    MouseOverBackground="#20F0F0F0"
+                    MouseOverForeground="#E0F0F0F0" />
+            </StackPanel>
+        </Border>
+        <ContentControl Grid.Row="1" Margin="15">
             <ContentControl.Template>
                 <ControlTemplate TargetType="ContentControl">
                     <Border
