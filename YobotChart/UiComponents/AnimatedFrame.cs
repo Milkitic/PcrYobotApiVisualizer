@@ -78,7 +78,8 @@ namespace YobotChart.UiComponents
 
                 void OnSbOnCompleted(object obj, EventArgs args)
                 {
-                    InnerAnimateNavigate(uiElement);
+                    if (uiElement != null)
+                        InnerAnimateNavigate(uiElement);
                     _fadeOutStoryboard.Completed -= OnSbOnCompleted;
                 }
             }
@@ -123,6 +124,8 @@ namespace YobotChart.UiComponents
         private void AnimatedFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
             var uiElement = (UIElement)Content;
+            if (uiElement == null)
+                return;
             var endOpacity = uiElement.Opacity;
             var originTransform = uiElement.RenderTransform;
             uiElement.RenderTransformOrigin = new Point(0.5, 0.5);

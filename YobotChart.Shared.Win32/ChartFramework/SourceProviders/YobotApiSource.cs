@@ -74,6 +74,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
         public async Task UpdateDataAsync()
         {
             YobotApi = await YobotService.GetApiInfo().ConfigureAwait(false);
+            if (YobotApi == null) return;
             YobotApi.Challenges = YobotApi.Challenges.OrderBy(k => k.ChallengeTime).ToArray();
             RoundList = YobotApi.Challenges.GroupBy(k => k.Cycle).Select(k=>k.Key).ToList();
             DateList = YobotApi.Challenges.GroupBy(k => k.ChallengeTime.AddHours(-5).Date)

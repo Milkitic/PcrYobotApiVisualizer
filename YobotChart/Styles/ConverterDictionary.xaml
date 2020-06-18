@@ -4,6 +4,8 @@
     xmlns:converters="clr-namespace:YobotChart.Converters">
     <converters:WindowMarginConverter x:Key="WindowMarginConverter" />
     <converters:RatioConverter x:Key="RatioConverter" />
+    <converters:IntPositiveTo26Converter x:Key="IntPositiveTo26Converter" />
+    <converters:Multi_IntPositiveToVisibleConverter x:Key="Multi_IntPositiveToVisibleConverter" />
     <converters:DateTimeToFormatStringConverter x:Key="DateTimeToFormatStringConverter" />
     <converters:TimeSpanToFormatStringConverter x:Key="TimeSpanToFormatStringConverter" />
 </ResourceDictionary>

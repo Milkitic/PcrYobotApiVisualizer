@@ -103,6 +103,8 @@ namespace YobotChart
         {
         }
 
+        private Task task;
+        private CancellationTokenSource cts;
         private async Task<string> YobotService_InitRequested()
         {
             bool? result = null;
@@ -119,30 +121,66 @@ namespace YobotChart
                 }, (sender, args) => result = true,
                     (sender, args) => result = false);
             });
-            await Task.Factory.StartNew(() =>
+
+            if (task != null && !task.IsCanceled && !task.IsFaulted && !task.IsCompleted)
             {
-                while (result == null)
+                try
+                {
+                    cts.Cancel();
+                    cts.Dispose();
+                    await Task.WhenAll(task);
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            cts = new CancellationTokenSource();
+            task = Task.Factory.StartNew(() =>
+            {
+                while (result == null && !cts.IsCancellationRequested)
                 {
                     Thread.Sleep(100);
                 }
             });
+            await task;
             return initUriControl?.Text;
         }
 
         private async void Logout_Click(object sender, RoutedEventArgs e)
         {
+            popUserPanel.IsOpen = false;
             await YobotApiSource.Default.YobotService.LogoutAsync();
+            MainFrame.Content = null;
+            await Relogin();
         }
 
-        private void BtnAddTemplatePage_OnClick(object sender, RoutedEventArgs e)
+        private void BtnUser_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.AnimateNavigate(SingletonPageHelper.Get<SelectTemplatePage>());
+            if (SharedVm.Default.LoginUser != null)
+            {
+                popUserPanel.IsOpen = true;
+            }
         }
 
-        private void BtnDashBoardPage_OnClick(object sender, RoutedEventArgs e)
+        private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
+            if (FrontDialogOverlay.MainCanvas.Visibility != Visibility.Hidden) return;
+            await Relogin();
         }
 
+        private async Task Relogin()
+        {
+            await YobotApiSource.Default.UpdateDataAsync();
+            if (SharedVm.Default.LoginUser != null)
+            {
+                MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
+                Console.WriteLine("navigate");
+            }
+            else
+            {
+                Console.WriteLine("null");
+            }
+        }
     }
 }

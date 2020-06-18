@@ -53,65 +53,71 @@ namespace YobotChart.YobotService
 
         public async Task<bool> LoginAsync(string loginUrl)
         {
-            Uri uri;
             try
             {
-                uri = new Uri(loginUrl);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-
-            var origin = uri.Scheme + "://" + uri.Authority;
-
-            if (origin != Origin && !string.IsNullOrWhiteSpace(Origin) && OriginChangeRequested != null)
-            {
-                if (OriginChangeRequested != null)
+                Uri uri;
+                try
                 {
-                    var result = await (OriginChangeRequested.Invoke().ConfigureAwait(false));
-                    if (result)
+                    uri = new Uri(loginUrl);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+
+                var origin = uri.Scheme + "://" + uri.Authority;
+
+                if (origin != Origin && !string.IsNullOrWhiteSpace(Origin) && OriginChangeRequested != null)
+                {
+                    if (OriginChangeRequested != null)
                     {
-                        AppSettings.Default.General.Origin = origin;
-                        AppSettings.SaveDefault();
+                        var result = await (OriginChangeRequested.Invoke().ConfigureAwait(false));
+                        if (result)
+                        {
+                            AppSettings.Default.General.Origin = origin;
+                            AppSettings.SaveDefault();
+                        }
                     }
                 }
-            }
-            else
-            {
-                AppSettings.Default.General.Origin = origin;
-                AppSettings.SaveDefault();
-            }
+                else
+                {
+                    AppSettings.Default.General.Origin = origin;
+                    AppSettings.SaveDefault();
+                }
 
-            Host = uri.Host;
-            Origin = origin;
-            SharedVm.Default.LoginUser = new User();
+                Host = uri.Host;
+                Origin = origin;
+                SharedVm.Default.LoginUser = new User();
 
-            await ValidateVersion().ConfigureAwait(false);
-            _mre.Reset();
-            Execute.OnUiThread(() => _hiddenWebBrowser.Navigate(loginUrl));
-            var waitResult = await Task.Run(() =>
-            {
-                bool result = true;
-                if (_loading)
-                    while (_loading)
+                await ValidateVersion().ConfigureAwait(false);
+                _mre.Reset();
+                Execute.OnUiThread(() => _hiddenWebBrowser.Navigate(loginUrl));
+                var waitResult = await Task.Run(() =>
+                {
+                    bool result = true;
+                    if (_loading)
+                        while (_loading)
+                        {
+                            result = _mre.Wait(_timeoutMilliseconds);
+                        }
+                    else
                     {
                         result = _mre.Wait(_timeoutMilliseconds);
                     }
-                else
+                    return result;
+                }).ConfigureAwait(false);
+
+                if (!waitResult)
                 {
-                    result = _mre.Wait(_timeoutMilliseconds);
+                    SharedVm.Default.LoginUser = null;
                 }
-                return result;
-            }).ConfigureAwait(false);
 
-            if (!waitResult)
-            {
-                SharedVm.Default.LoginUser = null;
+                return waitResult;
             }
-
-            return waitResult;
+            finally
+            {
+            }
         }
 
         public async Task<string> ValidateVersion()
@@ -149,6 +155,7 @@ namespace YobotChart.YobotService
         public async Task<YobotApiObjectV1> GetApiInfo()
         {
             var str = await InnerGetApiInfo(false).ConfigureAwait(false);
+            if (str is null) return null;
             return JsonConvert.DeserializeObject<YobotApiObjectV1>(str);
         }
 
@@ -190,8 +197,8 @@ namespace YobotChart.YobotService
 
         private async Task<string> InnerGetApiInfo(bool loop)
         {
-            await CheckIsLogin().ConfigureAwait(false);
-
+            if (!await CheckIsLogin().ConfigureAwait(false))
+                return null;
             var request = (HttpWebRequest)WebRequest.Create($"{Origin}/yobot/clan/{GroupId}/statistics/api/");
             request.Method = "GET";
             SetCookie(request);
@@ -219,12 +226,12 @@ namespace YobotChart.YobotService
             return responseFromServer;
         }
 
-        private async Task CheckIsLogin()
+        private async Task<bool> CheckIsLogin()
         {
-            if (IsLogin) return;
+            if (IsLogin) return true;
 
             var result = await LoginAsync($"{Origin}/yobot/login/").ConfigureAwait(false);
-            if (result) return;
+            if (result) return true;
 
             if (InitRequested == null) throw new Exception("登录失败，请检查链接是否已过期");
 
@@ -236,11 +243,13 @@ namespace YobotChart.YobotService
                 Origin = null;
                 AppSettings.Default.General.Origin = null;
                 AppSettings.SaveDefault();
-                throw new ArgumentNullException();
+                return false;
+                //throw new ArgumentNullException();
             }
 
             result = await LoginAsync(newUri).ConfigureAwait(false);
             if (!result) throw new Exception("登录失败，请检查链接是否已过期");
+            return true;
         }
 
         private void SetCookie(HttpWebRequest request)

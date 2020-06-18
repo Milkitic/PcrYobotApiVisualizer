@@ -80,43 +80,76 @@
                     HorizontalAlignment="Right"
                     DockPanel.Dock="Right"
                     Orientation="Horizontal">
-                    <buttonComponent:SystemButton
-                        Width="Auto"
-                        Padding="4,0"
-                        Content="{Binding SharedVm.LoginUser.QQNick}"
-                        FontSize="14"
-                        IconMargin="0,0,5,0"
-                        IconSize="26"
-                        SnapsToDevicePixels="True"
-                        WindowChrome.IsHitTestVisibleInChrome="True">
-                        <buttonComponent:SystemButton.IconTemplate>
-                            <ControlTemplate>
-                                <Border>
-                                    <Image
-                                        Width="30"
-                                        RenderOptions.BitmapScalingMode="HighQuality"
-                                        SnapsToDevicePixels="True"
-                                        Source="{Binding SharedVm.LoginUser.AvatarUri}"
-                                        UseLayoutRounding="True">
-                                        <Image.Clip>
-                                            <EllipseGeometry
-                                                Center="15,15"
-                                                RadiusX="15"
-                                                RadiusY="15" />
-                                        </Image.Clip>
-                                    </Image>
-                                    <Border.Effect>
-                                        <DropShadowEffect
-                                            BlurRadius="5"
-                                            Direction="0"
-                                            Opacity="0.4"
-                                            ShadowDepth="0"
-                                            Color="Black" />
-                                    </Border.Effect>
-                                </Border>
-                            </ControlTemplate>
-                        </buttonComponent:SystemButton.IconTemplate>
-                    </buttonComponent:SystemButton>
+                    <Grid>
+                        <buttonComponent:SystemButton
+                            x:Name="btnLogin"
+                            Width="Auto"
+                            Padding="4,0"
+                            HorizontalAlignment="Right"
+                            Click="BtnLogin_Click"
+                            FontSize="14"
+                            IconMargin="0,0,2,0"
+                            IconSize="18"
+                            IconTemplate="{StaticResource UserTempl}"
+                            SnapsToDevicePixels="True"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                            <buttonComponent:SystemButton.Visibility>
+                                <MultiBinding Converter="{StaticResource Multi_IntPositiveToVisibleConverter}" ConverterParameter="1">
+                                    <Binding Path="SharedVm.LoginUser.QQ" />
+                                    <Binding Path="SharedVm.LoginUser" />
+                                </MultiBinding>
+                            </buttonComponent:SystemButton.Visibility>
+                            <Label
+                                Content="登录"
+                                FontSize="13"
+                                Foreground="#f0f0f0" />
+                        </buttonComponent:SystemButton>
+                        <buttonComponent:SystemButton
+                            x:Name="btnUser"
+                            Width="Auto"
+                            Padding="4,0"
+                            Click="BtnUser_Click"
+                            Content="{Binding SharedVm.LoginUser.QQNick}"
+                            FontSize="14"
+                            IconMargin="0,0,5,0"
+                            IconSize="26"
+                            SnapsToDevicePixels="True"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                            <buttonComponent:SystemButton.Visibility>
+                                <MultiBinding Converter="{StaticResource Multi_IntPositiveToVisibleConverter}">
+                                    <Binding Path="SharedVm.LoginUser.QQ" />
+                                    <Binding Path="SharedVm.LoginUser" />
+                                </MultiBinding>
+                            </buttonComponent:SystemButton.Visibility>
+                            <buttonComponent:SystemButton.IconTemplate>
+                                <ControlTemplate>
+                                    <Border>
+                                        <Image
+                                            Width="30"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            SnapsToDevicePixels="True"
+                                            Source="{Binding SharedVm.LoginUser.AvatarUri}"
+                                            UseLayoutRounding="True">
+                                            <Image.Clip>
+                                                <EllipseGeometry
+                                                    Center="15,15"
+                                                    RadiusX="15"
+                                                    RadiusY="15" />
+                                            </Image.Clip>
+                                        </Image>
+                                        <Border.Effect>
+                                            <DropShadowEffect
+                                                BlurRadius="5"
+                                                Direction="0"
+                                                Opacity="0.4"
+                                                ShadowDepth="0"
+                                                Color="Black" />
+                                        </Border.Effect>
+                                    </Border>
+                                </ControlTemplate>
+                            </buttonComponent:SystemButton.IconTemplate>
+                        </buttonComponent:SystemButton>
+                    </Grid>
                     <Border
                         Margin="5,10,0,10"
                         BorderBrush="#59FFFFFF"
@@ -124,18 +157,6 @@
                     <buttonComponent:MinButton WindowChrome.IsHitTestVisibleInChrome="True" />
                     <buttonComponent:MaxButton WindowChrome.IsHitTestVisibleInChrome="True" />
                     <buttonComponent:CloseButton WindowChrome.IsHitTestVisibleInChrome="True" />
-                </StackPanel>
-                <StackPanel
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right"
-                    Orientation="Horizontal"
-                    WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Button
-                        x:Name="btnLogout"
-                        VerticalAlignment="Top"
-                        Click="Logout_Click"
-                        Content="退出登录" />
                 </StackPanel>
             </DockPanel>
         </Grid>
@@ -147,7 +168,6 @@
         </WebBrowser>
         <Grid Grid.Row="1" Margin="1">
             <uiComponents:AnimatedFrame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
-
             <frontDialogComponent:FrontDialogOverlay
                 x:Name="FrontDialogOverlay"
                 Grid.Row="0"
@@ -162,5 +182,89 @@
                 VerticalAlignment="Bottom"
                 d:IsHidden="True" />
         </Grid>
+        <Popup
+            x:Name="popUserPanel"
+            AllowsTransparency="True"
+            PlacementTarget="{Binding ElementName=btnUser}"
+            StaysOpen="False"
+            VerticalOffset="-5">
+            <Grid MinWidth="200">
+                <Border Margin="5" Background="White">
+                    <Border.Effect>
+                        <DropShadowEffect
+                            BlurRadius="5"
+                            Opacity="0.3"
+                            ShadowDepth="0"
+                            Color="Black" />
+                    </Border.Effect>
+                </Border>
+                <Border
+                    Margin="5"
+                    Padding="5"
+                    Background="White">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                            <Grid>
+                                <Border Width="48" Height="48">
+                                    <Border Background="White">
+                                        <Border.Clip>
+                                            <EllipseGeometry
+                                                Center="24,24"
+                                                RadiusX="24"
+                                                RadiusY="24" />
+                                        </Border.Clip>
+                                    </Border>
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="5"
+                                            Direction="0"
+                                            Opacity="0.4"
+                                            ShadowDepth="0"
+                                            Color="Black" />
+                                    </Border.Effect>
+                                </Border>
+                                <Image
+                                    Width="48"
+                                    Height="48"
+                                    RenderOptions.BitmapScalingMode="HighQuality"
+                                    Source="{Binding SharedVm.LoginUser.AvatarUri}">
+                                    <Image.Clip>
+                                        <EllipseGeometry
+                                            Center="24,24"
+                                            RadiusX="24"
+                                            RadiusY="24" />
+                                    </Image.Clip>
+                                </Image>
+                            </Grid>
+                            <Label
+                                HorizontalAlignment="Center"
+                                Content="{Binding SharedVm.LoginUser.QQNick}"
+                                FontSize="14" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <Label
+                                Content="公会"
+                                FontSize="13"
+                                Foreground="#929292" />
+                            <Label Content="{Binding SharedVm.LoginUser.ClanNick}" FontSize="13" />
+                        </StackPanel>
+                        <buttonComponent:CommonButton
+                            x:Name="btnLogout"
+                            Grid.Row="2"
+                            Height="auto"
+                            Padding="4,2"
+                            VerticalAlignment="Top"
+                            Click="Logout_Click"
+                            Content="退出登录"
+                            FontSize="13" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Popup>
     </Grid>
 </Window>
