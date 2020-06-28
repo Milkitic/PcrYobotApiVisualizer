@@ -12,6 +12,8 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     Initialized="Page_Initialized"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
     <Page.Resources>
         <Duration x:Key="SelectingDuration">00:00:00.22</Duration>
