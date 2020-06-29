@@ -1,4 +1,4 @@
-﻿<Window
+﻿<win32:WindowEx
     x:Class="YobotChart.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:notificationComponent="clr-namespace:YobotChart.UiComponents.NotificationComponent"
     xmlns:uiComponents="clr-namespace:YobotChart.UiComponents"
+    xmlns:win32="clr-namespace:YobotChart.Shared.Win32;assembly=YobotChartShared.win32"
     Title="MainWindow"
     Width="1366"
     Height="768"
@@ -62,6 +63,7 @@
                     VerticalAlignment="Center"
                     Background="Transparent"
                     BorderThickness="0"
+                    Click="BtnSettings_Click"
                     DockPanel.Dock="Left"
                     Foreground="{StaticResource ThemeLightBrush}"
                     IconMargin="0"
@@ -267,4 +269,4 @@
             </Grid>
         </Popup>
     </Grid>
-</Window>
+</win32:WindowEx>

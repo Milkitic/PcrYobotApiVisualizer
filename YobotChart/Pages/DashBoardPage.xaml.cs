@@ -402,6 +402,7 @@ namespace YobotChart.Pages
             try
             {
                 await YobotApiSource.Default.UpdateDataAsync();
+                UpdateGraphs();
             }
             catch (ArgumentNullException arg)
             {
@@ -502,19 +503,19 @@ namespace YobotChart.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            YobotApiSource.Default.SourceAutoUpdated += Default_SourceAutoUpdated;
+            YobotApiSource.Default.SourceAutoUpdated += UpdateGraphs;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            YobotApiSource.Default.SourceAutoUpdated -= Default_SourceAutoUpdated;
+            YobotApiSource.Default.SourceAutoUpdated -= UpdateGraphs;
         }
 
-        private void Default_SourceAutoUpdated()
+        private void UpdateGraphs()
         {
             foreach (var collection in _viewModel.Collections)
             {
-                Execute.ToUiThread(() => { collection.RequestUpdateGraph(); });
+                Execute.ToUiThread(async () => await collection.RequestUpdateGraph());
             }
         }
     }

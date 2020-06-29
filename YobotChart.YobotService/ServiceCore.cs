@@ -274,7 +274,7 @@ namespace YobotChart.YobotService
             Console.WriteLine("Navigate to " + _hiddenWebBrowser.Source);
         }
 
-        private async void HiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
+        private void HiddenWebBrowser_LoadCompleted(object sender, NavigationEventArgs e)
         {
             try
             {

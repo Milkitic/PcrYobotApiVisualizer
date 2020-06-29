@@ -72,11 +72,13 @@
     <Compile Include="ChartFramework\SourceProviders\StatsProviderInfoSource.cs" />
     <Compile Include="ChartFramework\Attributes\StatsProviderAttribute.cs" />
     <Compile Include="Execute.cs" />
+    <Compile Include="IWindowBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ChartFramework\StatsViewModel.cs" />
     <Compile Include="SharedVm.cs" />
     <Compile Include="WebBrowserExtension.cs" />
     <Compile Include="ChartFramework\SourceProviders\YobotApiSource.cs" />
+    <Compile Include="WindowEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\YamlDotNet.Comment\YamlDotNet.Comment.csproj">

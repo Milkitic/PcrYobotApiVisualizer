@@ -89,7 +89,7 @@ namespace YobotChart.UserControls
                         return;
                     }
 
-                    RecreateGraph();
+                    //RecreateGraph();
                     result.ChartConfig?.Invoke(Chart);
 
                     switch (result.ChartType)
@@ -115,6 +115,7 @@ namespace YobotChart.UserControls
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             StatsViewModel.UpdateGraphRequested = UpdateGraph;
+            RecreateGraph();
             await UpdateGraph();
         }
     }
