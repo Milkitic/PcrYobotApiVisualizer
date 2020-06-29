@@ -7,5 +7,6 @@
     <converters:IntPositiveTo26Converter x:Key="IntPositiveTo26Converter" />
     <converters:Multi_IntPositiveToVisibleConverter x:Key="Multi_IntPositiveToVisibleConverter" />
     <converters:DateTimeToFormatStringConverter x:Key="DateTimeToFormatStringConverter" />
+    <converters:Int32ToFormatStringConverter x:Key="Int32ToFormatStringConverter" />
     <converters:TimeSpanToFormatStringConverter x:Key="TimeSpanToFormatStringConverter" />
 </ResourceDictionary>

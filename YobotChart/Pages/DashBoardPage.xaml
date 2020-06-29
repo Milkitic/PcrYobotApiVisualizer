@@ -65,7 +65,8 @@
                         MouseDownBackground="#10F0F0F0"
                         MouseDownForeground="#F0F0F0F0"
                         MouseOverBackground="#20F0F0F0"
-                        MouseOverForeground="#E0F0F0F0" />
+                        MouseOverForeground="#E0F0F0F0"
+                        ToolTip="更新数据" />
                     <ToggleButton
                         Width="26"
                         Height="26"
@@ -74,7 +75,8 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Foreground="#A0F0F0F0"
-                        IsChecked="{Binding EditMode, Mode=TwoWay}">
+                        IsChecked="{Binding EditMode, Mode=TwoWay}"
+                        ToolTip="编辑模式">
                         <ToggleButton.Template>
                             <ControlTemplate TargetType="{x:Type ToggleButton}">
                                 <Grid>
@@ -135,7 +137,8 @@
                         MouseDownBackground="#10F0F0F0"
                         MouseDownForeground="#F0F0F0F0"
                         MouseOverBackground="#20F0F0F0"
-                        MouseOverForeground="#E0F0F0F0" />
+                        MouseOverForeground="#E0F0F0F0"
+                        ToolTip="新增图表" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -306,7 +309,8 @@
                                             DragCompleted="Thumb_DragCompleted"
                                             DragDelta="Thumb_DragDelta"
                                             DragStarted="Thumb_DragStarted"
-                                            Tag="{Binding}">
+                                            Tag="{Binding}"
+                                            ToolTip="按住拖动">
                                             <Thumb.Template>
                                                 <ControlTemplate>
                                                     <Border
@@ -335,13 +339,28 @@
                                                 VerticalAlignment="Center"
                                                 Background="Transparent"
                                                 BorderThickness="0"
+                                                Click="BtnWidget_Click"
+                                                CornerRadius="0"
+                                                Foreground="{StaticResource ThemeLightBrush}"
+                                                IconMargin="0"
+                                                IconSize="16"
+                                                IconTemplate="{StaticResource WidgetTempl}"
+                                                Tag="{Binding}"
+                                                ToolTip="加载小部件（仅测试）" />
+                                            <buttonComponent:CommonButton
+                                                Height="auto"
+                                                Padding="2"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent"
+                                                BorderThickness="0"
                                                 Click="BtnRemove_Click"
                                                 CornerRadius="0"
                                                 Foreground="{StaticResource ThemeLightBrush}"
                                                 IconMargin="0"
                                                 IconSize="16"
                                                 IconTemplate="{StaticResource CloseTempl}"
-                                                Tag="{Binding}" />
+                                                Tag="{Binding}"
+                                                ToolTip="删除图表" />
                                         </StackPanel>
                                     </Grid>
                                 </Border>

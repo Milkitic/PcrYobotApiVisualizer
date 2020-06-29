@@ -518,5 +518,13 @@ namespace YobotChart.Pages
                 Execute.ToUiThread(async () => await collection.RequestUpdateGraph());
             }
         }
+
+        private void BtnWidget_Click(object sender, RoutedEventArgs e)
+        {
+            var thumb = (Button)sender;
+            var statsVm = (StatsViewModel)thumb.Tag;
+            var widgetWin = new WidgetWindow(statsVm);
+            widgetWin.Show();
+        }
     }
 }

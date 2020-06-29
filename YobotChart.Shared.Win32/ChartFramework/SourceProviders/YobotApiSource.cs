@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using YobotChart.Shared.Annotations;
+using YobotChart.Shared.Configuration;
 using YobotChart.Shared.YobotService;
 using YobotChart.Shared.YobotService.V1;
 
@@ -89,7 +90,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
             }
         }
 
-        public TimeSpan AutoUpdateInterval { get; set; } = TimeSpan.FromSeconds(10);
+        public TimeSpan AutoUpdateInterval { get; set; } = AppSettings.Default.General.AutoUpdateInterval;
 
         public async Task UpdateDataAsync()
         {

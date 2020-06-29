@@ -24,7 +24,9 @@ namespace YobotChart.Shared.Win32.ChartFramework
 
         private bool _isLoading;
         private DashboardInfo _dashboardInfo = new DashboardInfo();
-        public Func<Task> UpdateGraphRequested;
+
+        //[YamlIgnore]
+        public event Func<Task> UpdateGraphRequested;
 
         [YamlIgnore]
         public StatsProviderInfo SourceStatsProvider

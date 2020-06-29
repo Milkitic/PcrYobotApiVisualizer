@@ -20,9 +20,14 @@
         <Label
             Margin="0,0,0,20"
             HorizontalAlignment="Center"
-            Content="登录链接 / API链接"
+            Content="登录链接"
             FontSize="24" />
-        <textBoxComponent:CommonTextBox
+        <!--<Label
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            Content="登录链接 / API链接"
+            FontSize="24" />-->
+        <!--<textBoxComponent:CommonTextBox
             x:Name="TextBox"
             Grid.Row="1"
             Width="Auto"
@@ -33,6 +38,18 @@
             VerticalAlignment="Center"
             FontSize="18"
             Hint="../login/c/#qqid=..&amp;key=.. 或 ../clan/../statistics/api/?apikey=.."
+            KeyDown="TextBox_OnKeyDown" />-->
+        <textBoxComponent:CommonTextBox
+            x:Name="TextBox"
+            Grid.Row="1"
+            Width="Auto"
+            Height="40"
+            Margin="40,0"
+            Padding="3,0,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            FontSize="18"
+            Hint="../login/c/#qqid=..&amp;key=.."
             KeyDown="TextBox_OnKeyDown" />
         <buttonComponent:CommonButton
             Grid.Row="2"

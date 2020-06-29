@@ -17,6 +17,7 @@
     FontFamily="{StaticResource FontRegular}"
     Initialized="Window_Initialized"
     Loaded="Window_Loaded"
+    Shown="WindowEx_Shown"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.DataContext>
@@ -188,6 +189,7 @@
             x:Name="popUserPanel"
             AllowsTransparency="True"
             PlacementTarget="{Binding ElementName=btnUser}"
+            PopupAnimation="Fade"
             StaysOpen="False"
             VerticalOffset="-5">
             <Grid MinWidth="200">

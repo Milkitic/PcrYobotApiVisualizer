@@ -1,12 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Threading;
 using YobotChart.AutoUpdate;
 using YobotChart.Pages;
@@ -53,6 +50,8 @@ namespace YobotChart
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private GiteeUpdater _updater;
+        private Task _task;
+        private CancellationTokenSource _cts;
 
         public MainWindow()
         {
@@ -69,14 +68,6 @@ namespace YobotChart
             YobotApiSource.Default.YobotService.InitRequested += YobotService_InitRequested;
 
             SharedVm.Default.IsUpdatingData = true;
-            try
-            {
-                await YobotApiSource.Default.UpdateDataAsync();
-            }
-            finally
-            {
-                SharedVm.Default.IsUpdatingData = false;
-            }
 
             new Task(async () =>
             {
@@ -98,60 +89,29 @@ namespace YobotChart
                     Logger.Error(ex, "检测更新出现错误");
                 }
             }).Start();
+        }
+
+        private void BtnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Notification.Show("暂不支持此功能。请手动配置\"appsettings.yml\"", 5);
+        }
+
+        private async void WindowEx_Shown(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await YobotApiSource.Default.UpdateDataAsync();
+            }
+            finally
+            {
+                SharedVm.Default.IsUpdatingData = false;
+            }
 
             MainFrame.AnimateNavigate(SingletonPageHelper.Get<DashBoardPage>());
         }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            BtnSettings_Click(sender, e);
-        }
-
-        private Task task;
-        private CancellationTokenSource cts;
-        private async Task<string> YobotService_InitRequested()
-        {
-            bool? result = null;
-            InitUriControl initUriControl = null;
-            Execute.OnUiThread(() =>
-            {
-                initUriControl = new InitUriControl();
-                FrontDialogOverlay.ShowContent(initUriControl, new FrontDialogOverlay.ShowContentOptions
-                {
-                    Height = 400,
-                    Width = 650,
-                    ShowDialogButtons = false,
-                    ShowTitleBar = false
-                }, (sender, args) => result = true,
-                    (sender, args) => result = false);
-            });
-
-            if (task != null && !task.IsCanceled && !task.IsFaulted && !task.IsCompleted)
-            {
-                try
-                {
-                    cts.Cancel();
-                    cts.Dispose();
-                    await Task.WhenAll(task);
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            cts = new CancellationTokenSource();
-            task = Task.Factory.StartNew(() =>
-            {
-                while (result == null && !cts.IsCancellationRequested)
-                {
-                    Thread.Sleep(100);
-                }
-            });
-            await task;
-            return initUriControl?.Text;
         }
 
         private async void Logout_Click(object sender, RoutedEventArgs e)
@@ -190,77 +150,46 @@ namespace YobotChart
             }
         }
 
-        public enum DesktopWindow
+        private async Task<string> YobotService_InitRequested()
         {
-            ProgMan,
-            SHELLDLL_DefViewParent,
-            SHELLDLL_DefView,
-            SysListView32
-        }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetShellWindow();
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
-
-        public static IntPtr GetDesktopWindow(DesktopWindow desktopWindow)
-        {
-            IntPtr _ProgMan = GetShellWindow();
-            IntPtr _SHELLDLL_DefViewParent = _ProgMan;
-            IntPtr _SHELLDLL_DefView = FindWindowEx(_ProgMan, IntPtr.Zero, "SHELLDLL_DefView", null);
-            IntPtr _SysListView32 = FindWindowEx(_SHELLDLL_DefView, IntPtr.Zero, "SysListView32", "FolderView");
-
-            if (_SHELLDLL_DefView == IntPtr.Zero)
+            bool? result = null;
+            InitUriControl initUriControl = null;
+            Execute.OnUiThread(() =>
             {
-                EnumWindows((hwnd, lParam) =>
+                initUriControl = new InitUriControl();
+                FrontDialogOverlay.ShowContent(initUriControl, new FrontDialogOverlay.ShowContentOptions
                 {
-                    var sb = new StringBuilder(256);
-                    GetClassName(hwnd, sb, sb.Capacity);
+                    Height = 400,
+                    Width = 650,
+                    ShowDialogButtons = false,
+                    ShowTitleBar = false
+                }, (sender, args) => result = true,
+                    (sender, args) => result = false);
+            });
 
-                    if (sb.ToString() == "WorkerW")
-                    {
-                        IntPtr child = FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null);
-                        if (child != IntPtr.Zero)
-                        {
-                            _SHELLDLL_DefViewParent = hwnd;
-                            _SHELLDLL_DefView = child;
-                            _SysListView32 = FindWindowEx(child, IntPtr.Zero, "SysListView32", "FolderView"); ;
-                            return false;
-                        }
-                    }
-                    return true;
-                }, IntPtr.Zero);
-            }
-
-            switch (desktopWindow)
+            if (_task != null && !_task.IsCanceled && !_task.IsFaulted && !_task.IsCompleted)
             {
-                case DesktopWindow.ProgMan:
-                    return _ProgMan;
-                case DesktopWindow.SHELLDLL_DefViewParent:
-                    return _SHELLDLL_DefViewParent;
-                case DesktopWindow.SHELLDLL_DefView:
-                    return _SHELLDLL_DefView;
-                case DesktopWindow.SysListView32:
-                    return _SysListView32;
-                default:
-                    return IntPtr.Zero;
+                try
+                {
+                    _cts.Cancel();
+                    _cts.Dispose();
+                    await Task.WhenAll(_task);
+                }
+                catch (Exception)
+                {
+                }
             }
-        }
 
-        private void BtnSettings_Click(object sender, RoutedEventArgs e)
-        {
-            IntPtr hWnd = new WindowInteropHelper(this).Handle;
-            var intPtr = GetDesktopWindow(DesktopWindow.SysListView32);
-            SetParent(hWnd, intPtr);
+            _cts = new CancellationTokenSource();
+            _task = Task.Factory.StartNew(() =>
+            {
+                while (result == null && !_cts.IsCancellationRequested)
+                {
+                    Thread.Sleep(100);
+                }
+            });
+            await _task;
+            return initUriControl?.Text ?? "none";
         }
     }
 }
