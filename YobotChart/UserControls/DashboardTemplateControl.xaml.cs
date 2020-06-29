@@ -114,6 +114,7 @@ namespace YobotChart.UserControls
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            StatsViewModel.UpdateGraphRequested = UpdateGraph;
             await UpdateGraph();
         }
     }

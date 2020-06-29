@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YobotChart.Shared.Annotations;
 using YobotChart.Shared.Win32.ChartFramework.ConfigModels;
@@ -23,6 +24,7 @@ namespace YobotChart.Shared.Win32.ChartFramework
 
         private bool _isLoading;
         private DashboardInfo _dashboardInfo = new DashboardInfo();
+        public Func<Task> UpdateGraphRequested;
 
         [YamlIgnore]
         public StatsProviderInfo SourceStatsProvider
@@ -130,6 +132,11 @@ namespace YobotChart.Shared.Win32.ChartFramework
             }
         }
 
+        public async Task RequestUpdateGraph()
+        {
+            if (UpdateGraphRequested != null) await UpdateGraphRequested?.Invoke();
+        }
+
         public void InitProvider()
         {
             var provider =
@@ -179,7 +186,6 @@ namespace YobotChart.Shared.Win32.ChartFramework
                 if (value.Equals(_x)) return;
                 _x = value;
                 OnPropertyChanged();
-                
             }
         }
 
@@ -253,10 +259,10 @@ namespace YobotChart.Shared.Win32.ChartFramework
 
         public void ResetInterface()
         {
-           X = PointX * DashboardInfo.UnitX;
-           Y = PointY * DashboardInfo.UnitY;
-           Width = DashboardInfo.UnitX * PointScaleX;
-           Height = DashboardInfo.UnitY * PointScaleY;
+            X = PointX * DashboardInfo.UnitX;
+            Y = PointY * DashboardInfo.UnitY;
+            Width = DashboardInfo.UnitX * PointScaleX;
+            Height = DashboardInfo.UnitY * PointScaleY;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

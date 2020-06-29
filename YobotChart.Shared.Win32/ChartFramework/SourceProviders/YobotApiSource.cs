@@ -89,7 +89,7 @@ namespace YobotChart.Shared.Win32.ChartFramework.SourceProviders
             }
         }
 
-        public TimeSpan AutoUpdateInterval { get; set; } = TimeSpan.FromMinutes(5);
+        public TimeSpan AutoUpdateInterval { get; set; } = TimeSpan.FromSeconds(10);
 
         public async Task UpdateDataAsync()
         {

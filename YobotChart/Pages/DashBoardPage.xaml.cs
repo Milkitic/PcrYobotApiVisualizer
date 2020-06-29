@@ -502,12 +502,20 @@ namespace YobotChart.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
+            YobotApiSource.Default.SourceAutoUpdated += Default_SourceAutoUpdated;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
+            YobotApiSource.Default.SourceAutoUpdated -= Default_SourceAutoUpdated;
+        }
 
+        private void Default_SourceAutoUpdated()
+        {
+            foreach (var collection in _viewModel.Collections)
+            {
+                Execute.ToUiThread(() => { collection.RequestUpdateGraph(); });
+            }
         }
     }
 }
