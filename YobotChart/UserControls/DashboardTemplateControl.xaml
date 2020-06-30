@@ -9,6 +9,7 @@
     xmlns:notificationComponent="clr-namespace:YobotChart.UiComponents.NotificationComponent"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Background="#80FFFFFF"
     ClipToBounds="True"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
@@ -16,7 +17,7 @@
     <d:UserControl.DataContext>
         <chartFramework:StatsViewModel />
     </d:UserControl.DataContext>
-    <Grid Background="#80FFFFFF">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

@@ -34,7 +34,6 @@ namespace YobotChart
 
         private void WindowEx_Shown(object sender, RoutedEventArgs e)
         {
-            this.ShowAsWidgets();
         }
 
         private void WindowEx_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -68,6 +67,11 @@ namespace YobotChart
         {
             HwndSource hwndSource = PresentationSource.FromVisual((Visual)sender) as HwndSource;
             SendMessage(hwndSource.Handle, 0x112, (IntPtr)61448, IntPtr.Zero);
+        }
+
+        private void WindowEx_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.ShowAsWidgets();
         }
     }
 }
